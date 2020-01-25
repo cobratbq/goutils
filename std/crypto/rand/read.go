@@ -6,6 +6,13 @@ import (
 	"github.com/cobratbq/goutils/std/errors"
 )
 
+// RandomizeBytes reads `len(dst)` random bytes, then returns `dst`.
+// It will panic on any kind of failure reading random bytes.
+func RandomizeBytes(dst []byte) []byte {
+	MustReadBytes(dst)
+	return dst
+}
+
 // MustReadBytes reads random bytes into dst and fails if anything out of the
 // ordinary happens.
 func MustReadBytes(dst []byte) {
