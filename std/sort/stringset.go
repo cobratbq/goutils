@@ -6,6 +6,7 @@ import (
 
 // StringSet sorts the keys in a set (a map[string]struct{}) in
 // lexicographical order.
+// FIXME write unit tests
 func StringSet(set map[string]struct{}) []string {
 	keys := make([]string, 0, len(set))
 	for k := range set {
