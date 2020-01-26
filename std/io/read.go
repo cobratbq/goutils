@@ -13,3 +13,12 @@ func MustReadAll(r io.Reader) []byte {
 	errors.RequireSuccess(err, "Failed to read all data from reader: %+v")
 	return data
 }
+
+// Discard reads remaining data from reader and discards it. Any possible
+// errors in the process are ignored. Returns nr of bytes written, thus
+// discarded.
+// FIXME write unit tests
+func Discard(r io.Reader) int64 {
+	n, _ := io.Copy(ioutil.Discard, r)
+	return n
+}
