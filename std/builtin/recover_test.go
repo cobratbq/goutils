@@ -15,3 +15,17 @@ func TestRecoverLoggedNil(t *testing.T) {
 	defer RecoverLogged("Recovering ... %+v")
 	panic(nil)
 }
+
+func TestRecoverLoggedStackTraceNotPanicking(t *testing.T) {
+	defer RecoverLoggedStackTrace("Hello world")
+}
+
+func TestRecoverLoggedStackTraceNilPanic(t *testing.T) {
+	defer RecoverLoggedStackTrace("Hello world")
+	panic(nil)
+}
+
+func TestRecoverLoggedStackTracePanicking(t *testing.T) {
+	defer RecoverLoggedStackTrace("Hello world!")
+	panic("Hello!")
+}
