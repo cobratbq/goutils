@@ -3,7 +3,7 @@ package rand
 import (
 	"crypto/rand"
 
-	"github.com/cobratbq/goutils/std/errors"
+	"github.com/cobratbq/goutils/std/builtin"
 )
 
 // RandomizeBytes reads `len(dst)` random bytes, then returns `dst`.
@@ -19,5 +19,5 @@ func MustReadBytes(dst []byte) {
 	_, err := rand.Read(dst)
 	// rand.Read(...) api specifies that there will always be an error if
 	// `num bytes read < len(dst)`.
-	errors.RequireSuccess(err, "failed to read random bytes: %+v")
+	builtin.RequireSuccess(err, "failed to read random bytes: %+v")
 }

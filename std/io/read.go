@@ -1,15 +1,16 @@
 package io
 
 import (
-	"github.com/cobratbq/goutils/std/errors"
 	"io"
 	"io/ioutil"
+
+	"github.com/cobratbq/goutils/std/builtin"
 )
 
 // MustReadAll reads all data from reader and panics in case an error occurs.
 func MustReadAll(r io.Reader) []byte {
 	data, err := ioutil.ReadAll(r)
-	errors.RequireSuccess(err, "Failed to read all data from reader: %+v")
+	builtin.RequireSuccess(err, "Failed to read all data from reader: %+v")
 	return data
 }
 
