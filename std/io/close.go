@@ -24,3 +24,25 @@ func CloseLogged(c io.Closer, message string) {
 		log.Printf(message, err)
 	}
 }
+
+// NopCloser is a no-op close ReadWriteCloser implementation.
+//
+// One would typically want to respect the Close method on writers. This
+// implementation provides no-op closing for cases where `Close()` is already
+// handled at a different level of nesting.
+type NopCloser struct {
+	Rw io.ReadWriter
+}
+
+func (n *NopCloser) Read(p []byte) (int, error) {
+	return n.Rw.Read(p)
+}
+
+func (n *NopCloser) Write(p []byte) (int, error) {
+	return n.Rw.Write(p)
+}
+
+// Close is a no-op.
+func (n *NopCloser) Close() error {
+	return nil
+}

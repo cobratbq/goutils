@@ -1,8 +1,10 @@
 package io
 
 import (
+	"bytes"
 	"errors"
 	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -75,4 +77,39 @@ type closefailer struct{}
 
 func (closefailer) Close() error {
 	return errors.New("bad shit happened")
+}
+
+func TestNopCloserRepeatedClose(t *testing.T) {
+	closer := &NopCloser{os.Stderr}
+	err := closer.Close()
+	if err != nil {
+		t.FailNow()
+	}
+	err = closer.Close()
+	if err != nil {
+		t.FailNow()
+	}
+	err = closer.Close()
+	if err != nil {
+		t.FailNow()
+	}
+}
+
+func TestNopCloserReadPassthrough(t *testing.T) {
+	b := bytes.NewBufferString("Hello world!")
+	c := NopCloser{b}
+	data := make([]byte, 12)
+	c.Read(data)
+	if !bytes.Equal([]byte("Hello world!"), data) {
+		t.FailNow()
+	}
+}
+
+func TestNopCloserWritePassthrough(t *testing.T) {
+	b := bytes.NewBuffer(nil)
+	c := NopCloser{b}
+	c.Write([]byte("Hello world!"))
+	if string(b.Bytes()) != "Hello world!" {
+		t.FailNow()
+	}
 }
