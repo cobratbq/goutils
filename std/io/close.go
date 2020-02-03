@@ -13,14 +13,19 @@ func CloseDiscarded(c io.Closer) {
 }
 
 // ClosePanicked closes the closer and panics with specified message in case of
-// an error.
+// any error, except for io.ErrClosedPipe.
 func ClosePanicked(c io.Closer, message string) {
-	builtin.RequireSuccess(c.Close(), message)
+	err := c.Close()
+	if err == io.ErrClosedPipe {
+		return
+	}
+	builtin.RequireSuccess(err, message)
 }
 
 // CloseLogged closes the closer and logs specified message in case of error.
+// Any error except for io.ErrClosedPipe is logged.
 func CloseLogged(c io.Closer, message string) {
-	if err := c.Close(); err != nil {
+	if err := c.Close(); err != nil && err != io.ErrClosedPipe {
 		log.Printf(message, err)
 	}
 }
