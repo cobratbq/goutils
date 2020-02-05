@@ -1,8 +1,8 @@
 package http
 
 import (
+	"bufio"
 	"errors"
-	"io"
 	"net"
 	"net/http"
 )
@@ -13,8 +13,9 @@ var ErrNonHijackableWriter = errors.New("failed to acquire raw client connection
 // HijackConnection acquires the underlying connection by inspecting the
 // ResponseWriter provided. One may use the returned io.ReadWriter to perform
 // communication operations. The net.Conn instance is provided for low-level
-// connection maintenance. The user must close net.Conn!
-func HijackConnection(resp http.ResponseWriter) (io.ReadWriter, net.Conn, error) {
+// connection maintenance.
+// The user must close net.Conn!
+func HijackConnection(resp http.ResponseWriter) (*bufio.ReadWriter, net.Conn, error) {
 	hijacker, ok := resp.(http.Hijacker)
 	if !ok {
 		return nil, nil, ErrNonHijackableWriter
