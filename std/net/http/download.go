@@ -9,9 +9,9 @@ import (
 	io_ "github.com/cobratbq/goutils/std/io"
 )
 
-// DownloadToFile downloads content from the given URL into the specified file
-// name.
-func DownloadToFile(fileName, URL string) error {
+// DownloadToFilePath downloads content from the given URL into the specified
+// file name.
+func DownloadToFilePath(fileName, URL string) error {
 	dstFile, err := os.Create(fileName)
 	if err != nil {
 		return err
