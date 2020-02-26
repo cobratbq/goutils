@@ -10,14 +10,18 @@ import (
 )
 
 // DownloadToFilePath downloads content from the given URL into the specified
-// file name.
+// file name. In case of failure to download, the file is removed.
 func DownloadToFilePath(fileName, URL string) error {
 	dstFile, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}
 	defer io_.ClosePanicked(dstFile, "failed to close destination file: %+v")
-	return DownloadFromURL(dstFile, URL)
+	if err = DownloadFromURL(dstFile, URL); err != nil {
+		os.Remove(dstFile.Name())
+		return err
+	}
+	return nil
 }
 
 // DownloadFromURL downloads content from the specified URL and immediately
