@@ -4,7 +4,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/cobratbq/goutils/std/builtin"
+	"github.com/cobratbq/goutils/assert"
 )
 
 // CloseDiscarded closes the closer and discards any possible error.
@@ -19,7 +19,7 @@ func ClosePanicked(c io.Closer, message string) {
 	if err == io.ErrClosedPipe {
 		return
 	}
-	builtin.RequireSuccess(err, message)
+	assert.RequireSuccess(err, message)
 }
 
 // CloseLogged closes the closer and logs specified message in case of error.

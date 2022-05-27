@@ -1,5 +1,7 @@
 package assert
 
+// TODO add Equal(a, b)
+
 func False(expected bool) {
 	True(!expected)
 }

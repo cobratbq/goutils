@@ -4,13 +4,13 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/cobratbq/goutils/std/builtin"
+	"github.com/cobratbq/goutils/assert"
 )
 
 // MustReadAll reads all data from reader and panics in case an error occurs.
 func MustReadAll(r io.Reader) []byte {
 	data, err := ioutil.ReadAll(r)
-	builtin.RequireSuccess(err, "Failed to read all data from reader: %+v")
+	assert.RequireSuccess(err, "Failed to read all data from reader: %+v")
 	return data
 }
 

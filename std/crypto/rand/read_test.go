@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/cobratbq/goutils/std/builtin"
+	"github.com/cobratbq/goutils/assert"
 )
 
 func TestMustReadBytesNil(t *testing.T) {
@@ -18,7 +18,7 @@ func TestMustReadBytes(t *testing.T) {
 
 func TestRandomizeNil(t *testing.T) {
 	result := RandomizeBytes(nil)
-	builtin.Require(result == nil, "expected to get nil returned")
+	assert.Require(result == nil, "expected to get nil returned")
 }
 
 func TestRandomizeBytes(t *testing.T) {
@@ -26,6 +26,6 @@ func TestRandomizeBytes(t *testing.T) {
 	var dst [20]byte
 	copy(original[:], dst[:])
 	result := RandomizeBytes(dst[:])
-	builtin.Require(bytes.Equal(result, dst[:]), "expected to receive randomized bytes")
-	builtin.Require(!bytes.Equal(result, original[:]), "expected different bytes from start")
+	assert.Require(bytes.Equal(result, dst[:]), "expected to receive randomized bytes")
+	assert.Require(!bytes.Equal(result, original[:]), "expected different bytes from start")
 }
