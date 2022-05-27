@@ -125,7 +125,7 @@ func TestNopCloserWritePassthrough(t *testing.T) {
 	b := bytes.NewBuffer(nil)
 	c := NopCloser{b}
 	c.Write([]byte("Hello world!"))
-	if string(b.Bytes()) != "Hello world!" {
+	if b.String() != "Hello world!" {
 		t.FailNow()
 	}
 }
