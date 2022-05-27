@@ -41,7 +41,6 @@ func (*nonHijackableWriter) Write([]byte) (int, error) {
 }
 
 func (*nonHijackableWriter) WriteHeader(int) {
-	return
 }
 
 type hijackableWriter struct {
