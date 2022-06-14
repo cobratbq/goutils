@@ -8,35 +8,27 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+
+	assert "github.com/cobratbq/goutils/std/testing"
 )
 
 func TestCloseDiscardedNil(t *testing.T) {
-	defer func() {
-		v := recover()
-		if v == nil {
-			t.Error("Expected to have an actual panic.")
-		}
-	}()
-	CloseDiscarded(nil)
+	defer assert.RequirePanic(t)
+	CloseIgnored(nil)
 	t.FailNow()
 }
 
 func TestCloseDiscardedGraceful(t *testing.T) {
 	c := ioutil.NopCloser(nil)
-	CloseDiscarded(c)
+	CloseIgnored(c)
 }
 
 func TestCloseDiscardedFailure(t *testing.T) {
-	CloseDiscarded(&closefailer{})
+	CloseIgnored(&closefailer{})
 }
 
 func TestCloseLoggedNilCloser(t *testing.T) {
-	defer func() {
-		v := recover()
-		if v == nil {
-			t.Error("Expected to have an actual panic.")
-		}
-	}()
+	defer assert.RequirePanic(t)
 	CloseLogged(nil, "Uh oh!")
 	t.FailNow()
 }
@@ -54,12 +46,7 @@ func TestCloseLoggedErrClosedPipe(t *testing.T) {
 }
 
 func TestClosePanickedNil(t *testing.T) {
-	defer func() {
-		v := recover()
-		if v == nil {
-			t.Error("Expected to have an actual panic.")
-		}
-	}()
+	defer assert.RequirePanic(t)
 	ClosePanicked(nil, "failed to close nil: %+v")
 	t.FailNow()
 }
@@ -69,12 +56,7 @@ func TestClosePanickedSuccess(t *testing.T) {
 }
 
 func TestClosePanickedFailure(t *testing.T) {
-	defer func() {
-		v := recover()
-		if v != "failed to close: bad shit happened" {
-			t.Error("Expected to have an actual panic.")
-		}
-	}()
+	defer assert.RequirePanic(t)
 	ClosePanicked(&closefailer{}, "failed to close: %+v")
 	t.FailNow()
 }

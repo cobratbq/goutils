@@ -9,7 +9,7 @@ import (
 )
 
 // CloseDiscarded closes the closer and discards any possible error.
-func CloseDiscarded(c io.Closer) {
+func CloseIgnored(c io.Closer) {
 	c.Close()
 }
 

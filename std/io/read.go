@@ -19,6 +19,6 @@ func MustReadAll(r io.Reader) []byte {
 // errors in the process are ignored. Returns nr of bytes written, thus
 // discarded.
 func Discard(r io.Reader) int64 {
-	n, _ := io.Copy(ioutil.Discard, r)
+	n, _ := io.Copy(io.Discard, r)
 	return n
 }
