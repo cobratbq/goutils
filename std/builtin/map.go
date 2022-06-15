@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 package builtin
 
-import (
-	"reflect"
-)
-
-// ExtractStringKeys extracts keys from a map containing string keys. The
-// function uses reflection to extract keys from the map.
-func ExtractStringKeys(stringmap interface{}) []string {
-	keys := reflect.ValueOf(stringmap).MapKeys()
-	result := make([]string, len(keys))
-	for i, v := range keys {
-		result[i] = v.Interface().(string)
+// ExtractKeys extracts the keys from a map.
+func ExtractKeys[K comparable, V any](map_ map[K]V) []K {
+	keys := make([]K, 0, len(map_))
+	for k := range map_ {
+		keys = append(keys, k)
 	}
-	return result
+	return keys
+}
+
+// ExtractValues extracts the values from a map.
+func ExtractValues[K comparable, V any](map_ map[K]V) []V {
+	vals := make([]V, 0, len(map_))
+	for _, v := range map_ {
+		vals = append(vals, v)
+	}
+	return vals
 }

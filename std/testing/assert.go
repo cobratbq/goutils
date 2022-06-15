@@ -29,16 +29,21 @@ func Unequal[T comparable](t *testing.T, a, b string) {
 	}
 }
 
-func ElementPresent[K comparable](t *testing.T, set map[K]struct{}, key K) {
-	if _, ok := set[key]; !ok {
-		t.Errorf("Expected key '%v' to be present in set.", key)
+func SliceContains[T comparable](t *testing.T, slice []T, elm T) {
+	for _, v := range slice {
+		if v == elm {
+			return
+		}
 	}
+	t.Errorf("Expected element '%v' to be present in slice.", elm)
+}
+
+func ElementPresent[K comparable](t *testing.T, set map[K]struct{}, key K) {
+	KeyPresent(t, set, key)
 }
 
 func ElementAbsent[K comparable](t *testing.T, set map[K]struct{}, key K) {
-	if _, ok := set[key]; ok {
-		t.Errorf("Expected key '%v' to be absent in set.", key)
-	}
+	KeyAbsent(t, set, key)
 }
 
 func KeyPresent[K comparable, V any](t *testing.T, set map[K]V, key K) {
@@ -50,5 +55,22 @@ func KeyPresent[K comparable, V any](t *testing.T, set map[K]V, key K) {
 func KeyAbsent[K comparable, V any](t *testing.T, set map[K]V, key K) {
 	if _, ok := set[key]; ok {
 		t.Errorf("Expected key '%v' to be absent in map.", key)
+	}
+}
+
+func ValuePresent[K comparable, V comparable](t *testing.T, map_ map[K]V, value V) {
+	for _, v := range map_ {
+		if v == value {
+			return
+		}
+	}
+	t.Errorf("Expected value '%v' to be present in map.", value)
+}
+
+func ValueAbsent[K comparable, V comparable](t *testing.T, map_ map[K]V, value V) {
+	for _, v := range map_ {
+		if v == value {
+			t.Errorf("Expected value '%v' to be absent in map.", value)
+		}
 	}
 }

@@ -4,26 +4,22 @@ package builtin
 import (
 	"sort"
 	"testing"
+
+	assert "github.com/cobratbq/goutils/std/testing"
 )
 
 func TestExtractKeysNilMap(t *testing.T) {
-	defer func() {
-		recover()
-	}()
-	ExtractStringKeys(nil)
-	t.FailNow()
+	ExtractKeys(map[string]string(nil))
 }
 
-func TestExtractKeysNonString(t *testing.T) {
-	defer func() {
-		recover()
-	}()
+func TestExtractKeysIntegers(t *testing.T) {
 	m := map[int]func(){
 		0:  func() {},
 		-1: func() {},
 	}
-	ExtractStringKeys(m)
-	t.FailNow()
+	k := ExtractKeys(m)
+	assert.SliceContains(t, k, 0)
+	assert.SliceContains(t, k, -1)
 }
 
 func TestExtractKeysFuncMap(t *testing.T) {
@@ -31,12 +27,12 @@ func TestExtractKeysFuncMap(t *testing.T) {
 		"hello": func() {},
 		"world": func() {},
 	}
-	keys := ExtractStringKeys(m)
+	keys := ExtractKeys(m)
 	if len(keys) != 2 {
-		t.Fail()
+		t.Errorf("Failed to extract 2 keys from map.")
 	}
 	sort.Strings(keys)
 	if keys[0] != "hello" || keys[1] != "world" {
-		t.Fail()
+		t.Errorf("Failed to find keys at expected sorted positions.")
 	}
 }
