@@ -9,6 +9,9 @@ end_of_line = lf
 trim_trailing_whitespace = false
 insert_final_newline = false
 
+[.editorconfig]
+insert_final_newline = true
+
 [{*.go,go.mod}]
 charset = utf-8
 indent_style = tab
