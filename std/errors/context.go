@@ -1,5 +1,7 @@
 package errors
 
+// TODO consider dropping in favor of 'github.com/pkg/errors', although unfortunate that it is not part of stdlib
+
 // Context wraps an error to provide additional context information.
 func Context(cause error, message string) error {
 	// TODO should we return the pointer instead?
