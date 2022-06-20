@@ -18,3 +18,9 @@ func Equal[T comparable](v1, v2 T) {
 		panic("assertion failed: Equal")
 	}
 }
+
+// Expect checks for error and either panics on error, or passes through result.
+func Expect[T any](result T, err error) T {
+	Success(err, "unexpected failure encountered")
+	return result
+}
