@@ -3,12 +3,21 @@ package assert
 
 import (
 	"fmt"
+	"log"
 )
 
 // RequireSuccess checks that err is nil. If the error is non-nil, it will
 // panic. `message` can have '%v' format specifier so that it can be
 // substituted with the error message.
+// Deprecated: `RequireSuccess` deprecated in favor of `Success`.
 func RequireSuccess(err error, message string) {
+	log.Println("assert.RequireSuccess is deprecated. Use assert.Success")
+	Success(err, message)
+}
+
+// Success checks that err is nil. If the error is non-nil, it will panic. `message` can have '%v'
+// format specifier so that it can be substituted with the error message.
+func Success(err error, message string) {
 	Require(err == nil, fmt.Sprintf(message, err))
 }
 

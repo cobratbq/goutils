@@ -20,7 +20,7 @@ func ClosePanicked(c io.Closer, message string) {
 	if err == io.ErrClosedPipe {
 		return
 	}
-	assert.RequireSuccess(err, message)
+	assert.Success(err, message)
 }
 
 // CloseLogged closes the closer and logs specified message in case of error.

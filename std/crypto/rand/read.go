@@ -20,5 +20,5 @@ func MustReadBytes(dst []byte) {
 	_, err := rand.Read(dst)
 	// rand.Read(...) api specifies that there will always be an error if
 	// `num bytes read < len(dst)`.
-	assert.RequireSuccess(err, "failed to read random bytes: %+v")
+	assert.Success(err, "failed to read random bytes: %+v")
 }
