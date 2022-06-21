@@ -15,6 +15,13 @@ func MustReadAll(r io.Reader) []byte {
 	return data
 }
 
+// MustReadBytes reads bytes into dst and fails if anything out of the ordinary happens.
+func MustReadBytes(in io.Reader, dst []byte) {
+	n, err := in.Read(dst)
+	assert.Success(err, "failed to read random bytes: %+v")
+	assert.Equal(n, len(dst))
+}
+
 // Discard reads remaining data from reader and discards it. Any possible
 // errors in the process are ignored. Returns nr of bytes written, thus
 // discarded.
