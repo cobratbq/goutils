@@ -4,6 +4,18 @@ import (
 	"testing"
 )
 
+func True(t *testing.T, v bool) {
+	if !v {
+		t.Error("Value is false")
+	}
+}
+
+func False(t *testing.T, v bool) {
+	if v {
+		t.Error("Value is true")
+	}
+}
+
 func Nil(t *testing.T, v interface{}) {
 	if v != nil {
 		t.Errorf("Value is not nil: %v", v)

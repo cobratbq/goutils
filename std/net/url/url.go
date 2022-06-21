@@ -2,13 +2,14 @@
 package url
 
 import (
-	"errors"
 	"net/url"
 	"strings"
+
+	"github.com/cobratbq/goutils/std/errors"
 )
 
-var ErrSchemeMissing error = errors.New("scheme missing")
-var ErrSchemeUnknown error = errors.New("scheme unknown")
+const ErrSchemeMissing errors.StringError = "scheme missing"
+const ErrSchemeUnknown errors.StringError = "scheme unknown"
 
 func PortOrProtocolDefault(uri *url.URL) (string, error) {
 	port := uri.Port()
