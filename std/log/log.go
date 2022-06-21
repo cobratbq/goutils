@@ -10,7 +10,7 @@ func Debug(line string) {
 }
 
 // Debugf writes a line to os.Stderr with prefix 'debug', using fmt formatting options.
-func Debugf(format string, args ...interface{}) {
+func Debugf(format string, args ...any) {
 	log.Printf("[debug] "+format+"\n", args)
 }
 
@@ -20,7 +20,7 @@ func Info(line string) {
 }
 
 // Info writes a line to os.Stderr with prefix 'info'.
-func Infof(format string, args ...interface{}) {
+func Infof(format string, args ...any) {
 	log.Printf("[info] "+format+"\n", args)
 }
 
@@ -30,7 +30,7 @@ func Warn(line string) {
 }
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
-func Warnf(format string, args ...interface{}) {
+func Warnf(format string, args ...any) {
 	log.Printf("[warn] "+format+"\n", args)
 }
 
@@ -40,6 +40,6 @@ func Error(line string) {
 }
 
 // Errorf writes a line to os.Stderr with prefix 'ERROR', using fmt formatting options.
-func Errorf(format string, args ...interface{}) {
+func Errorf(format string, args ...any) {
 	log.Printf("ERROR: "+format+"\n", args...)
 }
