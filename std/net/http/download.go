@@ -10,8 +10,8 @@ import (
 	io_ "github.com/cobratbq/goutils/std/io"
 )
 
-// DownloadToFilePath downloads content from the given URL into the specified
-// file name. In case of failure to download, the file is removed.
+// DownloadToFilePath downloads content from the given URL into the specified file name. In case of
+// failure to download, the file is removed.
 func DownloadToFilePath(fileName, URL string) error {
 	dstFile, err := os.Create(fileName)
 	if err != nil {
@@ -25,9 +25,9 @@ func DownloadToFilePath(fileName, URL string) error {
 	return nil
 }
 
-// DownloadFromURL downloads content from the specified URL and immediately
-// writes it to the destination. In case an unexpected http status code is
-// received, an error is returned containing that status code.
+// DownloadFromURL downloads content from the specified URL and immediately writes it to the
+// destination. In case an unexpected http status code is received, an error is returned containing
+// that status code.
 func DownloadFromURL(dst io.Writer, url string) error {
 	resp, err := http.DefaultClient.Get(url)
 	if err != nil {
@@ -44,8 +44,7 @@ func DownloadFromURL(dst io.Writer, url string) error {
 	return nil
 }
 
-// ErrStatusCode indicates that a status code other than the expected status
-// code is received.
+// ErrStatusCode indicates that a status code other than the expected status code is received.
 type ErrStatusCode int
 
 func (code ErrStatusCode) Error() string {
