@@ -1,3 +1,6 @@
+// testing contains assertions for use in unit tests. I recommend aliasing the import to 'assert',
+// so that you can call methods with `assert.Equal(t, a, b)` which makes it nicely readable. In
+// addition, one would either use `assert` in production logic, or `std/testing` in unit tests.
 package testing
 
 import (
