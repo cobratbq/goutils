@@ -31,19 +31,32 @@ func AnyEqual[T Equaler](actual T, values ...T) {
 	panic("assertion failed: expected one of specified values")
 }
 
+// TODO is this interface predefined somewhere in std?
+type Equaler interface {
+	Equal(other Equaler) bool
+}
+
 func Equal[T comparable](v1, v2 T) {
 	if v1 != v2 {
 		panic("assertion failed: Equal")
 	}
 }
 
-// Expect checks for error and either panics on error, or passes through result.
+// Expect checks for error and either panics on error, or passes through only the result.
+// TODO should we do Expect with our without parameter for error message?
 func Expect[T any](result T, err error) T {
 	Success(err, "unexpected failure encountered")
 	return result
 }
 
-// TODO is this interface predefined somewhere in std?
-type Equaler interface {
-	Equal(other Equaler) bool
+// Expect checks for error and either panics on error, or passes through only the result.
+func Expect2[T any, T2 any](result T, result2 T2, err error) (T, T2) {
+	Success(err, "unexpected failure encountered")
+	return result, result2
+}
+
+// Expect checks for error and either panics on error, or passes through only the result.
+func Expect3[T, T2, T3 any](result T, result2 T2, result3 T3, err error) (T, T2, T3) {
+	Success(err, "unexpected failure encountered")
+	return result, result2, result3
 }

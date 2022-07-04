@@ -16,20 +16,19 @@ func RequireSuccess(err error, message string) {
 
 // Success checks that err is nil. If the error is non-nil, it will panic. `message` can have '%v'
 // format specifier so that it can be substituted with the error message.
+// TODO consider just concatenating message and err.Error(), no formatting.
 func Success(err error, message string) {
 	Require(err == nil, fmt.Sprintf(message, err))
+}
+
+// Required checks if provided value is nil, if so panics with provided message.
+func Required(val any, message string) {
+	Require(val != nil, message)
 }
 
 // Require check required condition and panics if condition does not hold.
 func Require(condition bool, message string) {
 	if !condition {
-		panic(message)
-	}
-}
-
-// RequireNonNil checks if provided value is nil, if so panics with provided message.
-func RequireNonNil(val interface{}, message string) {
-	if val == nil {
 		panic(message)
 	}
 }
@@ -41,5 +40,5 @@ func Unreachable() {
 
 // Unsupported panics with the provided message in order to signal for an unsupported case.
 func Unsupported(message string) {
-	panic(message)
+	panic("Unsupported: " + message)
 }

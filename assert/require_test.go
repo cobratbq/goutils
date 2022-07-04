@@ -26,12 +26,12 @@ func TestRequireNonNilNil(t *testing.T) {
 			t.Error("Expected non-nil result from recovery.")
 		}
 	}()
-	RequireNonNil(nil, "This should fail ...")
+	Required(nil, "This should fail ...")
 	t.FailNow()
 }
 
 func TestRequireNonNil(t *testing.T) {
-	RequireNonNil("Hello", "World!")
+	Required("Hello", "World!")
 }
 
 func TestRequireSuccessFails(t *testing.T) {

@@ -2,11 +2,11 @@
 package http
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
 
+	"github.com/cobratbq/goutils/std/errors"
 	io_ "github.com/cobratbq/goutils/std/io"
 )
 
@@ -45,8 +45,8 @@ func DownloadFromURL(dst io.Writer, url string) error {
 }
 
 // ErrStatusCode indicates that a status code other than the expected status code is received.
-type ErrStatusCode int
+type ErrStatusCode errors.UintError
 
 func (code ErrStatusCode) Error() string {
-	return fmt.Sprintf("http status code: %d", code)
+	return "http status code: " + errors.UintError(code).Error()
 }

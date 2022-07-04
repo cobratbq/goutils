@@ -6,5 +6,5 @@ func RequirePanic(t *testing.T) {
 	if recover() != nil {
 		return
 	}
-	t.Error("Panic was expected")
+	t.Error("panic was expected")
 }
