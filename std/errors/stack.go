@@ -1,8 +1,13 @@
 package errors
 
-import "runtime/debug"
+import (
+	"runtime/debug"
+
+	"github.com/cobratbq/goutils/assert"
+)
 
 func Stacktrace(cause error) error {
+	assert.Required(cause, "Stacktrace is expected to wrap an error")
 	return stack{cause: cause, stack: debug.Stack()}
 }
 
@@ -15,7 +20,7 @@ type stack struct {
 
 func (s stack) Error() string {
 	// FIXME should we, and how, include the stacktrace in the error string?
-	return s.cause.Error()
+	return s.cause.Error() + "\n" + string(s.stack)
 }
 
 func (s stack) Unwrap() error {
