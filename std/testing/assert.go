@@ -39,7 +39,7 @@ func Equal[T comparable](t *testing.T, a, b T) {
 	t.Errorf("Strings '%v' and '%v' should be equal", a, b)
 }
 
-func Unequal[T comparable](t *testing.T, a, b string) {
+func Unequal[T comparable](t *testing.T, a, b T) {
 	if a == b {
 		t.Errorf("Strings '%v' and '%v' should not be equal", a, b)
 	}
