@@ -15,7 +15,7 @@ func TestStacktraceNil(t *testing.T) {
 }
 
 func TestStacktrace(t *testing.T) {
-	const ErrMyError = UintError(0)
+	var ErrMyError = NewUintError(0)
 	assert.Equal(t, "0", ErrMyError.Error())
 	err := Stacktrace(ErrMyError)
 	var firstLine, trace1 string

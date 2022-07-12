@@ -9,7 +9,7 @@ import (
 	"github.com/cobratbq/goutils/std/errors"
 )
 
-const ErrIncompleteRead errors.StringError = "incomplete read"
+var ErrIncompleteRead = errors.NewStringError("incomplete read")
 
 func ReadByte(in io.Reader) (byte, error) {
 	var b [1]byte

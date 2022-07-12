@@ -39,14 +39,9 @@ func DownloadFromURL(dst io.Writer, url string) error {
 		return err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return ErrStatusCode(resp.StatusCode)
+		return errors.Context(ErrStatusCode, "unexpected status code")
 	}
 	return nil
 }
 
-// ErrStatusCode indicates that a status code other than the expected status code is received.
-type ErrStatusCode errors.UintError
-
-func (code ErrStatusCode) Error() string {
-	return "http status code: " + errors.UintError(code).Error()
-}
+var ErrStatusCode = errors.NewStringError("status code error")

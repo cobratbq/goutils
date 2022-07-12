@@ -8,7 +8,7 @@ import (
 	"github.com/cobratbq/goutils/std/errors"
 )
 
-const ErrHeaderMissing errors.StringError = `'Date' header not available in response`
+var ErrHeaderMissing = errors.NewStringError(`'Date' header not available in response`)
 
 func ExtractResponseHeaderDate(resp *http.Response) (time.Time, error) {
 	dates, ok := resp.Header["Date"]

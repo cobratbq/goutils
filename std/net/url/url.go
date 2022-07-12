@@ -8,8 +8,8 @@ import (
 	"github.com/cobratbq/goutils/std/errors"
 )
 
-const ErrSchemeMissing errors.StringError = "scheme missing"
-const ErrSchemeUnknown errors.StringError = "scheme unknown"
+var ErrSchemeMissing = errors.NewStringError("scheme missing")
+var ErrSchemeUnknown = errors.NewStringError("scheme unknown")
 
 func PortOrProtocolDefault(uri *url.URL) (string, error) {
 	port := uri.Port()

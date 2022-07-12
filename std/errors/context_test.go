@@ -9,7 +9,7 @@ import (
 )
 
 func TestContext(t *testing.T) {
-	const err StringError = "I am the error used for testing"
+	var err = NewStringError("I am the error used for testing")
 	singleWrap := Context(err, "Singly-wrapped context message")
 	assert.Equal(t, "Singly-wrapped context message: I am the error used for testing",
 		singleWrap.Error())
