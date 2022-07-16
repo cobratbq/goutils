@@ -1,4 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+
+// A concise error handling package that provides the mechanisms for creating a "root" error that is
+// a basic instance of String/Uint/Int, and the ability to add stacktrace and context to the root
+// error. Existing "root" errors already present in the Go standard library can be used equally
+// well.
+//
+// Ideally, following properties are desired:
+// 1. uniquely-identifying error instances
+// 2. constant/read-only instances, i.e. can be addressed but not changed
+// 3. composable/extendable into dedicated error type/series for specific use cases (without
+//    overhead)
+// TODO above three properties cannot be satisfied yet.
 package errors
 
 import "errors"
