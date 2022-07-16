@@ -52,10 +52,14 @@ func TestBenchmarkAllocationlessWrappedError(t *testing.T) {
 		UintError
 	}
 	report := testing.Benchmark(func(b *testing.B) {
-		var errBase = NewUintError(401)
-		var errForbidden = &httpStatusCodeError{*errBase}
-		assert.True(b, error(errBase) != error(errForbidden))
-		assert.Equal(b, unsafe.Sizeof(*errBase), unsafe.Sizeof(*errForbidden))
+		for i := 0; i < b.N; i++ {
+			var errBase = NewUintError(401)
+			var errForbidden = &httpStatusCodeError{*errBase}
+			assert.True(b, error(errBase) != error(errForbidden))
+			assert.Equal(b, unsafe.Sizeof(*errBase), unsafe.Sizeof(*errForbidden))
+		}
 	})
 	assert.Equal(t, report.MemAllocs, 0)
+	assert.Equal(t, report.AllocsPerOp(), 0)
+	assert.Equal(t, report.AllocedBytesPerOp(), 0)
 }
