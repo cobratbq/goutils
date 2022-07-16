@@ -22,20 +22,6 @@ func Any[T comparable](actual T, values ...T) {
 	panic("assertion failed: expected one of specified values")
 }
 
-func AnyEqual[T Equaler](actual T, values ...T) {
-	for _, v := range values {
-		if actual.Equal(v) {
-			return
-		}
-	}
-	panic("assertion failed: expected one of specified values")
-}
-
-// TODO is this interface predefined somewhere in std?
-type Equaler interface {
-	Equal(other Equaler) bool
-}
-
 func Equal[T comparable](v1, v2 T) {
 	if v1 != v2 {
 		panic("assertion failed: Equal")
