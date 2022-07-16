@@ -4,6 +4,7 @@ package errors
 import (
 	"errors"
 	"testing"
+	"unsafe"
 
 	assert "github.com/cobratbq/goutils/std/testing"
 )
@@ -36,4 +37,24 @@ func TestIntError(t *testing.T) {
 	assert.True(t, errors.Is(err, err))
 	assert.Unequal(t, err, err2)
 	assert.False(t, errors.Is(err2, err))
+}
+
+func TestExpectWrappedErrorSameSize(t *testing.T) {
+	var errBase = NewStringError("Hello world")
+	var errWrapped = &struct{ StringError }{*NewStringError("Hello world")}
+	assert.True(t, error(errBase) != error(errWrapped))
+	assert.Equal(t, unsafe.Sizeof(*errBase), unsafe.Sizeof(*errWrapped))
+}
+
+func TestBenchmarkAllocationlessWrappedError(t *testing.T) {
+	type httpStatusCodeError struct {
+		UintError
+	}
+	report := testing.Benchmark(func(b *testing.B) {
+		var errBase = NewUintError(401)
+		var errForbidden = &httpStatusCodeError{*errBase}
+		assert.True(b, error(errBase) != error(errForbidden))
+		assert.Equal(b, unsafe.Sizeof(*errBase), unsafe.Sizeof(*errForbidden))
+	})
+	assert.Equal(t, report.MemAllocs, 0)
 }

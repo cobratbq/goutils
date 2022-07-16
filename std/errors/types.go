@@ -11,7 +11,6 @@ import "strconv"
 // wrapped around the root error.
 type StringError struct{ v string }
 
-// FIXME does this need to be a pointer to be unique-identifying?
 func NewStringError(msg string) *StringError {
 	return &StringError{msg}
 }
@@ -27,7 +26,6 @@ func (e *StringError) Error() string {
 // HTTP-like protocols.
 type UintError struct{ v uint }
 
-// FIXME does this need to be a pointer to be unique-identifying?
 func NewUintError(value uint) *UintError {
 	return &UintError{value}
 }
@@ -43,7 +41,6 @@ func (e *UintError) Error() string {
 // HTTP-like protocols.
 type IntError struct{ v int }
 
-// FIXME does this need to be a pointer to be unique-identifying?
 func NewIntError(v int) *IntError {
 	return &IntError{v}
 }
