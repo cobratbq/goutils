@@ -1,4 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+
+// assert provides various assertion functions that can be used to confirm certain conditions such
+// that these conditions can be assumed true afterwards. These functions are particularly useful to
+// catch unexpected and unsupported use cases, without having to "pollute" the code with
+// if-statements. Assertions may be placeholders for use cases that will later be supported, or they
+// may indicate failure conditions that will not or cannot ever be supported. Regardless, assertions
+// allow you to handle cases and failure conditions that you do not handle otherwise.
 package assert
 
 func False(expected bool) {

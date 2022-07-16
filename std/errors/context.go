@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+
 package errors
 
 // Context wraps an error to provide additional context information.
