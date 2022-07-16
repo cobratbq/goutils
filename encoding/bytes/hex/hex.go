@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+
 package hex
 
 func HexDecodeChars(c0 byte, c1 byte) uint8 {
