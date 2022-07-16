@@ -3,7 +3,7 @@ package testing
 
 import "testing"
 
-func RequirePanic(t *testing.T) {
+func RequirePanic(t testing.TB) {
 	if recover() != nil {
 		return
 	}
