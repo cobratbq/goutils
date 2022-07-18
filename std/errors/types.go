@@ -12,6 +12,10 @@ import "strconv"
 // wrapped around the root error.
 type StringError struct{ v string }
 
+// NewStringError creates a new string-based error instance. If used as-is, the pointer that is
+// returned is uniquely-identifying and therefore immediately useable. In case the StringError is a
+// basis for a custom error type, the pointer can be dereferenced to include the value itself in the
+// newly defined struct-type, for efficiency.
 func NewStringError(msg string) *StringError {
 	return &StringError{msg}
 }
@@ -27,6 +31,10 @@ func (e *StringError) Error() string {
 // HTTP-like protocols.
 type UintError struct{ v uint }
 
+// NewUintError creates a new uint-based error instance. If used as-is, the pointer that is returned
+// is uniquely-identifying and therefore immediately useable. In case UintError is a basis for a
+// custom error type, the pointer can be dereferenced as to include the value itself in the newly
+// defined struct-type, for efficiency.
 func NewUintError(value uint) *UintError {
 	return &UintError{value}
 }
@@ -42,6 +50,10 @@ func (e *UintError) Error() string {
 // HTTP-like protocols.
 type IntError struct{ v int }
 
+// NewIntError creates a new int-based error instance. If used as-is, the pointer that is returned
+// is uniquely-identifying and therefore immediately useable. In case the IntError is a basis for a
+// custom error type, the pointer can be dereferenced to include the value itself in the newly
+// defined struct-type, for efficiency.
 func NewIntError(v int) *IntError {
 	return &IntError{v}
 }
