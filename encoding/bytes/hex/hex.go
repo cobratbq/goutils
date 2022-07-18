@@ -2,17 +2,13 @@
 
 package hex
 
-import "github.com/cobratbq/goutils/assert"
-
 const index string = `0123456789abcdef`
-const indexLen uint = 16
 
 func HexEncodeChars(value uint8) (byte, byte) {
 	return HexEncodeChar((value & 0xf0) >> 4), HexEncodeChar(value & 0x0f)
 }
 
 func HexEncodeChar(value uint8) byte {
-	assert.Require(value < uint8(indexLen), "Hexadecimal system contains only 16 values.")
 	return index[value]
 }
 

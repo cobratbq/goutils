@@ -30,6 +30,12 @@ func TestHexEncode(t *testing.T) {
 	}
 }
 
+func TestHexEncodeOOB(t *testing.T) {
+	defer assert.RequirePanic(t)
+	_ = HexEncodeChar(16)
+	t.FailNow()
+}
+
 func TestHexDecode(t *testing.T) {
 	entries := map[byte]byte{
 		'0': 0,
@@ -52,4 +58,10 @@ func TestHexDecode(t *testing.T) {
 	for s, d := range entries {
 		assert.Equal(t, d, HexDecodeChar(s))
 	}
+}
+
+func TestHexDecodeInvalid(t *testing.T) {
+	defer assert.RequirePanic(t)
+	HexDecodeChar('z')
+	t.FailNow()
 }
