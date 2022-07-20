@@ -9,7 +9,7 @@ import (
 )
 
 func Stacktrace(cause error) error {
-	assert.Required(cause, "Stacktrace is expected to wrap an error")
+	assert.Required(cause, "Stacktrace expects to wrap an error but got nil")
 	return stack{cause: cause, stack: debug.Stack()}
 }
 

@@ -23,3 +23,9 @@ func TestContext(t *testing.T) {
 	assert.True(t, err == errors.Unwrap(errors.Unwrap(doubleWrap)))
 	assert.True(t, Is(doubleWrap, err))
 }
+
+func TestContextNilError(t *testing.T) {
+	defer assert.RequirePanic(t)
+	Context(nil, "providing context to nil")
+	t.FailNow()
+}

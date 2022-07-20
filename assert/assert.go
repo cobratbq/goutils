@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 // assert provides various assertion functions that can be used to confirm certain conditions such
-// that these conditions can be assumed true afterwards. These functions are particularly useful to
-// catch unexpected and unsupported use cases, without having to "pollute" the code with
-// if-statements. Assertions may be placeholders for use cases that will later be supported, or they
-// may indicate failure conditions that will not or cannot ever be supported. Regardless, assertions
-// allow you to handle cases and failure conditions that you do not handle otherwise.
+// that these conditions are guaranteed true afterwards. These functions are particularly useful to
+// catch unexpected and unsupported use cases, without having to litter the code with if-statements.
+// Assertions may be placeholders for use cases that will later be supported, or they may indicate
+// failure conditions that will not or cannot ever be supported, or cannot even occur. Some use
+// cases or possible error conditions are illusions created by the type-system, for example when a
+// function implements an interface but will never fail the operation.
+// Regardless, assertions allow you to (subtly) handle cases and failure conditions that you do not
+// handle otherwise.
 package assert
 
 func False(expected bool) {
@@ -36,20 +39,19 @@ func Equal[T comparable](v1, v2 T) {
 }
 
 // Expect checks for error and either panics on error, or passes through only the result.
-// TODO should we do Expect with our without parameter for error message?
 func Expect[T any](result T, err error) T {
-	Success(err, "unexpected failure encountered")
+	Success(err, "unexpected failure")
 	return result
 }
 
 // Expect checks for error and either panics on error, or passes through only the result.
 func Expect2[T any, T2 any](result T, result2 T2, err error) (T, T2) {
-	Success(err, "unexpected failure encountered")
+	Success(err, "unexpected failure")
 	return result, result2
 }
 
 // Expect checks for error and either panics on error, or passes through only the result.
 func Expect3[T, T2, T3 any](result T, result2 T2, result3 T3, err error) (T, T2, T3) {
-	Success(err, "unexpected failure encountered")
+	Success(err, "unexpected failure")
 	return result, result2, result3
 }

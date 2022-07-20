@@ -9,10 +9,10 @@ import (
 	assert "github.com/cobratbq/goutils/std/testing"
 )
 
-func TestStacktraceNil(t *testing.T) {
+func TestStacktraceNilError(t *testing.T) {
 	defer assert.RequirePanic(t)
 	Stacktrace(nil)
-	t.Fatal("Expected to panic because of nil")
+	t.FailNow()
 }
 
 func TestStacktrace(t *testing.T) {
