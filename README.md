@@ -6,6 +6,9 @@ The _goutils_ module provides common operations that typically operate on a sing
 
 - `assert` - assertions for quickly testing and guarding conditions.
 - `std` - additional utilities for the standard library.  
+  - ...
+  - `errors` - provides error handling utils: basic functions, `Context(..)`, `Stacktrace(..)`
+  - ...
 - `encoding` - various encodings, grouped by encoded type.
 
 ## Don't Repeat Yourself (DRY)
