@@ -7,6 +7,6 @@ import (
 	"time"
 )
 
-func NanotimeAsHexString(t time.Time) string {
+func NanotimeAsStringHex(t time.Time) string {
 	return strconv.FormatInt(t.UnixNano(), 16)
 }
