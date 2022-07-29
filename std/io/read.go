@@ -39,7 +39,7 @@ func ReadFull(in io.Reader, dst []byte) error {
 
 func MustReadFull(in io.Reader, dst []byte) {
 	n, err := in.Read(dst)
-	assert.Success(err, "Failed to read sufficient bytes to fill destination: %+v")
+	assert.Success(err, "Failed to read sufficient bytes to fill destination")
 	assert.Equal(n, len(dst))
 }
 
@@ -50,13 +50,13 @@ func ReadAll(in io.Reader) ([]byte, error) {
 // MustReadAll reads all data from reader and panics in case an error occurs.
 func MustReadAll(in io.Reader) []byte {
 	data, err := ioutil.ReadAll(in)
-	assert.Success(err, "Failed to read all data from reader: %+v")
+	assert.Success(err, "Failed to read all data from reader")
 	return data
 }
 
 // MustReadBytes reads bytes into dst and fails if anything out of the ordinary happens.
 func MustReadBytes(in io.Reader, dst []byte) {
 	n, err := in.Read(dst)
-	assert.Success(err, "failed to read random bytes: %+v")
+	assert.Success(err, "failed to read random bytes")
 	assert.Equal(n, len(dst))
 }

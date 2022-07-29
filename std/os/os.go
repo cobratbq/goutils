@@ -11,7 +11,7 @@ import (
 // WorkingDir gets the working directory and panics on failure.
 func WorkingDir() string {
 	wd, err := os.Getwd()
-	assert.Success(err, "cannot acquire working directory: %+v")
+	assert.Success(err, "cannot acquire working directory")
 	return wd
 }
 

@@ -5,14 +5,12 @@ package assert
 import (
 	"errors"
 	"testing"
+
+	assert "github.com/cobratbq/goutils/std/testing"
 )
 
 func TestRequireFailed(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.Error("Expected non-nil result from recovery.")
-		}
-	}()
+	defer assert.RequirePanic(t)
 	Require(false, "")
 	t.FailNow()
 }
@@ -22,11 +20,7 @@ func TestRequireSuccess(t *testing.T) {
 }
 
 func TestRequireNonNilNil(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.Error("Expected non-nil result from recovery.")
-		}
-	}()
+	defer assert.RequirePanic(t)
 	Required(nil, "This should fail ...")
 	t.FailNow()
 }
@@ -36,11 +30,7 @@ func TestRequireNonNil(t *testing.T) {
 }
 
 func TestRequireSuccessFails(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.Error("Expected non-nil result from recovery.")
-		}
-	}()
+	defer assert.RequirePanic(t)
 	RequireSuccess(errors.New("bad stuff happened"), "We expected to receive no error!")
 	t.FailNow()
 }
@@ -50,28 +40,19 @@ func TestRequireSuccessSucceeds(t *testing.T) {
 }
 
 func TestRequireSuccessFormatSpecifier(t *testing.T) {
-	defer func() {
-		m := recover().(string)
-		if m != "BUG: this message is part of the panic: Test" {
-			t.FailNow()
-		}
-	}()
+	defer assert.RequirePanic(t)
 	RequireSuccess(errors.New("Test"), "BUG: this message is part of the panic: %+v")
 	t.FailNow()
 }
 
 func TestUnreachable(t *testing.T) {
-	defer func() {
-		recover()
-	}()
+	defer assert.RequireRecover(t)
 	Unreachable()
 	t.FailNow()
 }
 
 func TestUnsupported(t *testing.T) {
-	defer func() {
-		recover()
-	}()
+	defer assert.RequireRecover(t)
 	Unsupported("To be implemented")
 	t.FailNow()
 }

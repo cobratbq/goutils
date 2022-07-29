@@ -2,18 +2,18 @@
 
 package assert
 
-import "testing"
+import (
+	"testing"
+
+	assert "github.com/cobratbq/goutils/std/testing"
+)
 
 func TestTrue(t *testing.T) {
 	True(true)
 }
 
 func TestTruePanics(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.FailNow()
-		}
-	}()
+	defer assert.RequirePanic(t)
 	True(false)
 	t.FailNow()
 }
@@ -23,10 +23,6 @@ func TestFalse(t *testing.T) {
 }
 
 func TestFalsePanics(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.FailNow()
-		}
-	}()
+	defer assert.RequirePanic(t)
 	False(true)
 }

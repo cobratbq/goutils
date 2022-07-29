@@ -3,7 +3,6 @@
 package assert
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -17,9 +16,11 @@ func RequireSuccess(err error, message string) {
 
 // Success checks that err is nil. If the error is non-nil, it will panic. `message` can have '%v'
 // format specifier so that it can be substituted with the error message.
-// TODO consider just concatenating message and err.Error(), no formatting.
 func Success(err error, message string) {
-	Require(err == nil, fmt.Sprintf(message, err))
+	if err == nil {
+		return
+	}
+	panic(message + ": " + err.Error())
 }
 
 // Required checks if provided value is nil, if so panics with provided message.
