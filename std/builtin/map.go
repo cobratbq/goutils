@@ -2,6 +2,15 @@
 
 package builtin
 
+// DuplicateMap duplicates the map only. A shallow copy of map entries into a new map of equal size.
+func DuplicateMap[K comparable, V any](src map[K]V) map[K]V {
+	dst := make(map[K]V, len(src))
+	for k, v := range src {
+		dst[k] = v
+	}
+	return dst
+}
+
 // ExtractKeys extracts the keys from a map.
 func ExtractKeys[K comparable, V any](map_ map[K]V) []K {
 	keys := make([]K, 0, len(map_))

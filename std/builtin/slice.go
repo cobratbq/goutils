@@ -2,6 +2,8 @@
 
 package builtin
 
+import "github.com/cobratbq/goutils/assert"
+
 func Contains[T comparable](slice []T, value T) bool {
 	for _, v := range slice {
 		if v == value {
@@ -9,4 +11,10 @@ func Contains[T comparable](slice []T, value T) bool {
 		}
 	}
 	return false
+}
+
+func Duplicate[T any](src []T) []T {
+	d := make([]T, len(src))
+	assert.Equal(copy(d, src), len(src))
+	return d
 }
