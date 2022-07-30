@@ -27,6 +27,7 @@ func ClosePanicked(c io.Closer, message string) {
 
 // CloseLogged closes the closer and logs specified message in case of error. Any error except for
 // io.ErrClosedPipe is logged. The error message is logged as a warning.
+// TODO consider logging without formatter
 func CloseLogged(c io.Closer, message string) {
 	if err := c.Close(); err != nil && !errors.Is(err, io.ErrClosedPipe) {
 		log.Warnf(message, err)
