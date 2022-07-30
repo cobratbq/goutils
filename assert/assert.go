@@ -55,3 +55,18 @@ func Expect3[T, T2, T3 any](result T, result2 T2, result3 T3, err error) (T, T2,
 	Success(err, "unexpected failure")
 	return result, result2, result3
 }
+
+// Error drops the result, returning only the error
+func Error[T any](result T, err error) error {
+	return err
+}
+
+// Error2 drops two results, returning only the error
+func Error2[T, T2 any](result T, result2 T2, err error) error {
+	return err
+}
+
+// Error3 drops three results, returning only the error
+func Error3[T, T2, T3 any](result T, result2 T2, result3 T3, err error) error {
+	return err
+}
