@@ -54,3 +54,15 @@ func (n *NopCloser) Write(p []byte) (int, error) {
 func (n *NopCloser) Close() error {
 	return nil
 }
+
+type CloserWrapper struct {
+	closer io.Closer
+}
+
+func NewCloserWrapper(closer io.Closer) *CloserWrapper {
+	return &CloserWrapper{closer}
+}
+
+func (c *CloserWrapper) Close() error {
+	return c.closer.Close()
+}
