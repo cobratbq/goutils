@@ -36,6 +36,7 @@ func Require(condition bool, message string) {
 }
 
 // Unreachable panics with a message to indicate this should not be happening.
+// TODO how useful is this? Go compiler/static analysis cannot detect that this function call is terminal
 func Unreachable() {
 	panic("BUG: this code should not be reachable.")
 }
