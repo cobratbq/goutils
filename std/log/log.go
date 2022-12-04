@@ -11,6 +11,10 @@ func Debug(line string) {
 	log.Println("[debug] " + line)
 }
 
+func Debugln(args ...any) {
+	log.Println(append([]any{"[debug]"}, args...)...)
+}
+
 // Debugf writes a line to os.Stderr with prefix 'debug', using fmt formatting options.
 func Debugf(format string, args ...any) {
 	log.Printf("[debug] "+format+"\n", args)

@@ -38,26 +38,26 @@ func Equal[T comparable](v1, v2 T) {
 	}
 }
 
-// Unwrap checks for error and either panics on error, or passes through only the result.
-func Unwrap[T any](result T, err error) T {
+// Expect checks for error and either panics on error, or passes through only the result.
+func Expect[T any](result T, err error) T {
 	Success(err, "unexpected failure")
 	return result
 }
 
-// Unwrap2 checks for error and either panics on error, or passes through only the results.
-func Unwrap2[T any, T2 any](result T, result2 T2, err error) (T, T2) {
+// Expect2 checks for error and either panics on error, or passes through only the results.
+func Expect2[T any, T2 any](result T, result2 T2, err error) (T, T2) {
 	Success(err, "unexpected failure")
 	return result, result2
 }
 
-// Unwrap3 checks for error and either panics on error, or passes through only the results.
-func Unwrap3[T, T2, T3 any](result T, result2 T2, result3 T3, err error) (T, T2, T3) {
+// Expect3 checks for error and either panics on error, or passes through only the results.
+func Expect3[T, T2, T3 any](result T, result2 T2, result3 T3, err error) (T, T2, T3) {
 	Success(err, "unexpected failure")
 	return result, result2, result3
 }
 
-// Unwrap4 checks for error and either panics on error, or passes through only the results.
-func Unwrap4[T, T2, T3, T4 any](result T, result2 T2, result3 T3, result4 T4, err error) (T, T2, T3, T4) {
+// Expect4 checks for error and either panics on error, or passes through only the results.
+func Expect4[T, T2, T3, T4 any](result T, result2 T2, result3 T3, result4 T4, err error) (T, T2, T3, T4) {
 	Success(err, "unexpected failure")
 	return result, result2, result3, result4
 }
