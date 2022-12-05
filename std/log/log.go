@@ -25,6 +25,10 @@ func Info(line string) {
 	log.Println("[info] " + line)
 }
 
+func Infoln(args ...any) {
+	log.Println(append([]any{"[info]"}, args...)...)
+}
+
 // Info writes a line to os.Stderr with prefix 'info'.
 func Infof(format string, args ...any) {
 	log.Printf("[info] "+format+"\n", args)
@@ -35,6 +39,10 @@ func Warn(line string) {
 	log.Println("[warn] " + line)
 }
 
+func Warnln(args ...any) {
+	log.Println(append([]any{"[warn]"}, args...)...)
+}
+
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warnf(format string, args ...any) {
 	log.Printf("[warn] "+format+"\n", args)
@@ -43,6 +51,10 @@ func Warnf(format string, args ...any) {
 // Error writes a line to os.Stderr with prefix 'ERROR'.
 func Error(line string) {
 	log.Println("ERROR: " + line)
+}
+
+func Errorln(args ...any) {
+	log.Println(append([]any{"ERROR:"}, args...)...)
 }
 
 // Errorf writes a line to os.Stderr with prefix 'ERROR', using fmt formatting options.
