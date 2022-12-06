@@ -17,7 +17,7 @@ func Debugln(args ...any) {
 
 // Debugf writes a line to os.Stderr with prefix 'debug', using fmt formatting options.
 func Debugf(format string, args ...any) {
-	log.Printf("[debug] "+format+"\n", args)
+	log.Printf("[debug] "+format+"\n", args...)
 }
 
 // Info writes a line to os.Stderr with prefix 'info'.
@@ -31,7 +31,7 @@ func Infoln(args ...any) {
 
 // Info writes a line to os.Stderr with prefix 'info'.
 func Infof(format string, args ...any) {
-	log.Printf("[info] "+format+"\n", args)
+	log.Printf("[info] "+format+"\n", args...)
 }
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
@@ -45,7 +45,7 @@ func Warnln(args ...any) {
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warnf(format string, args ...any) {
-	log.Printf("[warn] "+format+"\n", args)
+	log.Printf("[warn] "+format+"\n", args...)
 }
 
 // Error writes a line to os.Stderr with prefix 'ERROR'.
