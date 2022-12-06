@@ -32,3 +32,7 @@ A number of patterns are applied, so utilities with certain characteristics are 
 ## Implementation considerations
 
 - Avoid using goroutines unless completely internalized, for internal implementation performance improvements. For the use of a utility, the decision to execute in a goroutine should be left to the user.
+
+## To-Do
+
+- TODO is there standard utils for converting bytes 0 and 1 to actual binary numbers?
