@@ -19,3 +19,12 @@ func Decrement[K comparable](multiset map[K]uint, e K) {
 		delete(multiset, e)
 	}
 }
+
+// Sum the numbers of each element in the multiset into a total count.
+func Count[K comparable](multiset map[K]uint) uint {
+	count := uint(0)
+	for _, n := range multiset {
+		count += n
+	}
+	return count
+}
