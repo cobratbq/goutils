@@ -25,8 +25,7 @@ func Duplicate[T any](src []T) []T {
 // MapSlice maps a slice of data-type `I` to a function `I -> O` and returns a result slice of
 // data-type `O“.
 // The result slice is immediately allocated with equal capacity to prevent further allocations.
-// TODO consider renaming because 'Map' may refer to data-type or "mapping" operation, which is confusing.
-func MapSlice[I any, O any](input []I, f func(in I) O) []O {
+func TransformSlice[I any, O any](input []I, f func(in I) O) []O {
 	output := make([]O, 0, len(input))
 	for _, in := range input {
 		output = append(output, f(in))
