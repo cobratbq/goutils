@@ -6,7 +6,10 @@
 // The multiset uses `uint`-based counts such that the multiset adapts to the capacity of the
 // architecture on which it is executed.
 //
-// Invariant: all elements have a count strictly larger than 0. (I.e. elements that reach 0 must be
+// These multiset functions are just functions that operate on a map. Therefore there is no caching
+// or any other kind of optimization possible/available.
+//
+// INVARIANT: all elements have a count strictly larger than 0. (I.e. elements that reach 0 are
 // deleted from the multiset.)
 package multiset
 
