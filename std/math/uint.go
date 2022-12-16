@@ -15,7 +15,8 @@ func GCD_uint(a, b uint) uint {
 		return a
 	}
 	if b > a {
-		a, b = b, a
+		// Make sure a is the larger of the two uints
+		b = b % a
 	}
 	// Using Euclidian algorithm: `gcd(a, b) == gcd(a-b, b)` for `a > b`
 	for b > 0 {
