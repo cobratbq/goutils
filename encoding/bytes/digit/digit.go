@@ -1,5 +1,13 @@
 package digit
 
+func IsDigit(in byte) bool {
+	// There are only 10 possibilities. Let's just test each one, that way even for obscure
+	// character encodings where other characters are in-between these seemingly consecutive chars
+	// it will not pose a problem.
+	return in == '0' || in == '1' || in == '2' || in == '3' || in == '4' || in == '5' ||
+		in == '6' || in == '7' || in == '8' || in == '9'
+}
+
 func ReadDigit(in byte) uint8 {
 	switch in {
 	case '0':
