@@ -40,6 +40,8 @@ Use `len(multiset)` to count distinct entries. Use `multiset.Count` function to 
 
 _INVARIANT_ any entry that decreases to 0 occurrences is removed.
 
+_NOTE_ for clarification: this package does not provide a _multiset_. This package provides the necessary functions (logic) to use a map as a "poor man's multiset" for whenever a full-blown specialized multiset implementation is not necessary.
+
 ### `std/errors`
 
 The core notion is that any error in its root should be a fixed value, accessible as a variable. This is also in the root of the Go standard library. Many error situations require additional information. This information should be added, i.e. wrapped, as context-information. The root-cause will be the single variable that can be processed easily in code, while the context-information can be printed to provide additional information to developers/power-users.
