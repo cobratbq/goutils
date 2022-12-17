@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 // encoding contains all encodings. An encoding is defined as a transformation from (typically) any
 // collection of types into a target type, often a primitive type. The most prevalent target type
 // is (raw) bytes. However, big integer numbers may be encoded into uint limbs for purpose of

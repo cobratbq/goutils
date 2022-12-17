@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 // Multiset is a map with uint-values that represents a set of elements with their respective number
 // of elements. Functions `Increment` and `Decrement` will increase or decrease the count of
 // elements of that key, and if the count reaches zero, it will delete the element from the map

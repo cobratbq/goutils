@@ -22,15 +22,29 @@ Some functions may be trivial, but that is not the point. These functions exist 
 
 _Don't repeat yourself_ may be explained differently for different use cases: the first is in utility functions. The second in the repeated use of literals that may be captured as constants or variables, such that a change of value need only be updated at a single location. The utilities provided here do not, in any way, reduce the DRY burden for the repeated use of literal values, e.g. originating in a specification.
 
-## Naming patterns
+## Package notes
 
-A number of patterns are applied, so utilities with certain characteristics are easy to find. Assume `<original>` is the name of the original function for which the utility is written.
+### `std/builtin`
 
-- `Must<original>` (prefixed with `Must`) - eliminates the need for error checking. In case an error does occur, the function will _panic_, as the developer chooses this function to declare that these error cases do not happen, or are an unsupported case. `Must-` functions strip off the `error` type from the return type.
-- `Match<name>` (prefixed with `Match`) - test for a certain condition and returns boolean value indicating whether or not there is a match.
-- `<original>Logged`, `<original>Panicked` - execute function `<original>` and if an error occurs, perform appropriate action according to name: `Logged` logs the error and continues as normal, `Panicked` calls `panic`.
-- `<original><addition>` - execute a function `<original>` but this utility provides additional functionality `<addition>`. For example, `rand.Uint64NonZero()` provides a random `Uint64` as per the original function, but also ensures the returned value is `non-zero`, as per the `<addition>`.
-- `NewName` (name is loose derivation from `<original>`) - new logic operating on existing type/using an existing function.
+Utilities that improve working with the built-in primitives of the language.
+
+### `std/builtin/set`
+
+Utility functions for using any `map[K]struct{}`, with `K` being any `comparable` type, for set-like uses. This mechanism works for handling the data, but does not have any optimizations.
+
+### `std/builtin/multiset`
+
+Utility functions for using any `map[K]uint`, with `K` being any `comparable` type, for multiset- or bag-like uses. This mechanism works for handling the data, but does not have any optimizations. When the provided utility functions are used consistently, the invariant is preserved.
+
+Use `len(multiset)` to count distinct entries. Use `multiset.Count` function to summize all entry counts.
+
+_INVARIANT_ any entry that decreases to 0 occurrences is removed.
+
+### `std/errors`
+
+The core notion is that any error in its root should be a fixed value, accessible as a variable. This is also in the root of the Go standard library. Many error situations require additional information. This information should be added, i.e. wrapped, as context-information. The root-cause will be the single variable that can be processed easily in code, while the context-information can be printed to provide additional information to developers/power-users.
+
+Let the ability to apply above pattern also serve as an indicator of quality of the code: if error reporting requires a complex structure in order to communicate what is wrong, it likely means that a piece of code takes on too many concerns simultaneously.
 
 ## Implementation considerations
 
