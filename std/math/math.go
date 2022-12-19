@@ -25,6 +25,20 @@ func AbsInt[N signedNumber](n N) N {
 	return n
 }
 
+func Max[N number](x, y N) N {
+	if x > y {
+		return x
+	}
+	return y
+}
+
+func Min[N number](x, y N) N {
+	if x < y {
+		return x
+	}
+	return y
+}
+
 // Difference computes an absolute value that's the difference between `a` and `b`.
 func Difference[N number](a, b N) N {
 	if a < b {
