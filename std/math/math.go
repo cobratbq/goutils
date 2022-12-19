@@ -4,13 +4,25 @@ package math
 
 import "github.com/cobratbq/goutils/assert"
 
+type number interface {
+	signedNumber | unsignedNumber
+}
+
+type signedNumber interface {
+	int | int8 | int16 | int32 | int64
+}
+
+type unsignedNumber interface {
+	uint | uint8 | uint16 | uint32 | uint64
+}
+
 // LCM is a unoptimized version of the Least/Lowest Common Multiple.
 //
 // Using the Greatest Common Divisor, following [1]:
 // `lcm(a,b) = |ab| / gcd(a,b)`
 //
 // [1]: <https://en.wikipedia.org/wiki/Least_common_multiple>
-func LCM(a, b uint64) uint64 {
+func LCM[N unsignedNumber](a, b N) N {
 	// NOTE: first divide `b` by `GCD` to prevent multiplication from greatly increasing the
 	// intermediate result with risk of overflowing.
 	return a * (b / GCD(a, b))
@@ -23,7 +35,7 @@ func LCM(a, b uint64) uint64 {
 // `x` is greatest common divisor for `gcd(a,b)`.
 //
 // [1]: <https://en.wikipedia.org/wiki/Greatest_common_divisor>
-func GCD(a, b uint64) uint64 {
+func GCD[N unsignedNumber](a, b N) N {
 	assert.Require(a > 0, "Non-zero values required for this method of GCD calculation.")
 	assert.Require(b > 0, "Non-zero values required for this method of GCD calculation.")
 	if a == b {
