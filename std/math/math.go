@@ -4,43 +4,11 @@ package math
 
 import (
 	"github.com/cobratbq/goutils/assert"
+	"github.com/cobratbq/goutils/std/builtin"
 )
 
-type number interface {
-	signedNumber | unsignedNumber
-}
-
-type signedNumber interface {
-	int | int8 | int16 | int32 | int64
-}
-
-type unsignedNumber interface {
-	uint | uint8 | uint16 | uint32 | uint64
-}
-
-func AbsInt[N signedNumber](n N) N {
-	if n < 0 {
-		return -n
-	}
-	return n
-}
-
-func Max[N number](x, y N) N {
-	if x > y {
-		return x
-	}
-	return y
-}
-
-func Min[N number](x, y N) N {
-	if x < y {
-		return x
-	}
-	return y
-}
-
 // Difference computes an absolute value that's the difference between `a` and `b`.
-func Difference[N number](a, b N) N {
+func Difference[N builtin.Number](a, b N) N {
 	if a < b {
 		return b - a
 	}
@@ -53,7 +21,7 @@ func Difference[N number](a, b N) N {
 // `lcm(a,b) = |ab| / gcd(a,b)`
 //
 // [1]: <https://en.wikipedia.org/wiki/Least_common_multiple>
-func LCM[N unsignedNumber](a, b N) N {
+func LCM[N builtin.UnsignedNumber](a, b N) N {
 	// NOTE: first divide `b` by `GCD` to prevent multiplication from greatly increasing the
 	// intermediate result with risk of overflowing.
 	return a * (b / GCD(a, b))
@@ -66,7 +34,7 @@ func LCM[N unsignedNumber](a, b N) N {
 // `x` is greatest common divisor for `gcd(a,b)`.
 //
 // [1]: <https://en.wikipedia.org/wiki/Greatest_common_divisor>
-func GCD[N unsignedNumber](a, b N) N {
+func GCD[N builtin.UnsignedNumber](a, b N) N {
 	assert.Require(a > 0, "Non-zero values required for this method of GCD calculation.")
 	assert.Require(b > 0, "Non-zero values required for this method of GCD calculation.")
 	if a == b {
@@ -81,4 +49,40 @@ func GCD[N unsignedNumber](a, b N) N {
 		a, b = b, a%b
 	}
 	return a
+}
+
+// AbsInt determines the absolute value of provided integer.
+func AbsInt[N builtin.SignedNumber](n N) N {
+	if n < 0 {
+		return -n
+	}
+	return n
+}
+
+// Max returns the maximum of two values.
+func Max[N builtin.Number](x, y N) N {
+	if x > y {
+		return x
+	}
+	return y
+}
+
+// Min returns the minimum of two values.
+func Min[N builtin.Number](x, y N) N {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+// Sign returns the sign of the provided value: `1` for positive value, `0` for zero, `-1` for
+// negative value.
+func Sign[N builtin.Number](x N) int {
+	if x > 0 {
+		return 1
+	}
+	if x == 0 {
+		return 0
+	}
+	return -1
 }
