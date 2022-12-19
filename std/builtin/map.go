@@ -28,3 +28,12 @@ func ExtractValues[K comparable, V any](map_ map[K]V) []V {
 	}
 	return vals
 }
+
+// ReduceMapKeys uses provided reduction function to reduce keys into a single resulting value.
+func ReduceMapKeys[K comparable, V any, R any](input map[K]V, initial R, reduce func(v R, k K) R) R {
+	v := initial
+	for k, _ := range input {
+		v = reduce(v, k)
+	}
+	return v
+}
