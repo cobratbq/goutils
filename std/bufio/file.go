@@ -19,7 +19,13 @@ func OpenFileReadOnly(path string) (*bufio.Reader, io.Closer, error) {
 	return bufio.NewReader(file), io_.NewCloserWrapper(file), nil
 }
 
-// ReadLinesAsBytesNoDelimFunc reads lines from the reader until `io.EOF` and calls `process` to
+// ReadBytesLinesNoDelimFunc
+// Deprecated: use ReadBytesLinesFunc
+func ReadBytesLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(line []byte) error) error {
+	return ReadBytesLinesFunc(reader, delim, process)
+}
+
+// ReadBytesLinesFunc reads lines from the reader until `io.EOF` and calls `process` to
 // process each line one-by-one, or until the first processing error. Anything except `io.EOF“ is
 // treated as an error. In case `io.EOF` occurs, it is assumed that the acquired input is still
 // valid/complete and is passed on for processing.
@@ -34,7 +40,7 @@ func OpenFileReadOnly(path string) (*bufio.Reader, io.Closer, error) {
 // `process` closure. Returns IO-related errors for failures during reading.
 //
 // If `process` returns `ErrProcessingCompleted`, the read-loop will be interrupted to return early.
-func ReadBytesLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(line []byte) error) error {
+func ReadBytesLinesFunc(reader *bufio.Reader, delim byte, process func(line []byte) error) error {
 	for {
 		line, readErr := ReadBytesNoDelim(reader, delim)
 		if readErr != nil && !errors.Is(readErr, io.EOF) {
@@ -57,7 +63,13 @@ func ReadBytesLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(li
 	return nil
 }
 
-// ReadStringLinesNoDelimFunc reads lines from the reader until `io.EOF` and calls `process` to
+// ReadStringLinesNoDelimFunc
+// Deprecated: use ReadStringLinesFunc
+func ReadStringLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(line string) error) error {
+	return ReadStringLinesFunc(reader, delim, process)
+}
+
+// ReadStringLinesFunc reads lines from the reader until `io.EOF` and calls `process` to
 // process each line one-by-one, or until the first processing error. Anything except `io.EOF“ is
 // treated as an error. In case `io.EOF` occurs, it is assumed that the acquired input is still
 // valid/complete and is passed on for processing.
@@ -72,7 +84,7 @@ func ReadBytesLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(li
 // `process` closure. Returns IO-related errors for failures during reading.
 //
 // If `process` returns `ErrProcessingCompleted`, the read-loop will be interrupted to return early.
-func ReadStringLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(line string) error) error {
+func ReadStringLinesFunc(reader *bufio.Reader, delim byte, process func(line string) error) error {
 	for {
 		line, readErr := ReadStringNoDelim(reader, delim)
 		if readErr != nil && !errors.Is(readErr, io.EOF) {
