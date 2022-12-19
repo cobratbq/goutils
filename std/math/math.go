@@ -2,7 +2,9 @@
 
 package math
 
-import "github.com/cobratbq/goutils/assert"
+import (
+	"github.com/cobratbq/goutils/assert"
+)
 
 type number interface {
 	signedNumber | unsignedNumber
@@ -14,6 +16,21 @@ type signedNumber interface {
 
 type unsignedNumber interface {
 	uint | uint8 | uint16 | uint32 | uint64
+}
+
+func AbsInt[N signedNumber](n N) N {
+	if n < 0 {
+		return -n
+	}
+	return n
+}
+
+// Difference computes an absolute value that's the difference between `a` and `b`.
+func Difference[N number](a, b N) N {
+	if a < b {
+		return b - a
+	}
+	return a - b
 }
 
 // LCM is a unoptimized version of the Least/Lowest Common Multiple.
