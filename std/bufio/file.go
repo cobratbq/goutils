@@ -30,16 +30,17 @@ func ReadBytesLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(li
 // treated as an error. In case `io.EOF` occurs, it is assumed that the acquired input is still
 // valid/complete and is passed on for processing.
 //
-// Opinionated: in case of any error other than io.EOF, the last read input is lost and the error is
-// returned. This is different from the basic `Read` functions, as these return whatever it still
-// managed to read. Here we deviate because this util already sets assumptions on reading whole
-// lines as part of its purpose.
+// Opinionated:
+//   - any data read prior to `io.EOF` is considered a full line, therefore processed as normal.
+//   - in case of any error other than `io.EOF`, the last read data is lost and the error is
+//     returned immediately. This is different from the basic `Read` functions, as these return
+//     whatever it still managed to read. Here we deviate because this util already sets assumptions
+//     on reading whole lines as part of its purpose.
 //
-// Returns nil if all lines are successfully processed and `io.EOF` was encountered. Returns
-// `ErrProcessingFailure` (with context-information) if error was encountered during call to
-// `process` closure. Returns IO-related errors for failures during reading.
-//
-// If `process` returns `ErrProcessingCompleted`, the read-loop will be interrupted to return early.
+// Returns nil if all lines are successfully processed and `io.EOF` was reached or
+// `ErrProcessingCompleted` was returned by `process` function. Returns `ErrProcessingFailure` (with
+// context-information) if error was encountered during call to `process` closure. Returns
+// IO-related errors for failures during reading.
 func ReadBytesLinesFunc(reader *bufio.Reader, delim byte, process func(line []byte) error) error {
 	for {
 		line, readErr := ReadBytesNoDelim(reader, delim)
@@ -74,16 +75,17 @@ func ReadStringLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(l
 // treated as an error. In case `io.EOF` occurs, it is assumed that the acquired input is still
 // valid/complete and is passed on for processing.
 //
-// Opinionated: in case of any error other than io.EOF, the last read input is lost and the error is
-// returned. This is different from the basic `Read` functions, as these return whatever it still
-// managed to read. Here we deviate because this util already sets assumptions on reading whole
-// lines as part of its purpose.
+// Opinionated:
+//   - any data read prior to `io.EOF` is considered a full line, therefore processed as normal.
+//   - in case of any error other than `io.EOF`, the last read data is lost and the error is
+//     returned immediately. This is different from the basic `Read` functions, as these return
+//     whatever it still managed to read. Here we deviate because this util already sets assumptions
+//     on reading whole lines as part of its purpose.
 //
-// Returns nil if all lines are successfully processed and `io.EOF` was encountered. Returns
-// `ErrProcessingFailure` (with context-information) if error was encountered during call to
-// `process` closure. Returns IO-related errors for failures during reading.
-//
-// If `process` returns `ErrProcessingCompleted`, the read-loop will be interrupted to return early.
+// Returns nil if all lines are successfully processed and `io.EOF` was reached or
+// `ErrProcessingCompleted` was returned by `process` function. Returns `ErrProcessingFailure` (with
+// context-information) if error was encountered during call to `process` closure. Returns
+// IO-related errors for failures during reading.
 func ReadStringLinesFunc(reader *bufio.Reader, delim byte, process func(line string) error) error {
 	for {
 		line, readErr := ReadStringNoDelim(reader, delim)
