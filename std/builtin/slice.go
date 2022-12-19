@@ -44,3 +44,13 @@ func FilterSlice[E any](input []E, filter func(e E) bool) []E {
 	}
 	return output
 }
+
+// ReduceSlice reduces a slice `input` to a single aggregate value of type `V`, using `initial V` as
+// starting value. Function `reduce` defines exactly how `V` is determined with each entry.
+func ReduceSlice[E any, V any](input []E, initial V, reduce func(v V, e E) V) V {
+	v := initial
+	for _, e := range input {
+		v = reduce(v, e)
+	}
+	return v
+}
