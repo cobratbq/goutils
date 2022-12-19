@@ -17,6 +17,12 @@ package multiset
 
 import "github.com/cobratbq/goutils/assert"
 
+// Contains tests for presence of an element in a multiset-like map.
+func Contains[K comparable](multiset map[K]uint, e K) bool {
+	_, ok := multiset[e]
+	return ok
+}
+
 // Insert increments the count of an element, inserting the element if necessary.
 func Insert[K comparable](multiset map[K]uint, e K) {
 	multiset[e] += 1
