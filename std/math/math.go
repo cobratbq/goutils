@@ -8,7 +8,7 @@ import (
 )
 
 // Difference computes an absolute value that's the difference between `a` and `b`.
-func Difference[N builtin.Number](a, b N) N {
+func Difference[N builtin.Integer](a, b N) N {
 	if a < b {
 		return b - a
 	}
@@ -21,7 +21,7 @@ func Difference[N builtin.Number](a, b N) N {
 // `lcm(a,b) = |ab| / gcd(a,b)`
 //
 // [1]: <https://en.wikipedia.org/wiki/Least_common_multiple>
-func LCM[N builtin.UnsignedNumber](a, b N) N {
+func LCM[N builtin.UnsignedInteger](a, b N) N {
 	// NOTE: first divide `b` by `GCD` to prevent multiplication from greatly increasing the
 	// intermediate result with risk of overflowing.
 	return a * (b / GCD(a, b))
@@ -34,7 +34,7 @@ func LCM[N builtin.UnsignedNumber](a, b N) N {
 // `x` is greatest common divisor for `gcd(a,b)`.
 //
 // [1]: <https://en.wikipedia.org/wiki/Greatest_common_divisor>
-func GCD[N builtin.UnsignedNumber](a, b N) N {
+func GCD[N builtin.UnsignedInteger](a, b N) N {
 	assert.Require(a > 0, "Non-zero values required for this method of GCD calculation.")
 	assert.Require(b > 0, "Non-zero values required for this method of GCD calculation.")
 	if a == b {
@@ -52,7 +52,7 @@ func GCD[N builtin.UnsignedNumber](a, b N) N {
 }
 
 // AbsInt determines the absolute value of provided integer.
-func AbsInt[N builtin.SignedNumber](n N) N {
+func AbsInt[N builtin.SignedInteger](n N) N {
 	if n < 0 {
 		return -n
 	}
@@ -60,7 +60,7 @@ func AbsInt[N builtin.SignedNumber](n N) N {
 }
 
 // Max returns the maximum of two values.
-func Max[N builtin.Number](x, y N) N {
+func Max[N builtin.Integer](x, y N) N {
 	if x > y {
 		return x
 	}
@@ -68,7 +68,7 @@ func Max[N builtin.Number](x, y N) N {
 }
 
 // Min returns the minimum of two values.
-func Min[N builtin.Number](x, y N) N {
+func Min[N builtin.Integer](x, y N) N {
 	if x < y {
 		return x
 	}
@@ -77,7 +77,7 @@ func Min[N builtin.Number](x, y N) N {
 
 // Sign returns the sign of the provided value: `1` for positive value, `0` for zero, `-1` for
 // negative value.
-func Sign[N builtin.Number](x N) int {
+func Sign[N builtin.Integer](x N) int {
 	if x > 0 {
 		return 1
 	}
