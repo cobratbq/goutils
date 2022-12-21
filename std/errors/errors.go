@@ -6,11 +6,13 @@
 // well.
 //
 // Ideally, following properties are desired:
-// 1. uniquely-identifying error instances
-// 2. constant/read-only instances, i.e. can be addressed but not changed
-// 3. composable/extendable into dedicated error type/series for specific use cases (without
-//    overhead)
+//  1. uniquely-identifying error instances
+//  2. constant/read-only instances, i.e. can be addressed but not changed
+//  3. composable/extendable into dedicated error type/series for specific use cases (without
+//     overhead)
+//
 // TODO above three properties cannot be satisfied yet.
+// TODO do we need predefined errors? Errors such as `os.ErrInvalid` are defined specifically for the filesystem use-case. However, we need generic errors representing the various classes of incorrectness.
 package errors
 
 import "errors"
