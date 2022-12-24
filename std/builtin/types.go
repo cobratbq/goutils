@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
+// TODO `golang.org/x/exp/constraints` provides similar types, but is not yet part of the standard library.
+
 package builtin
 
 type Integer interface {
@@ -7,13 +9,13 @@ type Integer interface {
 }
 
 type UnsignedInteger interface {
-	uint8 | uint16 | uint32 | uint64 | uint
+	~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uint | ~uintptr
 }
 
 type SignedInteger interface {
-	int8 | int16 | int32 | int64 | int
+	~int8 | ~int16 | ~int32 | ~int64 | ~int
 }
 
 type Float interface {
-	float32 | float64
+	~float32 | ~float64
 }
