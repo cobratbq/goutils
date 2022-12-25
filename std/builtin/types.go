@@ -2,6 +2,8 @@
 
 // TODO `golang.org/x/exp/constraints` provides similar types, but is not yet part of the standard library.
 
+// Source: <https://go.dev/ref/spec#Interface_types>
+
 package builtin
 
 type Integer interface {
