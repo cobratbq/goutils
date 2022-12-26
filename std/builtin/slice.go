@@ -54,3 +54,15 @@ func ReduceSlice[E any, V any](input []E, initial V, reduce func(v V, e E) V) V 
 	}
 	return v
 }
+
+// TransformSliceToMapKeys assumes non-overlapping map keys, meaning that there will be the same
+// number of keys in the output as there are entries in the input slice. This assumption exists to
+// be able to detect loss of information, due to faulty logic.
+func TransformSliceToMapKeys[K comparable, V any](input []K, transform func(index int, entry K) V) map[K]V {
+	output := make(map[K]V, len(input))
+	for i, k := range input {
+		output[k] = transform(i, k)
+	}
+	assert.Equal(len(input), len(output))
+	return output
+}
