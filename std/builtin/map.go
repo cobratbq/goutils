@@ -86,3 +86,32 @@ func TransformMapValues[K comparable, VIN any, VOUT any](input map[K]VIN,
 	}
 	return output
 }
+
+// MergeMaps merges maps `m1` and `m2`. It requires all keys to be distinct. MergeMaps will panic if
+// a key is present in both maps. MergeMapsFunc can be used if such conflict resolution is needed.
+func MergeMaps[K comparable, V any](m1, m2 map[K]V) map[K]V {
+	output := DuplicateMap(m1)
+	for k, v := range m2 {
+		assert.False(ContainsKey(output, k))
+		output[k] = v
+	}
+	assert.Equal(len(output), len(m1)+len(m2))
+	return output
+}
+
+// MergeMapsFunc merges two distinct maps into one destination map, freshly created. In case a key
+// exists in both maps, func `conflict` is called for conflict resolution. It will return the
+// desired value, which can be determined based on provided key and the original values from both
+// maps.
+func MergeMapsFunc[K comparable, V any](m1, m2 map[K]V, conflict func(key K, value1, value2 V) V) map[K]V {
+	output := DuplicateMap(m1)
+	for k, v2 := range m2 {
+		if v1, present := output[k]; present {
+			output[k] = conflict(k, v1, v2)
+		} else {
+			output[k] = v2
+		}
+	}
+	assert.Require(len(output) <= len(m1)+len(m2), "Expected no new entries to be created.")
+	return output
+}
