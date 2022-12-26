@@ -39,7 +39,7 @@ func ExtractValues[K comparable, V any](map_ map[K]V) []V {
 // ReduceMapKeys uses provided reduction function to reduce keys into a single resulting value.
 func ReduceMapKeys[K comparable, V any, R any](input map[K]V, initial R, reduce func(v R, k K) R) R {
 	v := initial
-	for k, _ := range input {
+	for k := range input {
 		v = reduce(v, k)
 	}
 	return v
@@ -119,7 +119,7 @@ func MergeMapsFunc[K comparable, V any](m1, m2 map[K]V, conflict func(key K, val
 // MapKeysSubset checks, `O(n)` for `n` entries, if all keys of `subset` map are present in `set` map. Values are not
 // considered.
 func MapKeysSubset[K comparable, V any](set map[K]V, subset map[K]V) bool {
-	for k, _ := range subset {
+	for k := range subset {
 		if _, ok := set[k]; !ok {
 			return false
 		}
