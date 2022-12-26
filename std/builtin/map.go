@@ -4,6 +4,11 @@ package builtin
 
 import "github.com/cobratbq/goutils/assert"
 
+func ContainsKey[K comparable, V any](map_ map[K]V, key K) bool {
+	_, ok := map_[key]
+	return ok
+}
+
 // DuplicateMap duplicates the map only. A shallow copy of map entries into a new map of equal size.
 func DuplicateMap[K comparable, V any](src map[K]V) map[K]V {
 	dst := make(map[K]V, len(src))
