@@ -36,7 +36,10 @@ func TransformSlice[I any, O any](input []I, transform func(in I) O) []O {
 // TransformSliceToMapKeys assumes non-overlapping map keys, meaning that there will be the same
 // number of keys in the output as there are entries in the input slice. This assumption exists to
 // be able to detect loss of information, due to faulty logic.
-func TransformSliceToMapKeys[K comparable, V any](input []K, transform func(index int, entry K) V) map[K]V {
+// TODO consider changing this to a "MergeSliceIntoMapKeys" that does not create the map itself and provides mutating logic.
+func TransformSliceToMapKeys[K comparable, V any](input []K,
+	transform func(index int, element K) V) map[K]V {
+
 	output := make(map[K]V, len(input))
 	for i, k := range input {
 		output[k] = transform(i, k)

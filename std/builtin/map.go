@@ -59,11 +59,11 @@ func TransformMap[KIN, KOUT comparable, VIN, VOUT any](input map[KIN]VIN,
 	return output
 }
 
-// TransformMapKeys transforms an input map into an output map, using different types for keys.
+// TransformMapKeyType transforms an input map into an output map, using different types for keys.
 // Given that only keys are transformed, this implementation will assume that destination key types
 // will not overlap. If the transformation maps to the same key more than once, execution will
 // panic. This prevents losing values by overlapping destination keys.
-func TransformMapKeys[KIN comparable, KOUT comparable, V any](input map[KIN]V,
+func TransformMapKeyType[KIN comparable, KOUT comparable, V any](input map[KIN]V,
 	transform func(k KIN, v V) KOUT) map[KOUT]V {
 
 	output := make(map[KOUT]V, len(input))
@@ -76,8 +76,9 @@ func TransformMapKeys[KIN comparable, KOUT comparable, V any](input map[KIN]V,
 	return output
 }
 
-// TransformMapValues transforms an input map into an output map, using different types for values.
-func TransformMapValues[K comparable, VIN any, VOUT any](input map[K]VIN,
+// TransformMapValueType transforms an input map into an output map, using different types for
+// values.
+func TransformMapValueType[K comparable, VIN any, VOUT any](input map[K]VIN,
 	transform func(k K, vin VIN) VOUT) map[K]VOUT {
 
 	output := make(map[K]VOUT, len(input))
@@ -87,38 +88,32 @@ func TransformMapValues[K comparable, VIN any, VOUT any](input map[K]VIN,
 	return output
 }
 
-// MergeMaps merges maps `m1` and `m2`. It requires all keys to be distinct. MergeMaps will panic if
-// a key is present in both maps. MergeMapsFunc can be used if such conflict resolution is needed.
-func MergeMaps[K comparable, V any](m1, m2 map[K]V) map[K]V {
-	output := DuplicateMap(m1)
-	for k, v := range m2 {
-		assert.False(ContainsKey(output, k))
-		output[k] = v
+// MergeMap merges `src` map into `dst`. It requires all keys to be distinct. MergeMap will panic if
+// a key is present in both maps. MergeMapFunc can be used if such conflict resolution is needed.
+func MergeMap[K comparable, V any](dst, src map[K]V) {
+	for k, v := range src {
+		assert.False(ContainsKey(dst, k))
+		dst[k] = v
 	}
-	assert.Equal(len(output), len(m1)+len(m2))
-	return output
 }
 
-// MergeMapsFunc merges two distinct maps into one destination map, freshly created. In case a key
+// MergeMapFunc merges two distinct maps into one destination map, freshly created. In case a key
 // exists in both maps, func `conflict` is called for conflict resolution. It will return the
 // desired value, which can be determined based on provided key and the original values from both
 // maps.
-func MergeMapsFunc[K comparable, V any](m1, m2 map[K]V, conflict func(key K, value1, value2 V) V) map[K]V {
-	output := DuplicateMap(m1)
-	for k, v2 := range m2 {
-		if v1, present := output[k]; present {
-			output[k] = conflict(k, v1, v2)
+func MergeMapFunc[K comparable, V any](dst, src map[K]V, conflict func(key K, value1, value2 V) V) {
+	for k, v2 := range src {
+		if v1, present := dst[k]; present {
+			dst[k] = conflict(k, v1, v2)
 		} else {
-			output[k] = v2
+			dst[k] = v2
 		}
 	}
-	assert.Require(len(output) <= len(m1)+len(m2), "Expected no new entries to be created.")
-	return output
 }
 
 // MapKeysSubset checks, `O(n)` for `n` entries, if all keys of `subset` map are present in `set` map. Values are not
 // considered.
-func MapKeysSubset[K comparable, V any](set map[K]V, subset map[K]V) bool {
+func MapKeySubset[K comparable, V any](set map[K]V, subset map[K]V) bool {
 	for k := range subset {
 		if _, ok := set[k]; !ok {
 			return false
