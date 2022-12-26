@@ -33,6 +33,18 @@ func TransformSlice[I any, O any](input []I, transform func(in I) O) []O {
 	return output
 }
 
+// TransformSliceToMapKeys assumes non-overlapping map keys, meaning that there will be the same
+// number of keys in the output as there are entries in the input slice. This assumption exists to
+// be able to detect loss of information, due to faulty logic.
+func TransformSliceToMapKeys[K comparable, V any](input []K, transform func(index int, entry K) V) map[K]V {
+	output := make(map[K]V, len(input))
+	for i, k := range input {
+		output[k] = transform(i, k)
+	}
+	assert.Equal(len(input), len(output))
+	return output
+}
+
 // FilterSlice takes a slice `input` and a function `filter`. If `filter` returns true, the value is
 // preserved. If `filter` returns false, the value is dropped.
 func FilterSlice[E any](input []E, filter func(e E) bool) []E {
@@ -53,16 +65,4 @@ func ReduceSlice[E any, V any](input []E, initial V, reduce func(v V, e E) V) V 
 		v = reduce(v, e)
 	}
 	return v
-}
-
-// TransformSliceToMapKeys assumes non-overlapping map keys, meaning that there will be the same
-// number of keys in the output as there are entries in the input slice. This assumption exists to
-// be able to detect loss of information, due to faulty logic.
-func TransformSliceToMapKeys[K comparable, V any](input []K, transform func(index int, entry K) V) map[K]V {
-	output := make(map[K]V, len(input))
-	for i, k := range input {
-		output[k] = transform(i, k)
-	}
-	assert.Equal(len(input), len(output))
-	return output
 }
