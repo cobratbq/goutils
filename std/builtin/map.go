@@ -115,3 +115,14 @@ func MergeMapsFunc[K comparable, V any](m1, m2 map[K]V, conflict func(key K, val
 	assert.Require(len(output) <= len(m1)+len(m2), "Expected no new entries to be created.")
 	return output
 }
+
+// MapKeysSubset checks, `O(n)` for `n` entries, if all keys of `subset` map are present in `set` map. Values are not
+// considered.
+func MapKeysSubset[K comparable, V any](set map[K]V, subset map[K]V) bool {
+	for k, _ := range subset {
+		if _, ok := set[k]; !ok {
+			return false
+		}
+	}
+	return true
+}
