@@ -69,3 +69,12 @@ func ReduceSlice[E any, V any](input []E, initial V, reduce func(v V, e E) V) V 
 	}
 	return v
 }
+
+// UpdateSlice updates all elements of a slice using the provided `update` func. Elements are passed
+// in in isolation, therefore the update logic must operate on individual elements.
+// TODO consider renaming to `UpdateElements` or something to reflect that this function operates on the slice's elements.
+func UpdateSlice[E any](input []E, update func(e E) E) {
+	for i := 0; i < len(input); i++ {
+		input[i] = update(input[i])
+	}
+}
