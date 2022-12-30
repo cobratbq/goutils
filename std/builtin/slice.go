@@ -78,3 +78,12 @@ func UpdateSlice[E any](input []E, update func(e E) E) {
 		input[i] = update(input[i])
 	}
 }
+
+func Any[E any](input []E, test func(idx int, e E) bool) bool {
+	for idx, e := range input {
+		if test(idx, e) {
+			return true
+		}
+	}
+	return false
+}

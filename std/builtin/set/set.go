@@ -19,3 +19,19 @@ func Insert[K comparable](set map[K]struct{}, e K) {
 func Remove[K comparable](set map[K]struct{}, e K) {
 	delete(set, e)
 }
+
+// Merge merges `src` into `dst`.
+// FIXME consider naming: change to Join or Union or something?
+func Merge[K comparable](dst, src map[K]struct{}) {
+	for k := range src {
+		dst[k] = struct{}{}
+	}
+}
+
+// MergeSlice merges `slice` into `set`.
+// FIXME consider naming to follow function above in naming convention.
+func MergeSlice[K comparable](set map[K]struct{}, slice []K) {
+	for _, e := range slice {
+		set[e] = struct{}{}
+	}
+}
