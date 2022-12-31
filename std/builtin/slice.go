@@ -51,13 +51,13 @@ func TransformSliceToMapKeys[K comparable, V any](input []K,
 // FilterSlice takes a slice `input` and a function `filter`. If `filter` returns true, the value is
 // preserved. If `filter` returns false, the value is dropped.
 func FilterSlice[E any](input []E, filter func(e E) bool) []E {
-	output := make([]E, 0)
+	filtered := make([]E, 0)
 	for _, e := range input {
 		if filter(e) {
-			output = append(output, e)
+			filtered = append(filtered, e)
 		}
 	}
-	return output
+	return filtered
 }
 
 // ReduceSlice reduces a slice `input` to a single aggregate value of type `V`, using `initial V` as
@@ -79,6 +79,8 @@ func UpdateSlice[E any](input []E, update func(e E) E) {
 	}
 }
 
+// Any iterates over elements in the slice and tests if they satisfy `test`. Result is returned upon
+// first element found, and will iterate over all elements if none satisfy the condition.
 func Any[E any](input []E, test func(idx int, e E) bool) bool {
 	for idx, e := range input {
 		if test(idx, e) {

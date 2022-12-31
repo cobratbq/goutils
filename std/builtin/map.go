@@ -88,6 +88,16 @@ func TransformMapValueType[K comparable, VIN any, VOUT any](input map[K]VIN,
 	return output
 }
 
+func FilterMap[K comparable, V any](input map[K]V, filter func(k K, v V) bool) map[K]V {
+	filtered := make(map[K]V, 0)
+	for k, v := range input {
+		if filter(k, v) {
+			filtered[k] = v
+		}
+	}
+	return filtered
+}
+
 // MergeMap merges `src` map into `dst`. It requires all keys to be distinct. MergeMap will panic if
 // a key is present in both maps. MergeMapFunc can be used if such conflict resolution is needed.
 func MergeMap[K comparable, V any](dst, src map[K]V) {
