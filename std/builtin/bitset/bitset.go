@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
+// bitset is a package that provides a bit-wise set implementation for indexes/positions.
+// Essentially, a bit is 1 if present, or 0 if absent. These implementation can be used to
+// efficiently store the minimal information of 1 bit to keep track of e.g. presence for large
+// numbers.
 package bitset
 
 import (

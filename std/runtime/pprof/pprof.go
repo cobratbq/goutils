@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
+// pprof provides utilities for `runtime/pprof`.
+//
+// References:
+// - <https://pkg.go.dev/runtime/pprof>
+// - <https://github.com/google/pprof/blob/main/doc/README.md>
 package pprof
 
 import (
