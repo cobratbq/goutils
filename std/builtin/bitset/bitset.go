@@ -35,7 +35,13 @@ func Remove(bitset []uint, idx uint) {
 	bitset[limb] &^= bit
 }
 
-// Clear sets all bits to 0.
+// Clear sets all bits to 0. This implementation is not ideal as it has to operate on a slice of
+// arbitrary length. It assigns 0 to each individual cell in the slice. If `bitset` is backed by an
+// array that is directly accessible, consider assigning it an empty array of same (total) size.
+// This approach enjoys better compile-time support.
+//
+//	var mybitset [40]uint
+//	mybitset = [40]uint{}
 func Clear(bitset []uint) {
 	for i := 0; i < len(bitset); i++ {
 		bitset[i] = 0
