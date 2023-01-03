@@ -3,10 +3,10 @@
 package io
 
 import (
-	"errors"
 	"io"
 
 	"github.com/cobratbq/goutils/assert"
+	"github.com/cobratbq/goutils/std/errors"
 	"github.com/cobratbq/goutils/std/log"
 )
 
@@ -55,14 +55,42 @@ func (n *NopCloser) Close() error {
 	return nil
 }
 
-type CloserWrapper struct {
+type closerWrapper struct {
 	closer io.Closer
 }
 
-func NewCloserWrapper(closer io.Closer) *CloserWrapper {
-	return &CloserWrapper{closer}
+func NewCloserWrapper(closer io.Closer) *closerWrapper {
+	return &closerWrapper{closer}
 }
 
-func (c *CloserWrapper) Close() error {
+func (c *closerWrapper) Close() error {
 	return c.closer.Close()
 }
+
+type closeSequence struct {
+	seq []io.Closer
+}
+
+// NewSequence creates a new composite sequential closer that starts with the first provided closer,
+// continuing with the nexts
+func NewSequence(seq ...io.Closer) io.Closer {
+	return &closeSequence{seq: seq}
+}
+
+// Close closes all closers in sequence. It will continue with the next closer regardless of whether
+// an error occurred.
+func (c *closeSequence) Close() error {
+	var errs []error
+	for _, closer := range c.seq {
+		if err := closer.Close(); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	// FIXME (how to) aggregate multiple errors and return as single error? (see recent Go stdlib stuff)
+	if errs == nil {
+		return nil
+	}
+	return ErrSequenceClosingErrors
+}
+
+var ErrSequenceClosingErrors = errors.NewStringError("One or more errors occurred while closing sequences of closers")
