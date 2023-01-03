@@ -12,8 +12,8 @@ import (
 
 const LimbLength = builtin.UintSize
 
-// Cap returns the capacity of the set in (available) bits.
-func Cap(bitset []uint) int {
+// Len returns the length of the set in number of (available) bits.
+func Len(bitset []uint) int {
 	return len(bitset) * LimbLength
 }
 
