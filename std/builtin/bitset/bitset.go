@@ -7,15 +7,10 @@
 package bitset
 
 import (
-	"math"
-
 	"github.com/cobratbq/goutils/std/builtin"
 )
 
 const LimbLength = builtin.UintSize
-const LimbMask = LimbLength - 1
-
-var numShifts = uint(math.Log2(LimbLength))
 
 // Cap returns the capacity of the set in (available) bits.
 func Cap(bitset []uint) int {
@@ -48,7 +43,5 @@ func Clear(bitset []uint) {
 }
 
 func loc(idx uint) (uint, uint) {
-	// TODO "optimization" that isn't based on measurements. So needs to be double-checked.
-	return idx >> numShifts, 1 << (idx & LimbMask)
-	//return idx / LimbLength, 1 << (idx % LimbLength)
+	return idx / LimbLength, 1 << (idx % LimbLength)
 }
