@@ -67,12 +67,34 @@ func Max[N builtin.Integer](x, y N) N {
 	return y
 }
 
+// MaxN returns the maximum of vararg provided number of values.
+func MaxN[N builtin.Integer](x ...N) N {
+	max := x[0]
+	for _, v := range x {
+		if v > max {
+			max = v
+		}
+	}
+	return max
+}
+
 // Min returns the minimum of two values.
 func Min[N builtin.Integer](x, y N) N {
 	if x < y {
 		return x
 	}
 	return y
+}
+
+// MinN returns the minimum of vararg provided number of values.
+func MinN[N builtin.Integer](x ...N) N {
+	min := x[0]
+	for _, v := range x {
+		if v < min {
+			min = v
+		}
+	}
+	return min
 }
 
 // Sign returns the sign of the provided value: `1` for positive value, `0` for zero, `-1` for
