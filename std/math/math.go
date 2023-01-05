@@ -35,8 +35,8 @@ func LCM[N builtin.UnsignedInteger](a, b N) N {
 //
 // [1]: <https://en.wikipedia.org/wiki/Greatest_common_divisor>
 func GCD[N builtin.UnsignedInteger](a, b N) N {
-	assert.Require(a > 0, "Non-zero values required for this method of GCD calculation.")
-	assert.Require(b > 0, "Non-zero values required for this method of GCD calculation.")
+	assert.Require(a > 0, "Non-zero value a required for this method of GCD calculation.")
+	assert.Require(b > 0, "Non-zero value b required for this method of GCD calculation.")
 	if a == b {
 		return a
 	}
@@ -67,7 +67,8 @@ func Max[N builtin.Integer](x, y N) N {
 	return y
 }
 
-// MaxN returns the maximum of vararg provided number of values.
+// MaxN returns the maximum of vararg provided number of values. At least one value must be provided
+// or the function will panic.
 func MaxN[N builtin.Integer](x ...N) N {
 	max := x[0]
 	for _, v := range x {
