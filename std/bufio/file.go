@@ -11,13 +11,69 @@ import (
 	io_ "github.com/cobratbq/goutils/std/io"
 )
 
-func OpenFileReadOnly(path string) (*bufio.Reader, io.Closer, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, nil, err
+// - ErrProcessingIgnore to skip irrelevant value, ErrProcessingCompleted to signal to stop reading, ...
+// TODO can we combine `ReadProcessStringLinesFunc` and `ReadProcessBytesLinesFunc` somehow? There is a lot of duplication right now. On the other hand, if it works, it does not matter that much.
+// FIXME document function (and reference other options for other use cases)
+func ReadProcessStringLinesFunc[V any](reader *bufio.Reader, delim byte, process func(line string) (V, error)) ([]V, error) {
+	var results []V
+	for {
+		line, readErr := ReadStringNoDelim(reader, delim)
+		if readErr != nil && !errors.Is(readErr, io.EOF) {
+			// Error occurred while reading line, so abort. Return results that are available, let
+			// user judge whether those are useful.
+			return results, readErr
+		}
+		v, procErr := process(line)
+		if procErr == ErrProcessingIgnore {
+			// Error indicates resulting value should be ignored.
+		} else if procErr == ErrProcessingCompleted {
+			// Allow `process` function to signal early exit.
+			results = append(results, v)
+			break
+		} else if procErr != nil {
+			// Error occurred while processing line, so abort with processing failure.
+			return results, errors.Context(ErrProcessingFailure, procErr.Error())
+		} else {
+			results = append(results, v)
+		}
+		if errors.Is(readErr, io.EOF) {
+			break
+		}
 	}
-	return bufio.NewReader(file), io_.NewCloserWrapper(file), nil
+	return results, nil
 }
+
+// FIXME document function (and reference other options for other use cases)
+func ReadProcessBytesLinesFunc[V any](reader *bufio.Reader, delim byte, process func(line []byte) (V, error)) ([]V, error) {
+	var results []V
+	for {
+		line, readErr := ReadBytesNoDelim(reader, delim)
+		if readErr != nil && !errors.Is(readErr, io.EOF) {
+			// Error occurred while reading line, so abort. Return results that are available, let
+			// user judge whether those are useful.
+			return results, readErr
+		}
+		v, procErr := process(line)
+		if procErr == ErrProcessingIgnore {
+			// Error indicates resulting value should be ignored.
+		} else if procErr == ErrProcessingCompleted {
+			// Allow `process` function to signal early exit.
+			results = append(results, v)
+			break
+		} else if procErr != nil {
+			// Error occurred while processing line, so abort with processing failure.
+			return results, errors.Context(ErrProcessingFailure, procErr.Error())
+		} else {
+			results = append(results, v)
+		}
+		if errors.Is(readErr, io.EOF) {
+			break
+		}
+	}
+	return results, nil
+}
+
+var ErrProcessingIgnore = errors.NewStringError("processing resulted in irrelevant result, ignore")
 
 // ReadBytesLinesNoDelimFunc
 // Deprecated: use ReadBytesLinesFunc
@@ -127,4 +183,12 @@ func ReadStringNoDelim(reader *bufio.Reader, delim byte) (string, error) {
 		return buffer, err
 	}
 	return buffer[:len(buffer)-1], nil
+}
+
+func OpenFileReadOnly(path string) (*bufio.Reader, io.Closer, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, nil, err
+	}
+	return bufio.NewReader(file), io_.NewCloserWrapper(file), nil
 }
