@@ -19,12 +19,12 @@ func TestStacktrace(t *testing.T) {
 	var ErrMyError = NewUintError(0)
 	assert.Equal(t, "0", ErrMyError.Error())
 	err := Stacktrace(ErrMyError)
-	var firstLine, trace1 string
-	firstLine, trace1, _ = strings.Cut(err.Error(), "\n")
-	assert.Equal(t, "0", firstLine)
+	lines := strings.Split(err.Error(), "\n")
+	trace1 := strings.Join(lines[0:len(lines)-1], "\n")
+	assert.Equal(t, "Error: 0", lines[len(lines)-1])
 	err = Context(err, "Failed to increment from zero")
-	var trace2 string
-	firstLine, trace2, _ = strings.Cut(err.Error(), "\n")
-	assert.Equal(t, "Failed to increment from zero: 0", firstLine)
+	lines = strings.Split(err.Error(), "\n")
+	trace2 := strings.Join(lines[0:len(lines)-1], "\n")
+	assert.Equal(t, "Error: 0: Failed to increment from zero", lines[len(lines)-1])
 	assert.Equal(t, trace1, trace2)
 }

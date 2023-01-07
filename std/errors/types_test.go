@@ -7,6 +7,7 @@ import (
 	"testing"
 	"unsafe"
 
+	"github.com/cobratbq/goutils/std/log"
 	assert "github.com/cobratbq/goutils/std/testing"
 )
 
@@ -48,18 +49,28 @@ func TestExpectWrappedErrorSameSize(t *testing.T) {
 }
 
 func TestBenchmarkAllocationlessWrappedError(t *testing.T) {
+	// TODO unfortunately, this test seems to be a bit flaky. Running the test after clearing the test cache (`go clean -testcache`) will most-of-the-time result in a successful test. However incidentally there may be a spurious allocation. To be fixed ...
 	type httpStatusCodeError struct {
 		UintError
 	}
+	// Assume that the root error is predefined in a package variable.
+	var errBase = NewUintError(401)
+	// Now benchmark the wrapped use of the error, ensuring no allocations are performed. This test
+	// ensure that properly wrapping existing root errors are possible without additional
+	// allocations. This allows extending errors without suffering unexpected, subtle disadvantages.
 	report := testing.Benchmark(func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			var errBase = NewUintError(401)
 			var errForbidden = &httpStatusCodeError{*errBase}
+			// assert that error-wrapping is effective without overhead
 			assert.True(b, error(errBase) != error(errForbidden))
 			assert.Equal(b, unsafe.Sizeof(*errBase), unsafe.Sizeof(*errForbidden))
 		}
 	})
+	// Verify that there is no overhead in memory allocations.
+	log.Debugln("MemAllocs")
 	assert.Equal(t, report.MemAllocs, 0)
+	log.Debugln("AllocsPerOp")
 	assert.Equal(t, report.AllocsPerOp(), 0)
+	log.Debugln("AllocatedByte")
 	assert.Equal(t, report.AllocedBytesPerOp(), 0)
 }

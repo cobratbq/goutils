@@ -19,7 +19,7 @@ type stack struct {
 }
 
 func (s stack) Error() string {
-	return s.cause.Error() + "\n" + string(s.stack)
+	return "Stack-trace:\n" + string(s.stack) + "Error: " + s.cause.Error()
 }
 
 func (s stack) Unwrap() error {

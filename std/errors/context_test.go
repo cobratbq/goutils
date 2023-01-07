@@ -11,13 +11,13 @@ import (
 
 func TestContext(t *testing.T) {
 	var err = NewStringError("I am the error used for testing")
-	singleWrap := Context(err, "Singly-wrapped context message")
-	assert.Equal(t, "Singly-wrapped context message: I am the error used for testing",
+	singleWrap := Context(err, "First addition of context information")
+	assert.Equal(t, "I am the error used for testing: First addition of context information",
 		singleWrap.Error())
 	assert.True(t, err == errors.Unwrap(singleWrap))
 	assert.True(t, Is(singleWrap, err))
-	doubleWrap := Context(singleWrap, "Doubly-wrapped")
-	assert.Equal(t, "Doubly-wrapped: Singly-wrapped context message: I am the error used for testing",
+	doubleWrap := Context(singleWrap, "Second addition of context")
+	assert.Equal(t, "I am the error used for testing: First addition of context information: Second addition of context",
 		doubleWrap.Error())
 	assert.True(t, singleWrap == errors.Unwrap(doubleWrap))
 	assert.True(t, err == errors.Unwrap(errors.Unwrap(doubleWrap)))

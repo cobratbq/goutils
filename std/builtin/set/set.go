@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
-// set is a map with unit-values (`struct{}{}“). These values do not take up additional space. This
-// allows the map to be used as a set, indicating whether an element is present (as a key) or not.
+// set is a map of keys with unit-values (`struct{}{}`). These values do not take up additional
+// space. This allows the map to be used as a set, indicating whether an element is present (as a
+// key) or not. This is a basic utility. For highly specialized and optimized use cases, look for a
+// suitable specialized implementation.
 package set
 
 // Contains tests for the presence of element `e` and returns true iff present.
