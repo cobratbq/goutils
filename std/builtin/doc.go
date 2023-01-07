@@ -1,0 +1,8 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
+// builtin contains additional utility functions for built-in types of the Go programming languages.
+// This package contains the utils that apply to types and functions that are always immediately
+// available.
+//
+// TODO consider adding function for "compacting" a map, i.e. copying content over into new map such that there is no memory wasted after intense use.
+package builtin

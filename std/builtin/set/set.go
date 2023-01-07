@@ -35,3 +35,31 @@ func MergeSlice[K comparable](set map[K]struct{}, slice []K) {
 		set[e] = struct{}{}
 	}
 }
+
+// Difference updates `set` by removing any element present in `other`.
+//
+// See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
+//
+// FIXME unused, untested, consider producing separate output
+func Difference[K comparable](set, other map[K]struct{}) {
+	for k := range other {
+		// remove indiscriminately because it doesn't matter if the element isn't present anyways
+		delete(set, k)
+	}
+}
+
+// SymmetricDifference updates `set` by inserting any element present only in `other`, and removing
+// any element present in both.
+//
+// See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
+//
+// FIXME unused, untested, consider producing separate output
+func SymmetricDifference[K comparable](set, other map[K]struct{}) {
+	for k := range other {
+		if _, present := set[k]; present {
+			delete(set, k)
+		} else {
+			set[k] = struct{}{}
+		}
+	}
+}
