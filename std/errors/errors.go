@@ -15,7 +15,10 @@
 // TODO do we need predefined errors? Errors such as `os.ErrInvalid` are defined specifically for the filesystem use-case. However, we need generic errors representing the various classes of incorrectness.
 package errors
 
-import "errors"
+import (
+	"errors"
+	"strings"
+)
 
 // Is repeatedly unwraps an error and compares to target on each unwrapping.
 // Is uses the implementation from std/errors.
@@ -38,4 +41,16 @@ func Stack(err error) []byte {
 // Unwrap uses the implementation from std/errors.
 func Unwrap(err error) error {
 	return errors.Unwrap(err)
+}
+
+// JoinMessages joins the error messages of each error, using the provided separator.
+func JoinMessages(errs []error, sep string) string {
+	var buf strings.Builder
+	for i, err := range errs {
+		if i > 0 {
+			buf.WriteString(sep)
+		}
+		buf.WriteString(err.Error())
+	}
+	return buf.String()
 }

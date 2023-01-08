@@ -26,7 +26,7 @@ func StartCPUProfilingFileBacked(fileName string) (io.Closer, error) {
 		dest.Close()
 		return nil, errors.Context(profilerErr, "failed to start CPU profiler (with file-backing)")
 	}
-	return io_.NewSequence(profilerCloser, dest), nil
+	return io_.NewCloseSequence(profilerCloser, dest), nil
 }
 
 func StartCPUProfiling(output io.Writer) (io.Closer, error) {

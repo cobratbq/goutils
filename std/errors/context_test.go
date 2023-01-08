@@ -4,6 +4,7 @@ package errors
 
 import (
 	"errors"
+	"os"
 	"testing"
 
 	assert "github.com/cobratbq/goutils/std/testing"
@@ -28,4 +29,12 @@ func TestContextNilError(t *testing.T) {
 	defer assert.RequirePanic(t)
 	Context(nil, "providing context to nil")
 	t.FailNow()
+}
+
+func TestAggregateContext(t *testing.T) {
+	nested1 := NewStringError("hello world failed big-time")
+	nested2 := Context(NewUintError(500), "Server failure")
+	nested3 := Context(os.ErrNotExist, "could not find unix socket connection for fancy plug-in")
+	aggregate := Aggregate(os.ErrInvalid, "provided input is bad", nested1, nested2, nested3)
+	assert.Equal(t, aggregate.Error(), "invalid argument: provided input is bad ([hello world failed big-time],[500: Server failure],[file does not exist: could not find unix socket connection for fancy plug-in])")
 }

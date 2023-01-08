@@ -71,9 +71,17 @@ type closeSequence struct {
 	seq []io.Closer
 }
 
-// NewSequence creates a new composite sequential closer that starts with the first provided closer,
-// continuing with the nexts
-func NewSequence(seq ...io.Closer) io.Closer {
+// NewCloseSequence creates a new composite sequential closer that closes in the order provided.
+//
+// The sequence will not halt on error. If closing behavior is dependent on other closers, this
+// should be part of the closer's logic. Instead, errors are collected and an aggregate error is
+// returned that includes error messages from all the failures that occurred while closing the
+// sequence.
+//
+// Returns `ErrSequenceFailure` with context in case at least one of the closers fails to close.
+//
+// Panics are not mitigated in any way.
+func NewCloseSequence(seq ...io.Closer) io.Closer {
 	return &closeSequence{seq: seq}
 }
 
@@ -86,11 +94,10 @@ func (c *closeSequence) Close() error {
 			errs = append(errs, err)
 		}
 	}
-	// FIXME (how to) aggregate multiple errors and return as single error? (see recent Go stdlib stuff)
 	if errs == nil {
 		return nil
 	}
-	return ErrSequenceClosingErrors
+	return errors.Aggregate(ErrSequenceFailure, "one or more failures occurred", errs...)
 }
 
-var ErrSequenceClosingErrors = errors.NewStringError("One or more errors occurred while closing sequences of closers")
+var ErrSequenceFailure = errors.NewStringError("Error while executing sequence of closers")
