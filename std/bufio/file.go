@@ -12,42 +12,23 @@ import (
 )
 
 // - ErrProcessingIgnore to skip irrelevant value, ErrProcessingCompleted to signal to stop reading, ...
-// TODO can we combine `ReadProcessStringLinesFunc` and `ReadProcessBytesLinesFunc` somehow? There is a lot of duplication right now. On the other hand, if it works, it does not matter that much.
 // FIXME document function (and reference other options for other use cases)
 func ReadProcessStringLinesFunc[V any](reader *bufio.Reader, delim byte, process func(line string) (V, error)) ([]V, error) {
-	var results []V
-	for {
-		line, readErr := ReadStringNoDelim(reader, delim)
-		if readErr != nil && !errors.Is(readErr, io.EOF) {
-			// Error occurred while reading line, so abort. Return results that are available, let
-			// user judge whether those are useful.
-			return results, readErr
-		}
-		v, procErr := process(line)
-		if procErr == ErrProcessingIgnore {
-			// Error indicates resulting value should be ignored.
-		} else if procErr == ErrProcessingCompleted {
-			// Allow `process` function to signal early exit.
-			results = append(results, v)
-			break
-		} else if procErr != nil {
-			// Error occurred while processing line, so abort with processing failure.
-			return results, errors.Context(ErrProcessingFailure, procErr.Error())
-		} else {
-			results = append(results, v)
-		}
-		if errors.Is(readErr, io.EOF) {
-			break
-		}
-	}
-	return results, nil
+	return readProcessTypedLinesFunc(ReadStringNoDelim, reader, delim, process)
 }
 
 // FIXME document function (and reference other options for other use cases)
 func ReadProcessBytesLinesFunc[V any](reader *bufio.Reader, delim byte, process func(line []byte) (V, error)) ([]V, error) {
+	return readProcessTypedLinesFunc(ReadBytesNoDelim, reader, delim, process)
+}
+
+func readProcessTypedLinesFunc[T []byte | string, V any](
+	read func(r *bufio.Reader, delim byte) (T, error), reader *bufio.Reader, delim byte,
+	process func(line T) (V, error)) ([]V, error) {
+
 	var results []V
 	for {
-		line, readErr := ReadBytesNoDelim(reader, delim)
+		line, readErr := read(reader, delim)
 		if readErr != nil && !errors.Is(readErr, io.EOF) {
 			// Error occurred while reading line, so abort. Return results that are available, let
 			// user judge whether those are useful.
