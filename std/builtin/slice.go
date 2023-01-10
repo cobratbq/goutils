@@ -2,7 +2,10 @@
 
 package builtin
 
-import "github.com/cobratbq/goutils/assert"
+import (
+	"github.com/cobratbq/goutils/assert"
+	"github.com/cobratbq/goutils/std/builtin/multiset"
+)
 
 // Contains checks if provided value is present anywhere in the slice.
 func Contains[E comparable](slice []E, value E) bool {
@@ -46,6 +49,14 @@ func TransformSliceToMapKeys[K comparable, V any](input []K,
 	}
 	assert.Equal(len(input), len(output))
 	return output
+}
+
+func SummarizeSliceElementCount[E comparable](data []E) map[E]uint {
+	counts := make(map[E]uint)
+	for _, e := range data {
+		multiset.Insert(counts, e)
+	}
+	return counts
 }
 
 // FilterSlice takes a slice `input` and a function `filter`. If `filter` returns true, the value is
