@@ -105,6 +105,30 @@ func UpdateSlice[E any](input []E, update func(e E) E) {
 	}
 }
 
+// MoveElementTo moves an element at given index `from` in a slice to index `to`.
+func MoveElementTo[E any](input []E, from, to int) {
+	assert.Require(to >= 0 && to < len(input), "Invalid `to` index specified.")
+	MoveElementN(input, from, to-from)
+}
+
+// MoveElementN moves an element any number of positions in a slice by repeated performing
+// in-place swaps of elements.
+func MoveElementN[E any](input []E, idx int, n int) {
+	assert.Require(idx >= 0 && idx < len(input),
+		"Invalid index value `idx` provided for input slice.")
+	assert.Require(idx+n >= 0 && idx+n < len(input),
+		"Invalid movement number `n` specified for input and starting index.")
+	if n == 0 {
+		return
+	}
+	for i := 0; i < n; i++ {
+		input[idx+i], input[idx+i+1] = input[idx+i+1], input[idx+i]
+	}
+	for i := 0; i > n; i-- {
+		input[idx+i], input[idx+i-1] = input[idx+i-1], input[idx+i]
+	}
+}
+
 // Any iterates over elements in the slice and tests if they satisfy `test`. Result is returned upon
 // first element found, and will iterate over all elements if none satisfy the condition.
 func Any[E any](input []E, test func(idx int, e E) bool) bool {
