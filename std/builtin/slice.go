@@ -54,7 +54,8 @@ func TransformSliceToMapKeys[K comparable, V any](input []K,
 
 // SummarizeSliceElementsCount summarizes the contents of the slice as a multiset/bag containing
 // each distinct element with a count for the number of occurrences.
-func SummarizeSliceElementCount[E comparable](data []E) map[E]uint {
+// FIXME reconsider name for something shorter.
+func SummarizeSliceDistinctElementCount[E comparable](data []E) map[E]uint {
 	counts := make(map[E]uint)
 	for _, e := range data {
 		multiset.Insert(counts, e)
@@ -64,7 +65,8 @@ func SummarizeSliceElementCount[E comparable](data []E) map[E]uint {
 
 // SummarizeSliceElements summarizes the contents of the slice as a set containing each distinct
 // element present.
-func SummarizeSliceElements[E comparable](data []E) map[E]struct{} {
+// FIXME reconsider name for something shorter.
+func SummarizeSliceDistinctElements[E comparable](data []E) map[E]struct{} {
 	counts := make(map[E]struct{})
 	for _, e := range data {
 		set.Insert(counts, e)
