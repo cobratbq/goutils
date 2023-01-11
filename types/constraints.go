@@ -4,7 +4,7 @@
 
 // Source: <https://go.dev/ref/spec#Interface_types>
 
-package builtin
+package types
 
 type Integer interface {
 	UnsignedInteger | SignedInteger

@@ -15,21 +15,24 @@
 // deleted from the multiset.)
 package multiset
 
-import "github.com/cobratbq/goutils/assert"
+import (
+	"github.com/cobratbq/goutils/assert"
+	"github.com/cobratbq/goutils/types"
+)
 
 // Contains tests for presence of an element in a multiset-like map.
-func Contains[K comparable](multiset map[K]uint, e K) bool {
+func Contains[K comparable, C types.UnsignedInteger](multiset map[K]C, e K) bool {
 	_, ok := multiset[e]
 	return ok
 }
 
 // Insert increments the count of an element, inserting the element if necessary.
-func Insert[K comparable](multiset map[K]uint, e K) {
+func Insert[K comparable, C types.UnsignedInteger](multiset map[K]C, e K) {
 	multiset[e] += 1
 }
 
 // InsertN increments the count of an element with n, inserting the element if necessary.
-func InsertN[K comparable](multiset map[K]uint, e K, n uint) {
+func InsertN[K comparable, C types.UnsignedInteger](multiset map[K]C, e K, n C) {
 	multiset[e] += n
 }
 
@@ -37,7 +40,7 @@ func InsertN[K comparable](multiset map[K]uint, e K, n uint) {
 // count reaches 0. By deleting the element, `len(...)` may be used to accurately measure how many
 // different elements are currently present. Go's property of assuming zero-value default allows
 // transparently querying non-existing element and receiving an accurate count of 0.
-func Remove[K comparable](multiset map[K]uint, e K) {
+func Remove[K comparable, C types.UnsignedInteger](multiset map[K]C, e K) {
 	multiset[e] -= 1
 	if multiset[e] == 0 {
 		delete(multiset, e)
@@ -46,7 +49,7 @@ func Remove[K comparable](multiset map[K]uint, e K) {
 
 // RemoveN decrements the count of an element by `n`. The element count must be at least `n`,
 // otherwise the function panics.
-func RemoveN[K comparable](multiset map[K]uint, e K, n uint) {
+func RemoveN[K comparable, C types.UnsignedInteger](multiset map[K]C, e K, n C) {
 	assert.Require(n <= multiset[e], "Decrement count cannot be bigger than count in multiset.")
 	multiset[e] -= n
 	if multiset[e] == 0 {
@@ -56,8 +59,8 @@ func RemoveN[K comparable](multiset map[K]uint, e K, n uint) {
 
 // Sum the numbers of each element in the multiset into a total count. (The number of unique
 // elements can be acquired using `len(multiset)`.)
-func Count[K comparable](multiset map[K]uint) uint {
-	count := uint(0)
+func Count[K comparable, C types.UnsignedInteger](multiset map[K]C) C {
+	count := C(0)
 	for _, n := range multiset {
 		count += n
 	}

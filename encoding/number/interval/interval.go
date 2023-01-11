@@ -1,10 +1,8 @@
 package interval
 
-import (
-	"github.com/cobratbq/goutils/std/builtin"
-)
+import "github.com/cobratbq/goutils/types"
 
-func ExpandClosed[N builtin.Integer](a, b N) []N {
+func ExpandClosed[N types.Integer](a, b N) []N {
 	if a == b {
 		return []N{a}
 	}
