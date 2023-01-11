@@ -13,6 +13,7 @@
 //
 // INVARIANT: all elements have a count strictly larger than 0. (I.e. elements that reach 0 are
 // deleted from the multiset.)
+// FIXME try to set an upper-limit guard for `C` to ensure that multiset does not wrap around undetected.
 package multiset
 
 import (

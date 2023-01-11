@@ -5,6 +5,7 @@ package builtin
 import (
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/std/builtin/multiset"
+	"github.com/cobratbq/goutils/std/builtin/set"
 )
 
 // Contains checks if provided value is present anywhere in the slice.
@@ -55,6 +56,14 @@ func SummarizeSliceElementCount[E comparable](data []E) map[E]uint {
 	counts := make(map[E]uint)
 	for _, e := range data {
 		multiset.Insert(counts, e)
+	}
+	return counts
+}
+
+func SummarizeSliceElements[E comparable](data []E) map[E]struct{} {
+	counts := make(map[E]struct{})
+	for _, e := range data {
+		set.Insert(counts, e)
 	}
 	return counts
 }
