@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 // A concise error handling package that provides the mechanisms for creating a "root" error that is
 // a basic instance of String/Uint/Int, and the ability to add stacktrace and context to the root

@@ -63,9 +63,11 @@ Let the ability to apply above pattern also serve as an indicator of quality of 
 - [Effective Go]
 - [Go Fuzzing]
 - [Go-Perfbook]
+- [LICENSE]: [AGPL-3.0-or-later](<https://spdx.org/licenses/AGPL-3.0-or-later.html> "GNU Affero General Public License v3.0 or later")
 
 [Go language specification]: <https://go.dev/ref/spec> "The Go Programming Language Specification"
 [Writing Go code]: <https://go.dev/doc/code> "How to Write Go Code"
 [Effective Go]: <https://go.dev/doc/effective_go> "Effective Go"
 [Go Fuzzing]: <https://go.dev/security/fuzz/> "Go Fuzzing"
 [Go-Perfbook]: <https://github.com/dgryski/go-perfbook> "Go-Perfbook: best-practices for writing high-performance Go code"
+[LICENSE]: <LICENSE>

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 // assert provides various assertion functions that can be used to confirm certain conditions such
 // that these conditions are guaranteed true afterwards. These functions are particularly useful to

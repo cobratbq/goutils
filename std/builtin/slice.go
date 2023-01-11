@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 package builtin
 
@@ -52,6 +52,8 @@ func TransformSliceToMapKeys[K comparable, V any](input []K,
 	return output
 }
 
+// SummarizeSliceElementsCount summarizes the contents of the slice as a multiset/bag containing
+// each distinct element with a count for the number of occurrences.
 func SummarizeSliceElementCount[E comparable](data []E) map[E]uint {
 	counts := make(map[E]uint)
 	for _, e := range data {
@@ -60,6 +62,8 @@ func SummarizeSliceElementCount[E comparable](data []E) map[E]uint {
 	return counts
 }
 
+// SummarizeSliceElements summarizes the contents of the slice as a set containing each distinct
+// element present.
 func SummarizeSliceElements[E comparable](data []E) map[E]struct{} {
 	counts := make(map[E]struct{})
 	for _, e := range data {
