@@ -13,18 +13,18 @@ import (
 
 // - ErrProcessingIgnore to skip irrelevant value, ErrProcessingCompleted to signal to stop reading, ...
 // FIXME document function (and reference other options for other use cases)
-func ReadProcessStringLinesFunc[V any](reader *bufio.Reader, delim byte, process func(line string) (V, error)) ([]V, error) {
+func ReadProcessStringLinesFunc[V any](reader *bufio.Reader, delim byte, process func(string) (V, error)) ([]V, error) {
 	return readProcessTypedLinesFunc(ReadStringNoDelim, reader, delim, process)
 }
 
 // FIXME document function (and reference other options for other use cases)
-func ReadProcessBytesLinesFunc[V any](reader *bufio.Reader, delim byte, process func(line []byte) (V, error)) ([]V, error) {
+func ReadProcessBytesLinesFunc[V any](reader *bufio.Reader, delim byte, process func([]byte) (V, error)) ([]V, error) {
 	return readProcessTypedLinesFunc(ReadBytesNoDelim, reader, delim, process)
 }
 
 func readProcessTypedLinesFunc[T []byte | string, V any](
-	read func(r *bufio.Reader, delim byte) (T, error), reader *bufio.Reader, delim byte,
-	process func(line T) (V, error)) ([]V, error) {
+	read func(*bufio.Reader, byte) (T, error), reader *bufio.Reader, delim byte,
+	process func(T) (V, error)) ([]V, error) {
 
 	var results []V
 	for {
@@ -58,7 +58,7 @@ var ErrProcessingIgnore = errors.NewStringError("processing resulted in irreleva
 
 // ReadBytesLinesNoDelimFunc
 // Deprecated: use ReadBytesLinesFunc
-func ReadBytesLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(line []byte) error) error {
+func ReadBytesLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func([]byte) error) error {
 	return ReadBytesLinesFunc(reader, delim, process)
 }
 
@@ -78,7 +78,7 @@ func ReadBytesLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(li
 // `ErrProcessingCompleted` was returned by `process` function. Returns `ErrProcessingFailure` (with
 // context-information) if error was encountered during call to `process` closure. Returns
 // IO-related errors for failures during reading.
-func ReadBytesLinesFunc(reader *bufio.Reader, delim byte, process func(line []byte) error) error {
+func ReadBytesLinesFunc(reader *bufio.Reader, delim byte, process func([]byte) error) error {
 	for {
 		line, readErr := ReadBytesNoDelim(reader, delim)
 		if readErr != nil && !errors.Is(readErr, io.EOF) {
@@ -103,7 +103,7 @@ func ReadBytesLinesFunc(reader *bufio.Reader, delim byte, process func(line []by
 
 // ReadStringLinesNoDelimFunc
 // Deprecated: use ReadStringLinesFunc
-func ReadStringLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(line string) error) error {
+func ReadStringLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(string) error) error {
 	return ReadStringLinesFunc(reader, delim, process)
 }
 
@@ -123,7 +123,7 @@ func ReadStringLinesNoDelimFunc(reader *bufio.Reader, delim byte, process func(l
 // `ErrProcessingCompleted` was returned by `process` function. Returns `ErrProcessingFailure` (with
 // context-information) if error was encountered during call to `process` closure. Returns
 // IO-related errors for failures during reading.
-func ReadStringLinesFunc(reader *bufio.Reader, delim byte, process func(line string) error) error {
+func ReadStringLinesFunc(reader *bufio.Reader, delim byte, process func(string) error) error {
 	for {
 		line, readErr := ReadStringNoDelim(reader, delim)
 		if readErr != nil && !errors.Is(readErr, io.EOF) {

@@ -38,7 +38,7 @@ func ExtractValues[K comparable, V any](map_ map[K]V) []V {
 }
 
 // ReduceMapKeys uses provided reduction function to reduce keys into a single resulting value.
-func ReduceMapKeys[K comparable, V any, R any](input map[K]V, initial R, reduce func(v R, k K) R) R {
+func ReduceMapKeys[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, K) R) R {
 	v := initial
 	for k := range input {
 		v = reduce(v, k)
@@ -50,7 +50,7 @@ func ReduceMapKeys[K comparable, V any, R any](input map[K]V, initial R, reduce 
 // TransformMap assumes correct operation of the transformation function `f`. It will allow
 // overlapping keys in the output map, possibly resulting in loss of values.
 func TransformMap[KIN, KOUT comparable, VIN, VOUT any](input map[KIN]VIN,
-	transform func(k KIN, v VIN) (KOUT, VOUT)) map[KOUT]VOUT {
+	transform func(KIN, VIN) (KOUT, VOUT)) map[KOUT]VOUT {
 
 	output := make(map[KOUT]VOUT, 0)
 	for kin, vin := range input {
@@ -65,7 +65,7 @@ func TransformMap[KIN, KOUT comparable, VIN, VOUT any](input map[KIN]VIN,
 // will not overlap. If the transformation maps to the same key more than once, execution will
 // panic. This prevents losing values by overlapping destination keys.
 func TransformMapKeyType[KIN comparable, KOUT comparable, V any](input map[KIN]V,
-	transform func(k KIN, v V) KOUT) map[KOUT]V {
+	transform func(KIN, V) KOUT) map[KOUT]V {
 
 	output := make(map[KOUT]V, len(input))
 	for kIn, value := range input {
@@ -80,7 +80,7 @@ func TransformMapKeyType[KIN comparable, KOUT comparable, V any](input map[KIN]V
 // TransformMapValueType transforms an input map into an output map, using different types for
 // values.
 func TransformMapValueType[K comparable, VIN any, VOUT any](input map[K]VIN,
-	transform func(k K, vin VIN) VOUT) map[K]VOUT {
+	transform func(K, VIN) VOUT) map[K]VOUT {
 
 	output := make(map[K]VOUT, len(input))
 	for k, vin := range input {
@@ -91,7 +91,7 @@ func TransformMapValueType[K comparable, VIN any, VOUT any](input map[K]VIN,
 
 // FilterMap filters a map according to the provided filter, returning a new map containing the
 // filtered result.
-func FilterMap[K comparable, V any](input map[K]V, filter func(k K, v V) bool) map[K]V {
+func FilterMap[K comparable, V any](input map[K]V, filter func(K, V) bool) map[K]V {
 	filtered := make(map[K]V, 0)
 	for k, v := range input {
 		if filter(k, v) {
@@ -114,7 +114,7 @@ func MergeMap[K comparable, V any](dst, src map[K]V) {
 // exists in both maps, func `conflict` is called for conflict resolution. It will return the
 // desired value, which can be determined based on provided key and the original values from both
 // maps.
-func MergeMapFunc[K comparable, V any](dst, src map[K]V, conflict func(key K, value1, value2 V) V) {
+func MergeMapFunc[K comparable, V any](dst, src map[K]V, conflict func(K, V, V) V) {
 	for k, v2 := range src {
 		if v1, present := dst[k]; present {
 			dst[k] = conflict(k, v1, v2)
