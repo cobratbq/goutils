@@ -4,6 +4,7 @@ package builtin
 
 import "github.com/cobratbq/goutils/assert"
 
+// ContainsKey checks a map for the specified key.
 func ContainsKey[K comparable, V any](map_ map[K]V, key K) bool {
 	_, ok := map_[key]
 	return ok
@@ -88,6 +89,8 @@ func TransformMapValueType[K comparable, VIN any, VOUT any](input map[K]VIN,
 	return output
 }
 
+// FilterMap filters a map according to the provided filter, returning a new map containing the
+// filtered result.
 func FilterMap[K comparable, V any](input map[K]V, filter func(k K, v V) bool) map[K]V {
 	filtered := make(map[K]V, 0)
 	for k, v := range input {

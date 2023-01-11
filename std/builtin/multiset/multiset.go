@@ -61,7 +61,7 @@ func RemoveN[K comparable, C types.UnsignedInteger](multiset map[K]C, e K, n C) 
 // Sum the numbers of each element in the multiset into a total count. (The number of unique
 // elements can be acquired using `len(multiset)`.)
 func Count[K comparable, C types.UnsignedInteger](multiset map[K]C) C {
-	count := C(0)
+	var count C
 	for _, n := range multiset {
 		count += n
 	}
