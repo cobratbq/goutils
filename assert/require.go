@@ -25,6 +25,12 @@ func Success(err error, message string) {
 	panic(message + ": " + err.Error())
 }
 
+func Type[T any](unknown interface{}, message string) T {
+	v, ok := unknown.(T)
+	Require(ok, message)
+	return v
+}
+
 // Required checks if provided value is nil, if so panics with provided message.
 func Required(val any, message string) {
 	Require(val != nil, message)
