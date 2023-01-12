@@ -74,7 +74,6 @@ func TransformSlice[I any, O any](input []I, transform func(I) O) []O {
 // be able to detect loss of information, due to faulty logic.
 // TODO consider changing this to a "MergeSliceIntoMapKeys" that does not create the map itself and provides mutating logic.
 func TransformSliceToMapKeys[K comparable, V any](input []K, transform func(int, K) V) map[K]V {
-
 	output := make(map[K]V, len(input))
 	for i, k := range input {
 		output[k] = transform(i, k)

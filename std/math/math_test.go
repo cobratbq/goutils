@@ -5,8 +5,8 @@ package math
 import (
 	"testing"
 
-	"github.com/cobratbq/goutils/std/builtin"
 	t_ "github.com/cobratbq/goutils/std/testing"
+	"github.com/cobratbq/goutils/types"
 )
 
 func TestMaxInts(t *testing.T) {
@@ -36,8 +36,8 @@ func TestMaxNInts(t *testing.T) {
 		{[]int{-1, 0}, 0},
 		{[]int{-1, 1}, 1},
 		{[]int{99, -99}, 99},
-		{[]int{builtin.MaxInt, builtin.MinInt}, builtin.MaxInt},
-		{[]int{builtin.MaxInt - 3, builtin.MaxInt - 1, builtin.MaxInt - 2, builtin.MaxInt, builtin.MaxInt - 6}, builtin.MaxInt},
+		{[]int{types.MaxInt, types.MinInt}, types.MaxInt},
+		{[]int{types.MaxInt - 3, types.MaxInt - 1, types.MaxInt - 2, types.MaxInt, types.MaxInt - 6}, types.MaxInt},
 	}
 	for _, d := range testdata {
 		t_.Equal(t, d.result, MaxN(d.v...))

@@ -6,11 +6,9 @@
 // numbers.
 package bitset
 
-import (
-	"github.com/cobratbq/goutils/std/builtin"
-)
+import "github.com/cobratbq/goutils/types"
 
-const LimbLength = builtin.UintSize
+const LimbLength = types.UintSize
 
 // Len returns the length of the set in number of (available) bits.
 func Len(bitset []uint) int {
