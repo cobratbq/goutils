@@ -1,3 +1,5 @@
+__⚠ warning__ This library is still in development. There will be changes in structure and distribution. __⚠__
+
 # GoUtils
 
 Common utilities for Go. The boundary to inclusion is that these utilities (primarily) work on a single type and rely only on the Go standard library.
