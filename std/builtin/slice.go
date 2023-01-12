@@ -66,6 +66,20 @@ func TransformSlice[I any, O any](input []I, transform func(I) O) []O {
 	for _, in := range input {
 		output = append(output, transform(in))
 	}
+	assert.Equal(len(output), cap(output))
+	assert.Equal(len(input), len(output))
+	return output
+}
+
+// ConvertSliceToMap transforms a slice with data into a map. It assumes that there
+// FIXME consider how to deal with duplicate keys. The transform function should be able to assume no overlapping values. Otherwise input should be sanitized first.
+func ConvertSliceToMap[E any, K comparable, V any](input []E, transform func(int, E) (K, V)) map[K]V {
+	output := make(map[K]V)
+	for i, e := range input {
+		k, v := transform(i, e)
+		// FIXME not considering duplicate elements in input
+		output[k] = v
+	}
 	return output
 }
 
@@ -73,9 +87,11 @@ func TransformSlice[I any, O any](input []I, transform func(I) O) []O {
 // number of keys in the output as there are entries in the input slice. This assumption exists to
 // be able to detect loss of information, due to faulty logic.
 // TODO consider changing this to a "MergeSliceIntoMapKeys" that does not create the map itself and provides mutating logic.
+// TODO consider renaming to ConvertSliceToMapKeys
 func TransformSliceToMapKeys[K comparable, V any](input []K, transform func(int, K) V) map[K]V {
 	output := make(map[K]V, len(input))
 	for i, k := range input {
+		// FIXME not considering duplicate elements in input
 		output[k] = transform(i, k)
 	}
 	assert.Equal(len(input), len(output))
