@@ -126,7 +126,7 @@ func UpdateSlice[E any](input []E, update func(E) E) {
 	}
 }
 
-// MoveElementTo moves an element at given index `from` in a slice to index `to`.
+// MoveElementTo moves an element at given index `from` in `input` to index `to`.
 func MoveElementTo[E any](input []E, from, to int) {
 	assert.Require(to >= 0 && to < len(input), "Invalid `to` index specified.")
 	MoveElementN(input, from, to-from)

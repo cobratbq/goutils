@@ -5,4 +5,5 @@
 // available.
 //
 // TODO consider adding function for "compacting" a map, i.e. copying content over into new map such that there is no memory wasted after intense use.
+// TODO consider if we need to move slices and maps utils out to prevent `builtin` from growing too big.
 package builtin
