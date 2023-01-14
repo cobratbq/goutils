@@ -13,3 +13,11 @@ func AnyPrefix(s string, prefixes ...string) bool {
 	}
 	return false
 }
+
+// OrDefault returns the provided text if non-empty, or the alternative otherwise.
+func OrDefault(text, alt string) string {
+	if text == "" {
+		return alt
+	}
+	return text
+}
