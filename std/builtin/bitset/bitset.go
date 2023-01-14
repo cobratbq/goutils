@@ -21,10 +21,24 @@ func Bit(bitset []uint, idx uint) bool {
 	return bitset[limb]&bit == bit
 }
 
+// InsertMany inserts multiple indices into the bitset.
+func InsertMany(bitset []uint, idxs ...uint) {
+	for _, idx := range idxs {
+		Insert(bitset, idx)
+	}
+}
+
 // Insert sets the bit for specified index.
 func Insert(bitset []uint, idx uint) {
 	limb, bit := loc(idx)
 	bitset[limb] |= bit
+}
+
+// RemoveMany removes multiple indices from the bitset.
+func RemoveMany(bitset []uint, idxs ...uint) {
+	for _, idx := range idxs {
+		Remove(bitset, idx)
+	}
 }
 
 // Remove removes the bit for specified index.
