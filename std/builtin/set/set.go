@@ -17,24 +17,29 @@ func Insert[K comparable](set map[K]struct{}, e K) {
 	set[e] = struct{}{}
 }
 
+// InsertMany allows inserting any number of elements provided through vararg.
+func InsertMany[K comparable](set map[K]struct{}, elms ...K) {
+	for _, e := range elms {
+		set[e] = struct{}{}
+	}
+}
+
 // Remove removes an element if present in the map.
 func Remove[K comparable](set map[K]struct{}, e K) {
 	delete(set, e)
 }
 
-// Merge merges `src` into `dst`.
-// FIXME consider naming: change to Join or Union or something?
-func Merge[K comparable](dst, src map[K]struct{}) {
-	for k := range src {
-		dst[k] = struct{}{}
+// RemoveMany removes any number of elements as provided through vararg.
+func RemoveMany[K comparable](set map[K]struct{}, elms ...K) {
+	for _, e := range elms {
+		delete(set, e)
 	}
 }
 
-// MergeSlice merges `slice` into `set`.
-// FIXME consider naming to follow function above in naming convention.
-func MergeSlice[K comparable](set map[K]struct{}, slice []K) {
-	for _, e := range slice {
-		set[e] = struct{}{}
+// Merge merges `src` into `dst`.
+func Merge[K comparable](dst, src map[K]struct{}) {
+	for k := range src {
+		dst[k] = struct{}{}
 	}
 }
 
