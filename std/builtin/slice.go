@@ -28,6 +28,12 @@ func ContainsFunc[E any](slice []E, test func(E) bool) bool {
 	return false
 }
 
+func ForEach[E any](data []E, process func(e E)) {
+	for _, e := range data {
+		process(e)
+	}
+}
+
 // TODO Index and IndexFunc are duplicates of `golang.org/x/exp/slices`. Keep for convenience or remove for duplicate?
 // Index looks for a value linearly in the slice and returns its index if found, or -1 otherwise.
 func Index[E comparable](data []E, value E) int {
