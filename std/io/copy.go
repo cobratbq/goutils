@@ -4,6 +4,7 @@ package io
 
 import (
 	"io"
+	"sync"
 
 	"github.com/cobratbq/goutils/std/log"
 )
@@ -30,4 +31,14 @@ func CopyWithWarning(out io.Writer, in io.Reader) int64 {
 func Discard(r io.Reader) int64 {
 	n, _ := io.Copy(io.Discard, r)
 	return n
+}
+
+// Transfer may be called in a goroutine. It copies all content from one connection to the next.
+// Errors are ignored. In case copying is interrupted, for whatever reason, the function finishes up
+// and releases `wg`.
+func Transfer(wg *sync.WaitGroup, dst io.Writer, src io.Reader) {
+	defer wg.Done()
+	// Skip all error handling, because we simply cannot distinguish between expected and unexpected
+	// events. Logging this will only produce noise.
+	_, _ = io.Copy(dst, src)
 }
