@@ -9,25 +9,19 @@ import (
 )
 
 func TestMustParseIntEmptyString(t *testing.T) {
-	defer func() {
-		recover()
-	}()
-	MustParseInt("", 10, 64)
+	defer assert.RequirePanic(t)
+	MustParseInt[int64]("", 10)
 	t.FailNow()
 }
 
 func TestMustParseIntIllegalString(t *testing.T) {
-	defer func() {
-		recover()
-	}()
-	MustParseInt("abcdefg", 10, 64)
+	defer assert.RequirePanic(t)
+	MustParseInt[int64]("abcdefg", 10)
 	t.FailNow()
 }
 
 func TestMustParseIntZero(t *testing.T) {
-	if MustParseInt("0", 10, 64) != 0 {
-		t.FailNow()
-	}
+	assert.Equal(t, 0, MustParseInt[int64]("0", 10))
 }
 
 func TestParseConsecutiveDigitsNil(t *testing.T) {
