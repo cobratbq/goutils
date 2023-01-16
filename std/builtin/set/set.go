@@ -6,6 +6,17 @@
 // suitable specialized implementation.
 package set
 
+// Initializes creates and initializes a new map[K]struct{} for use as a set. All provided elements
+// will immediately be included in the set. Initialization assumes that elements are unique;
+// immediately allocates room for `len(elements)` elements in the map.
+func Initialize[K comparable](elements ...K) map[K]struct{} {
+	set := make(map[K]struct{}, len(elements))
+	for _, e := range elements {
+		set[e] = struct{}{}
+	}
+	return set
+}
+
 // Contains tests for the presence of element `e` and returns true iff present.
 func Contains[K comparable](set map[K]struct{}, e K) bool {
 	_, ok := set[e]
