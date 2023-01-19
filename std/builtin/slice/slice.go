@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-package builtin
+package slice
 
 import (
+	"os"
+
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/std/builtin/multiset"
 	"github.com/cobratbq/goutils/std/builtin/set"
+	"github.com/cobratbq/goutils/std/errors"
 )
 
 // Contains checks if provided value is present anywhere in the slice.
@@ -64,13 +67,13 @@ func Duplicate[T any](src []T) []T {
 	return d
 }
 
-// MapSlice maps a slice of data-type `I` to a function `I -> O` and returns a result slice of
+// MapSlice maps a slice of data-type `I` to a function `idx, I -> O` and returns a result slice of
 // data-type `O“.
 // The result slice is immediately allocated with equal capacity to prevent further allocations.
-func TransformSlice[I any, O any](input []I, transform func(I) O) []O {
+func Transform[I any, O any](input []I, transform func(int, I) O) []O {
 	output := make([]O, 0, len(input))
-	for _, in := range input {
-		output = append(output, transform(in))
+	for idx, in := range input {
+		output = append(output, transform(idx, in))
 	}
 	assert.Equal(len(output), cap(output))
 	assert.Equal(len(input), len(output))
@@ -79,10 +82,10 @@ func TransformSlice[I any, O any](input []I, transform func(I) O) []O {
 
 // ConvertSliceToMap transforms a slice with data into a map. It assumes that there
 // FIXME consider how to deal with duplicate keys. The transform function should be able to assume no overlapping values. Otherwise input should be sanitized first.
-func ConvertSliceToMap[E any, K comparable, V any](input []E, transform func(int, E) (K, V)) map[K]V {
+func ConvertToMap[E any, K comparable, V any](input []E, transform func(int, E) (K, V)) map[K]V {
 	output := make(map[K]V)
-	for i, e := range input {
-		k, v := transform(i, e)
+	for idx, e := range input {
+		k, v := transform(idx, e)
 		// FIXME not considering duplicate elements in input
 		output[k] = v
 	}
@@ -94,11 +97,11 @@ func ConvertSliceToMap[E any, K comparable, V any](input []E, transform func(int
 // be able to detect loss of information, due to faulty logic.
 // TODO consider changing this to a "MergeSliceIntoMapKeys" that does not create the map itself and provides mutating logic.
 // TODO consider renaming to ConvertSliceToMapKeys
-func TransformSliceToMapKeys[K comparable, V any](input []K, transform func(int, K) V) map[K]V {
+func ConvertToMapKeys[K comparable, V any](input []K, transform func(int, K) V) map[K]V {
 	output := make(map[K]V, len(input))
-	for i, k := range input {
+	for idx, k := range input {
 		// FIXME not considering duplicate elements in input
-		output[k] = transform(i, k)
+		output[k] = transform(idx, k)
 	}
 	assert.Equal(len(input), len(output))
 	return output
@@ -107,7 +110,7 @@ func TransformSliceToMapKeys[K comparable, V any](input []K, transform func(int,
 // SummarizeSliceElementsCount summarizes the contents of the slice as a multiset/bag containing
 // each distinct element with a count for the number of occurrences.
 // FIXME reconsider name for something shorter.
-func SummarizeSliceDistinctElementCount[E comparable](data []E) map[E]uint {
+func DistinctElementCount[E comparable](data []E) map[E]uint {
 	counts := make(map[E]uint)
 	for _, e := range data {
 		multiset.Insert(counts, e)
@@ -118,7 +121,7 @@ func SummarizeSliceDistinctElementCount[E comparable](data []E) map[E]uint {
 // SummarizeSliceElements summarizes the contents of the slice as a set containing each distinct
 // element present.
 // FIXME reconsider name for something shorter.
-func SummarizeSliceDistinctElements[E comparable](data []E) map[E]struct{} {
+func DistinctElements[E comparable](data []E) map[E]struct{} {
 	counts := make(map[E]struct{})
 	for _, e := range data {
 		set.Insert(counts, e)
@@ -128,10 +131,10 @@ func SummarizeSliceDistinctElements[E comparable](data []E) map[E]struct{} {
 
 // FilterSlice takes a slice `input` and a function `filter`. If `filter` returns true, the value is
 // preserved. If `filter` returns false, the value is dropped.
-func FilterSlice[E any](input []E, filter func(E) bool) []E {
+func Filter[E any](input []E, filter func(int, E) bool) []E {
 	filtered := make([]E, 0)
-	for _, e := range input {
-		if filter(e) {
+	for idx, e := range input {
+		if filter(idx, e) {
 			filtered = append(filtered, e)
 		}
 	}
@@ -140,20 +143,20 @@ func FilterSlice[E any](input []E, filter func(E) bool) []E {
 
 // ReduceSlice reduces a slice `input` to a single aggregate value of type `V`, using `initial V` as
 // starting value. Function `reduce` defines exactly how `V` is determined with each entry.
-func ReduceSlice[E any, V any](input []E, initial V, reduce func(V, E) V) V {
-	v := initial
-	for _, e := range input {
-		v = reduce(v, e)
+func Reduce[E any, R any](input []E, initial R, reduce func(R, int, E) R) R {
+	r := initial
+	for idx, e := range input {
+		r = reduce(r, idx, e)
 	}
-	return v
+	return r
 }
 
 // UpdateSlice updates all elements of a slice using the provided `update` func. Elements are passed
 // in in isolation, therefore the update logic must operate on individual elements.
 // TODO consider renaming to `UpdateElements` or something to reflect that this function operates on the slice's elements.
-func UpdateSlice[E any](input []E, update func(E) E) {
+func Update[E any](input []E, update func(int, E) E) {
 	for i := 0; i < len(input); i++ {
-		input[i] = update(input[i])
+		input[i] = update(i, input[i])
 	}
 }
 
@@ -190,4 +193,24 @@ func Any[E any](input []E, test func(int, E) bool) bool {
 		}
 	}
 	return false
+}
+
+// TODO consider defining `ErrInvalid` error independent of `os` package
+func MiddleElement[E any](slice []E) (int, E, error) {
+	if idx, err := MiddleIndex(slice); err == nil {
+		return idx, slice[idx], nil
+	} else {
+		var zero E
+		return 0, zero, err
+	}
+}
+
+// MiddleIndex looks up the middle position in an odd-sized slice and returns its index. If
+// even-sized, it returns `0` and an `os.ErrInvalid` with context.
+// TODO this may be too much: consider moving to different `slice` package or something, akin to `set` or `multiset` I'd guess.
+func MiddleIndex[E any](slice []E) (int, error) {
+	if len(slice)%2 == 0 {
+		return 0, errors.Context(os.ErrInvalid, "no middle element in even-sized slice")
+	}
+	return len(slice) / 2, nil
 }
