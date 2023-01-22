@@ -4,8 +4,30 @@ package maps
 
 import "github.com/cobratbq/goutils/assert"
 
+// ContainsAll checks whether all specified keys are present in the map. Returns `true` if all
+// exist, or `false` otherwise.
+func ContainsAll[K comparable, V any](map_ map[K]V, keys ...K) bool {
+	for _, k := range keys {
+		if _, found := map_[k]; !found {
+			return false
+		}
+	}
+	return true
+}
+
+// ContainsAny checks whether any of the specified keys is present in the map. Returns `true` if any
+// one occurrence is found, and returns on the first find. If no key is found, `false` is returned.
+func ContainsAny[K comparable, V any](map_ map[K]V, keys ...K) bool {
+	for _, k := range keys {
+		if _, found := map_[k]; found {
+			return true
+		}
+	}
+	return false
+}
+
 // ContainsKey checks a map for the specified key.
-func ContainsKey[K comparable, V any](map_ map[K]V, key K) bool {
+func Contains[K comparable, V any](map_ map[K]V, key K) bool {
 	_, ok := map_[key]
 	return ok
 }
@@ -105,7 +127,7 @@ func Filter[K comparable, V any](input map[K]V, filter func(K, V) bool) map[K]V 
 // a key is present in both maps. MergeMapFunc can be used if such conflict resolution is needed.
 func Merge[K comparable, V any](dst, src map[K]V) {
 	for k, v := range src {
-		assert.False(ContainsKey(dst, k))
+		assert.False(Contains(dst, k))
 		dst[k] = v
 	}
 }
