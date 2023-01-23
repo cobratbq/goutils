@@ -11,3 +11,5 @@ func True(expected bool) {}
 func Any[T comparable](actual T, values ...T) {}
 
 func Equal[T comparable](v1, v2 T) {}
+
+func Unqual[T comparable](v1, v2 T) {}

@@ -30,3 +30,9 @@ func Equal[T comparable](v1, v2 T) {
 		panic("assertion failed: Equal")
 	}
 }
+
+func Unequal[T comparable](v1, v2 T) {
+	if v1 == v2 {
+		panic("assertion failed: Unequal")
+	}
+}
