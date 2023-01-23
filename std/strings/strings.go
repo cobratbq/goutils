@@ -21,3 +21,13 @@ func OrDefault(text, alt string) string {
 	}
 	return text
 }
+
+// CondText returns a certain text given a provided condition is true or false. Both the true and
+// false case texts can be provided.
+func CondText(cond bool, truetext, falsetext string) string {
+	if cond {
+		return truetext
+	} else {
+		return falsetext
+	}
+}
