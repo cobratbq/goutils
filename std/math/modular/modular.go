@@ -44,5 +44,5 @@ func Mod[T types.Integer](value, modulus T) T {
 	if value >= 0 {
 		return value % modulus
 	}
-	return ((value % modulus) + modulus) % modulus
+	return (value % modulus) + modulus
 }
