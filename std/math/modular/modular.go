@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-// modular package provides arithmetic functions for modular arithmetic. This helps to avoid gotchas
-// of Go remainder operator such that modulo may (unintentionally) return negative values, which is
-// often not desirable.
+// modular provides arithmetic functions for modular arithmetic. This helps to avoid gotchas of Go
+// remainder operator such that modulo may (unintentionally) return negative values, which is often
+// not desirable.
 // (Some of) these functions are not perfectly efficient. The priority is in avoiding mistakes. For
 // very efficient modular arithmetic you will want to use the remainder operator and perform modulo
 // operations only if strictly necessary within your value-range.
+//
+// References:
+// - <https://en.wikipedia.org/wiki/Modular_arithmetic>
 package modular
 
 import (
