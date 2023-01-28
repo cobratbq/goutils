@@ -141,9 +141,21 @@ func Filter[E any](input []E, filter func(int, E) bool) []E {
 	return filtered
 }
 
-// ReduceSlice reduces a slice `input` to a single aggregate value of type `V`, using `initial V` as
+// Reduce reduces a slice `input` to a single aggregate value of type `V`, using `initial V` as
 // starting value. Function `reduce` defines exactly how `V` is determined with each entry.
-func Reduce[E any, R any](input []E, initial R, reduce func(R, int, E) R) R {
+func Reduce[E any, R any](input []E, initial R, reduce func(R, E) R) R {
+	r := initial
+	for _, e := range input {
+		r = reduce(r, e)
+	}
+	return r
+}
+
+// ReduceWithIndex reduces a slice `input` to a single aggregate value of type `V`, using
+// `initial V` as starting value. Function `reduce` defines exactly how `V` is determined with each
+// entry.
+// ReduceIndexed uses a callback function that receives the slice index in addition to the value.
+func ReduceWithIndex[E any, R any](input []E, initial R, reduce func(R, int, E) R) R {
 	r := initial
 	for idx, e := range input {
 		r = reduce(r, idx, e)
