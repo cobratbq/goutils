@@ -58,6 +58,10 @@ Let the ability to apply above pattern also serve as an indicator of quality of 
 
 - TODO is there standard utils for converting bytes 0 and 1 to actual binary numbers?
 
+## Build/Usage
+
+- build tag `disable_assert` to replace assertions with empty functions to negate overhead, although overhead should be minimal to non-existent.
+
 ## References
 
 - [Go language specification]
