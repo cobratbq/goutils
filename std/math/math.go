@@ -109,3 +109,23 @@ func Sign[N types.Integer](x N) int {
 	}
 	return -1
 }
+
+// PowUint calculates a power of a given base for an arbitrary base value.
+//
+// NOTE: this function is not optimized for very large calculations and care should be taken to
+// choose a data-type with sufficient space to contain the result.
+func PowUint[U types.UnsignedInteger](base, power U) U {
+	if power == 0 {
+		return 1
+	}
+	result := base
+	for i := U(1); i < power; i++ {
+		result *= base
+	}
+	return result
+}
+
+// Add is a trivial func. It can be referenced, for example in `Reduce`.
+func Add[T types.Number](a, b T) T {
+	return a + b
+}

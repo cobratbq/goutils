@@ -6,6 +6,10 @@
 
 package types
 
+type Number interface {
+	Integer | Float
+}
+
 type Integer interface {
 	UnsignedInteger | SignedInteger
 }
