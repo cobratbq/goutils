@@ -57,6 +57,7 @@ Let the ability to apply above pattern also serve as an indicator of quality of 
 ## To-Do
 
 - TODO is there standard utils for converting bytes 0 and 1 to actual binary numbers?
+- TODO what to do with something like an interval (Advent of Code 2022, Day 15)? It's not an encoding. It's a data structure with a specific purpose in the domain of ranges/intervals. Allowed or banned?
 
 ## Build/Usage
 
