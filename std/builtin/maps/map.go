@@ -61,11 +61,20 @@ func ExtractValues[K comparable, V any](map_ map[K]V) []V {
 
 // ReduceMapKeys uses provided reduction function to reduce keys into a single resulting value.
 func ReduceKeys[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, K) R) R {
-	v := initial
+	r := initial
 	for k := range input {
-		v = reduce(v, k)
+		r = reduce(r, k)
 	}
-	return v
+	return r
+}
+
+// ReduceValues uses provided reduction function to reduce values into a single resulting value.
+func ReduceValues[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, V) R) R {
+	r := initial
+	for _, v := range input {
+		r = reduce(r, v)
+	}
+	return r
 }
 
 // TransformMap transforms both keys and values of a map into the output types for keys and values.
@@ -109,6 +118,14 @@ func TransformValueType[K comparable, VIN any, VOUT any](input map[K]VIN,
 		output[k] = transform(k, vin)
 	}
 	return output
+}
+
+// UpdateValue iterates over all values in a map and calls `update` to acquire an updated value for
+// each entry in the map. UpdateValue updates the provided map.
+func UpdateValue[K comparable, V any](data map[K]V, update func(K, V) V) {
+	for k, v := range data {
+		data[k] = update(k, v)
+	}
 }
 
 // FilterMap filters a map according to the provided filter, returning a new map containing the
