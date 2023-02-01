@@ -107,7 +107,7 @@ func ConvertToMapKeys[K comparable, V any](input []K, transform func(int, K) V) 
 	return output
 }
 
-// SummarizeSliceElementsCount summarizes the contents of the slice as a multiset/bag containing
+// DistinctElementCount summarizes the contents of the slice as a multiset/bag containing
 // each distinct element with a count for the number of occurrences.
 // FIXME reconsider name for something shorter.
 func DistinctElementCount[E comparable](data []E) map[E]uint {
@@ -118,7 +118,7 @@ func DistinctElementCount[E comparable](data []E) map[E]uint {
 	return counts
 }
 
-// SummarizeSliceElements summarizes the contents of the slice as a set containing each distinct
+// DistinctElements summarizes the contents of the slice as a set containing each distinct
 // element present.
 // FIXME reconsider name for something shorter.
 func DistinctElements[E comparable](data []E) map[E]struct{} {
