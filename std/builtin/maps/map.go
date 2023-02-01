@@ -163,6 +163,19 @@ func MergeFunc[K comparable, V any](dst, src map[K]V, conflict func(K, V, V) V) 
 	}
 }
 
+// MergeValuesFunc merges two maps, and calls `conflict` in case a key exists in both maps.
+// `conflict` takes only values (see `MergeFunc` for conflict func that includes parameter for `K`)
+// and uses the value returned by `conflict`.
+func MergeValuesFunc[K comparable, V any](dst, src map[K]V, conflict func(V, V) V) {
+	for k, v2 := range src {
+		if v1, present := dst[k]; present {
+			dst[k] = conflict(v1, v2)
+		} else {
+			dst[k] = v2
+		}
+	}
+}
+
 // MapKeysSubset checks, `O(n)` for `n` entries, if all keys of `subset` map are present in `set` map. Values are not
 // considered.
 func KeySubset[K comparable, V any](set map[K]V, subset map[K]V) bool {
