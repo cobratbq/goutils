@@ -31,19 +31,19 @@ func TestRequireNonNil(t *testing.T) {
 	Required("Hello", "World!")
 }
 
-func TestRequireSuccessFails(t *testing.T) {
+func TestSuccessFails(t *testing.T) {
 	defer assert.RequirePanic(t)
-	RequireSuccess(errors.New("bad stuff happened"), "We expected to receive no error!")
+	Success(errors.New("bad stuff happened"), "We expected to receive no error!")
 	t.FailNow()
 }
 
-func TestRequireSuccessSucceeds(t *testing.T) {
-	RequireSuccess(nil, "Everything should have been fine!")
+func TestSuccessSucceeds(t *testing.T) {
+	Success(nil, "Everything should have been fine!")
 }
 
-func TestRequireSuccessFormatSpecifier(t *testing.T) {
+func TestSuccessFormatSpecifier(t *testing.T) {
 	defer assert.RequirePanic(t)
-	RequireSuccess(errors.New("Test"), "BUG: this message is part of the panic: %+v")
+	Success(errors.New("Test"), "BUG: this message is part of the panic: %+v")
 	t.FailNow()
 }
 
