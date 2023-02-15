@@ -100,4 +100,4 @@ func (c *closeSequence) Close() error {
 	return errors.Aggregate(ErrSequenceFailure, "one or more failures occurred", errs...)
 }
 
-var ErrSequenceFailure = errors.NewStringError("Error while executing sequence of closers")
+var ErrSequenceFailure = errors.NewStringError("error while executing sequence of closers")

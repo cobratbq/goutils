@@ -11,6 +11,46 @@ import (
 	io_ "github.com/cobratbq/goutils/std/io"
 )
 
+// OpenFileProcessStringLinesFunc opens the file - specified by name - and reads lines denoted by
+// `delim` in order to process their contents as strings passing them on to `process`. After
+// processing has terminated (contents exhausted or completion signaled, see
+// `ReadProcessStringLines`), the file is closed and results returned.
+//
+// Errors:
+//   - returns no result and error, in case of error while opening the input file.
+//   - returns partial results (successfully processed lines) and error, in case of error produced
+//     inside the `process` func while processing a line. (See `ReadProcessStringLines`)
+func OpenFileProcessStringLinesFunc[V any](filename string, delim byte, process func(string) (V, error)) ([]V, error) {
+	reader, closer, inputErr := OpenFileReadOnly(filename)
+	if inputErr != nil {
+		return nil, inputErr
+	}
+	// NOTE: assuming for now that nothing significant can go wrong *if* a failure during closing
+	// even happens. Logging for transparency but should be fine.
+	defer io_.CloseLogged(closer, "Failed to gracefully close the input file")
+	return readProcessTypedLinesFunc(ReadStringNoDelim, reader, delim, process)
+}
+
+// OpenFileProcessBytesLinesFunc opens the file - specified by name - and reads lines denoted by
+// `delim` in order to process their contents as strings passing them on to `process`. After
+// processing has terminated (contents exhausted or completion signaled, see
+// `ReadProcessStringLines`), the file is closed and results returned.
+//
+// Errors:
+//   - returns no result and error, in case of error while opening the input file.
+//   - returns partial results (successfully processed lines) and error, in case of error produced
+//     inside the `process` func while processing a line. (See `ReadProcessStringLines`)
+func OpenFileProcessBytesLinesFunc[V any](filename string, delim byte, process func([]byte) (V, error)) ([]V, error) {
+	reader, closer, inputErr := OpenFileReadOnly(filename)
+	if inputErr != nil {
+		return nil, inputErr
+	}
+	// NOTE: assuming for now that nothing significant can go wrong *if* a failure during closing
+	// even happens. Logging for transparency but should be fine.
+	defer io_.CloseLogged(closer, "Failed to gracefully close the input file")
+	return readProcessTypedLinesFunc(ReadBytesNoDelim, reader, delim, process)
+}
+
 // - ErrProcessingIgnore to skip irrelevant value, ErrProcessingCompleted to signal to stop reading, ...
 // FIXME document function (and reference other options for other use cases)
 func ReadProcessStringLinesFunc[V any](reader *bufio.Reader, delim byte, process func(string) (V, error)) ([]V, error) {
@@ -22,7 +62,7 @@ func ReadProcessBytesLinesFunc[V any](reader *bufio.Reader, delim byte, process 
 	return readProcessTypedLinesFunc(ReadBytesNoDelim, reader, delim, process)
 }
 
-func readProcessTypedLinesFunc[T []byte | string, V any](
+func readProcessTypedLinesFunc[T ~[]byte | ~string, V any](
 	read func(*bufio.Reader, byte) (T, error), reader *bufio.Reader, delim byte,
 	process func(T) (V, error)) ([]V, error) {
 
