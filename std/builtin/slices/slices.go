@@ -67,10 +67,10 @@ func Duplicate[T any](src []T) []T {
 	return d
 }
 
-// MapSlice maps a slice of data-type `I` to a function `idx, I -> O` and returns a result slice of
-// data-type `O“.
-// The result slice is immediately allocated with equal capacity to prevent further allocations.
-func Transform[I any, O any](input []I, transform func(int, I) O) []O {
+// Transform maps a slice of data-type `I` to a function `idx, I -> O` and returns a result slice of
+// data-type `O`.`
+// The result slice is immediately allocated with equal capacity to minimize allocations.
+func Transform[I, O any](input []I, transform func(int, I) O) []O {
 	output := make([]O, 0, len(input))
 	for idx, in := range input {
 		output = append(output, transform(idx, in))
@@ -80,7 +80,20 @@ func Transform[I any, O any](input []I, transform func(int, I) O) []O {
 	return output
 }
 
-// ConvertSliceToMap transforms a slice with data into a map. It assumes that there
+// TransformValues maps a slice of data-type `I` to a function `I -> O` and returns a result slice
+// of data-type `O`.
+// The result slice is immediately allocated with equal capacity to minimize allocations.
+func TransformValues[I, O any](input []I, transform func(I) O) []O {
+	output := make([]O, 0, len(input))
+	for _, in := range input {
+		output = append(output, transform(in))
+	}
+	assert.Equal(len(output), cap(output))
+	assert.Equal(len(input), len(output))
+	return output
+}
+
+// ConvertToMap transforms a slice with data into a map. It assumes that there
 // FIXME consider how to deal with duplicate keys. The transform function should be able to assume no overlapping values. Otherwise input should be sanitized first.
 func ConvertToMap[E any, K comparable, V any](input []E, transform func(int, E) (K, V)) map[K]V {
 	output := make(map[K]V)
@@ -196,6 +209,10 @@ func MoveElementN[E any](input []E, idx int, n int) {
 	}
 }
 
+func All[E any](input []E, test func(int, E) bool) bool {
+	return !Any(input, test)
+}
+
 // Any iterates over elements in the slice and tests if they satisfy `test`. Result is returned upon
 // first element found, and will iterate over all elements if none satisfy the condition.
 func Any[E any](input []E, test func(int, E) bool) bool {
@@ -225,4 +242,13 @@ func MiddleIndex[E any](slice []E) (int, error) {
 		return 0, errors.Context(os.ErrInvalid, "no middle element in even-sized slice")
 	}
 	return len(slice) / 2, nil
+}
+
+// Reversed creates a new slice with the contents of provided slice in reversed order.
+func Reversed[E any](slice []E) []E {
+	result := make([]E, 0, len(slice))
+	for i := len(slice) - 1; i >= 0; i-- {
+		result = append(result, slice[i])
+	}
+	return result
 }

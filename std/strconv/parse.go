@@ -27,8 +27,9 @@ func ParseConsecutiveDigits[T types.UnsignedInteger](line []byte) (T, int) {
 	return MustParseUint[T](string(line[:i]), DecimalBase), i
 }
 
-// DecimalBase is the base for the decimal system.
+const OctalBase = 8
 const DecimalBase = 10
+const HexadecimalBase = 16
 
 // MustParseInt parses a string for an integer value of at most specified bitsize. Success is
 // assumed and the function will panic on error.
@@ -43,6 +44,11 @@ func ParseInt[T types.SignedInteger](s string, base int) (T, error) {
 	var bitsize = int(unsafe.Sizeof(T(0))) * 8
 	result, err := strconv.ParseInt(s, base, bitsize)
 	return T(result), err
+}
+
+// MustParseUintDecimal parses a string and expects to convert to a decimal type.
+func MustParseUintDecimal[T types.UnsignedInteger](s string) T {
+	return MustParseUint[T](s, DecimalBase)
 }
 
 // MustParseUint parses a string for an unsigned integer value of at most specified bitsize. Success

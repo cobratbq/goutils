@@ -2,9 +2,13 @@
 
 // TODO `golang.org/x/exp/constraints` provides similar types, but is not yet part of the standard library.
 
-// Source: <https://go.dev/ref/spec#Interface_types>
+// Source: <https://go.dev/ref/spec#Interface_types> <https://pkg.go.dev/golang.org/x/exp>
 
 package types
+
+type Ordered interface {
+	Number | ~string
+}
 
 type Number interface {
 	Integer | Float

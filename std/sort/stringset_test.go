@@ -26,10 +26,10 @@ func TestStringSetSingle(t *testing.T) {
 
 func TestStringSetSomeStrings(t *testing.T) {
 	set := map[string]struct{}{
-		"citrus": struct{}{},
-		"banana": struct{}{},
-		"pear":   struct{}{},
-		"apple":  struct{}{},
+		"citrus": {},
+		"banana": {},
+		"pear":   {},
+		"apple":  {},
 	}
 	sorted := StringSet(set)
 	if len(sorted) != 4 {

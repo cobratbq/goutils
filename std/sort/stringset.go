@@ -10,6 +10,7 @@ import (
 
 // StringSet sorts the keys in a set (a map[string]struct{}) in
 // lexicographical order.
+// TODO add parametric type
 func StringSet(set map[string]struct{}) []string {
 	keys := maps.ExtractKeys(set)
 	sort.Strings(keys)
