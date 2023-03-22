@@ -10,7 +10,7 @@ func IsDigit(in byte) bool {
 		in == '6' || in == '7' || in == '8' || in == '9'
 }
 
-func ReadDigit(in byte) uint8 {
+func DecodeDigit(in byte) uint8 {
 	switch in {
 	case '0':
 		return 0
@@ -37,7 +37,7 @@ func ReadDigit(in byte) uint8 {
 	}
 }
 
-func WriteDigit(in uint8) byte {
+func EncodeDigit(in uint8) byte {
 	switch in {
 	case 0:
 		return '0'
