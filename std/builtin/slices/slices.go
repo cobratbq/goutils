@@ -142,9 +142,21 @@ func DistinctElements[E comparable](data []E) map[E]struct{} {
 	return counts
 }
 
-// FilterSlice takes a slice `input` and a function `filter`. If `filter` returns true, the value is
+// Filter takes a slice `input` and a function `filter`. If `filter` returns true, the value is
 // preserved. If `filter` returns false, the value is dropped.
-func Filter[E any](input []E, filter func(int, E) bool) []E {
+func Filter[E any](input []E, filter func(E) bool) []E {
+	filtered := make([]E, 0)
+	for _, e := range input {
+		if filter(e) {
+			filtered = append(filtered, e)
+		}
+	}
+	return filtered
+}
+
+// FilterWithIndex takes a slice `input` and a function `filter`. If `filter` returns true, the
+// value is preserved. If `filter` returns false, the value is dropped.
+func FilterWithIndex[E any](input []E, filter func(int, E) bool) []E {
 	filtered := make([]E, 0)
 	for idx, e := range input {
 		if filter(idx, e) {

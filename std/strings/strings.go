@@ -31,3 +31,13 @@ func CondText(cond bool, truetext, falsetext string) string {
 		return falsetext
 	}
 }
+
+// ContainsAll tests if all chars are present in s (subset).
+func ContainsAll(s, chars string) bool {
+	for _, r := range chars {
+		if !strings.ContainsRune(s, r) {
+			return false
+		}
+	}
+	return true
+}
