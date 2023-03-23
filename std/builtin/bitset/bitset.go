@@ -10,6 +10,16 @@ import "github.com/cobratbq/goutils/types"
 
 const LimbLength = types.UintSize
 
+// Calculate calculates the size of a backing array such that it can store at least the specified
+// capacity. (Rounded up to the next full limb. See `LimbLength`)
+func Calculate(capacity uint) int {
+	size := int(capacity / LimbLength)
+	if capacity%LimbLength != 0 {
+		size++
+	}
+	return size
+}
+
 // Len returns the length of the set in number of (available) bits.
 func Len(bitset []uint) int {
 	return len(bitset) * LimbLength
