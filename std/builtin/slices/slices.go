@@ -11,6 +11,14 @@ import (
 	"github.com/cobratbq/goutils/std/errors"
 )
 
+// AppendCond appends to a slice if condition holds true.
+func AppendCond[E any](cond bool, slice []E, value ...E) []E {
+	if cond {
+		return append(slice, value...)
+	}
+	return slice
+}
+
 // Contains checks if provided value is present anywhere in the slice.
 func Contains[E comparable](slice []E, value E) bool {
 	for _, v := range slice {
