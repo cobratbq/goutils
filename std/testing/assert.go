@@ -8,30 +8,35 @@ package testing
 import "testing"
 
 func True(t testing.TB, v bool) {
+	t.Helper()
 	if !v {
 		t.Error("Value is false")
 	}
 }
 
 func False(t testing.TB, v bool) {
+	t.Helper()
 	if v {
 		t.Error("Value is true")
 	}
 }
 
 func Nil(t testing.TB, v interface{}) {
+	t.Helper()
 	if v != nil {
 		t.Errorf("Value is not nil: %v", v)
 	}
 }
 
 func NotNil(t testing.TB, v interface{}) {
+	t.Helper()
 	if v == nil {
 		t.Error("Value is nil.")
 	}
 }
 
 func Equal[T comparable](t testing.TB, a, b T) {
+	t.Helper()
 	if a == b {
 		return
 	}
@@ -39,12 +44,14 @@ func Equal[T comparable](t testing.TB, a, b T) {
 }
 
 func Unequal[T comparable](t testing.TB, a, b T) {
+	t.Helper()
 	if a == b {
 		t.Errorf("Strings '%v' and '%v' should not be equal", a, b)
 	}
 }
 
 func SliceContains[T comparable](t testing.TB, slice []T, elm T) {
+	t.Helper()
 	for _, v := range slice {
 		if v == elm {
 			return
@@ -54,26 +61,31 @@ func SliceContains[T comparable](t testing.TB, slice []T, elm T) {
 }
 
 func ElementPresent[K comparable](t testing.TB, set map[K]struct{}, key K) {
+	t.Helper()
 	KeyPresent(t, set, key)
 }
 
 func ElementAbsent[K comparable](t testing.TB, set map[K]struct{}, key K) {
+	t.Helper()
 	KeyAbsent(t, set, key)
 }
 
 func KeyPresent[K comparable, V any](t testing.TB, set map[K]V, key K) {
+	t.Helper()
 	if _, ok := set[key]; !ok {
 		t.Errorf("Expected key '%v' to be present in map.", key)
 	}
 }
 
 func KeyAbsent[K comparable, V any](t testing.TB, set map[K]V, key K) {
+	t.Helper()
 	if _, ok := set[key]; ok {
 		t.Errorf("Expected key '%v' to be absent in map.", key)
 	}
 }
 
 func ValuePresent[K comparable, V comparable](t testing.TB, map_ map[K]V, value V) {
+	t.Helper()
 	for _, v := range map_ {
 		if v == value {
 			return
@@ -83,6 +95,7 @@ func ValuePresent[K comparable, V comparable](t testing.TB, map_ map[K]V, value 
 }
 
 func ValueAbsent[K comparable, V comparable](t testing.TB, map_ map[K]V, value V) {
+	t.Helper()
 	for _, v := range map_ {
 		if v == value {
 			t.Errorf("Expected value '%v' to be absent in map.", value)
