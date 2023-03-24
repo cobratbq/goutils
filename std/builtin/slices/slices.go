@@ -272,3 +272,43 @@ func Reversed[E any](slice []E) []E {
 	}
 	return result
 }
+
+// EmptyFrom3D creates an empty 3D slice with dimensions from the provided prototype.
+func EmptyFrom3D[E, V any](prototype [][][]E, initial V) [][][]V {
+	outer := make([][][]V, len(prototype))
+	for i := 0; i < len(outer); i++ {
+		outer[i] = EmptyFrom2D(prototype[i], initial)
+	}
+	return outer
+}
+
+// EmptyFrom2D creates an empty 2D slice with dimensions from the provided prototype.
+func EmptyFrom2D[E, V any](prototype [][]E, initial V) [][]V {
+	outer := make([][]V, len(prototype))
+	for i := 0; i < len(outer); i++ {
+		outer[i] = EmptyFrom(prototype[i], initial)
+	}
+	return outer
+}
+
+// EmptyFrom creates an empty (multi-dimensional) slice with initial values `initial`.
+func EmptyFrom[E, V any](prototype []E, initial V) []V {
+	slice := make([]V, len(prototype))
+	for i := 0; i < len(slice); i++ {
+		slice[i] = initial
+	}
+	return slice
+}
+
+func UniformDimensions2D[E any](slice [][]E) bool {
+	if len(slice) == 0 {
+		return true
+	}
+	length := len(slice[0])
+	for i := 1; i < len(slice); i++ {
+		if len(slice[i]) != length {
+			return false
+		}
+	}
+	return true
+}
