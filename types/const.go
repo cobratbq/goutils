@@ -13,15 +13,15 @@ const IntSize = strconv.IntSize
 
 // MaxInt is the maximum int value for the targeted platform. Other constants for data-types can be
 // found in package `math` package.
-const MaxInt = math.MaxInt
+const MaxInt int = math.MaxInt
 
 // MinInt is the minimum int value for the targeted platform. Other constants for data-types can be
 // found in package `math` package.
-const MinInt = math.MinInt
+const MinInt int = math.MinInt
 
 // UintSize is the bit-size of the data-type for the targeted platform.
 const UintSize = bits.UintSize
 
 // MaxUint is the maximum uint value for the targeted platform. Other constants for data-types can
 // be found in package `math` package.
-const MaxUint = math.MaxUint
+const MaxUint uint = math.MaxUint
