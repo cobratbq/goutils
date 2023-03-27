@@ -10,9 +10,10 @@ import (
 	"github.com/cobratbq/goutils/std/log"
 )
 
-// CloseDiscarded closes the closer and discards any possible error.
+// CloseIgnored closes the closer and discards any possible error.
 func CloseIgnored(c io.Closer) {
-	c.Close()
+	err := c.Close()
+	log.TracelnDepth(1, "`CloseIgnored` ignores error:", err)
 }
 
 // ClosePanicked closes the closer and panics with specified message in case of any error, except
@@ -52,6 +53,7 @@ func (n *NopCloser) Write(p []byte) (int, error) {
 
 // Close is a no-op.
 func (n *NopCloser) Close() error {
+	log.TracelnDepth(1, "`NopCloser` not closing wrapped ReadWriter.")
 	return nil
 }
 

@@ -11,7 +11,8 @@ import (
 
 // CopyNoWarning copies contents from in to out. Do NOT log anything in case transfer interrupts.
 func CopyNoWarning(out io.Writer, in io.Reader) int64 {
-	n, _ := io.Copy(out, in)
+	n, err := io.Copy(out, in)
+	log.TracelnDepth(1, "`CopyNoWarning` ignores error", err)
 	return n
 }
 
@@ -25,11 +26,11 @@ func CopyWithWarning(out io.Writer, in io.Reader) int64 {
 	return n
 }
 
-// Discard reads remaining data from reader and discards it. Any possible
-// errors in the process are ignored. Returns nr of bytes written, thus
-// discarded.
+// Discard reads remaining data from reader and discards it. Any possible errors in the process are
+// ignored. Returns nr of bytes written, thus discarded.
 func Discard(r io.Reader) int64 {
-	n, _ := io.Copy(io.Discard, r)
+	n, err := io.Copy(io.Discard, r)
+	log.TracelnDepth(1, "`CopyNoWarning` ignores error", err)
 	return n
 }
 
@@ -41,4 +42,5 @@ func Transfer(wg *sync.WaitGroup, dst io.Writer, src io.Reader) {
 	// Skip all error handling, because we simply cannot distinguish between expected and unexpected
 	// events. Logging this will only produce noise.
 	_, _ = io.Copy(dst, src)
+	// TODO if I include trace-logging here for `io.Copy` output, would that (ideally) be discarded for builds with `!enable_trace`?
 }
