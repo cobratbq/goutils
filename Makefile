@@ -8,7 +8,7 @@ all: build test
 
 .PHONY: test
 test: build
-	go test -tags netgo ./...
+	go test -v -tags netgo ./...
 
 .PHONY: build
 build: go.mod
