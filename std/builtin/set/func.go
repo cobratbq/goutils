@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 package set
 
 // SupersetOf constructs a closure with set `a`, such that it can be used repeatedly to test whether
