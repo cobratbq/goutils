@@ -17,6 +17,19 @@ func Create[K comparable](elements ...K) map[K]struct{} {
 	return set
 }
 
+// ContainsAll checks whether all elements of `b` are present in `a`.
+func ContainsAll[K comparable](a, b map[K]struct{}) bool {
+	if len(b) > len(a) {
+		return false
+	}
+	for k := range b {
+		if _, ok := a[k]; !ok {
+			return false
+		}
+	}
+	return true
+}
+
 // Contains tests for the presence of element `e` and returns true iff present.
 func Contains[K comparable](set map[K]struct{}, e K) bool {
 	_, ok := set[e]
