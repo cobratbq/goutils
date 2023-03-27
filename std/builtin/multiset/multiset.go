@@ -21,11 +21,11 @@ import (
 	"github.com/cobratbq/goutils/types"
 )
 
-// Initializes creates and initializes a new map[K]C for use as multiset. All provided elements
-// will immediately be included in the multiset, with initial value as specified in param `count`.
+// Create creates and initializes a new map[K]C for use as multiset. All provided elements will
+// immediately be included in the multiset, with initial value as specified in param `count`.
 // Initialization assumes that elements are unique; immediately allocates room for `len(elements)`
 // elements in the map.
-func Initialize[K comparable, C types.UnsignedInteger](count C, elements ...K) map[K]C {
+func Create[K comparable, C types.UnsignedInteger](count C, elements ...K) map[K]C {
 	assert.Require(count > 0, "The initial count must be larger than 0.")
 	multiset := make(map[K]C, len(elements))
 	for _, e := range elements {

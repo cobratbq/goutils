@@ -6,10 +6,10 @@
 // suitable specialized implementation.
 package set
 
-// Initializes creates and initializes a new map[K]struct{} for use as a set. All provided elements
-// will immediately be included in the set. Initialization assumes that elements are unique;
-// immediately allocates room for `len(elements)` elements in the map.
-func Initialize[K comparable](elements ...K) map[K]struct{} {
+// Create creates and initializes a new map[K]struct{} for use as a set. All provided elements will
+// immediately be included in the set. Initialization assumes that elements are unique; immediately
+// allocates room for `len(elements)` elements in the map.
+func Create[K comparable](elements ...K) map[K]struct{} {
 	set := make(map[K]struct{}, len(elements))
 	for _, e := range elements {
 		set[e] = struct{}{}
@@ -58,7 +58,7 @@ func Merge[K comparable](dst, src map[K]struct{}) {
 //
 // See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
 //
-// FIXME unused, untested, consider producing separate output
+// FIXME unused, untested, consider producing separate output (probably should be named `subtract` considering it is a impure function)
 func Difference[K comparable](set, other map[K]struct{}) {
 	for k := range other {
 		// remove indiscriminately because it doesn't matter if the element isn't present anyways
@@ -71,7 +71,7 @@ func Difference[K comparable](set, other map[K]struct{}) {
 //
 // See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
 //
-// FIXME unused, untested, consider producing separate output
+// FIXME unused, untested, consider producing separate output (probably should be made pure)
 func SymmetricDifference[K comparable](set, other map[K]struct{}) {
 	for k := range other {
 		if _, present := set[k]; present {
