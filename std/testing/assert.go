@@ -51,6 +51,7 @@ func Unequal[T comparable](t testing.TB, a, b T) {
 }
 
 func SliceContains[T comparable](t testing.TB, slice []T, elm T) {
+	// TODO consider renaming
 	t.Helper()
 	for _, v := range slice {
 		if v == elm {
@@ -61,11 +62,13 @@ func SliceContains[T comparable](t testing.TB, slice []T, elm T) {
 }
 
 func ElementPresent[K comparable](t testing.TB, set map[K]struct{}, key K) {
+	// TODO consider removing
 	t.Helper()
 	KeyPresent(t, set, key)
 }
 
 func ElementAbsent[K comparable](t testing.TB, set map[K]struct{}, key K) {
+	// TODO consider removing
 	t.Helper()
 	KeyAbsent(t, set, key)
 }
