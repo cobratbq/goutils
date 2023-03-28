@@ -13,7 +13,7 @@ var tracelog = log.New(os.Stderr, "[TRACE] ", log.LstdFlags|log.Llongfile)
 // Traceln (if `enable_trace`) logs the provided arguments. Included in the logging output is the
 // file name and line number of the immediate caller.
 func Traceln(args ...any) {
-	TracelnDepth(0, args...)
+	tracelog.Output(2, fmt.Sprintln(args...))
 }
 
 // TracelnDepth (if `enable_trace`) logs the provided arguments. Included in the logging output is
@@ -26,7 +26,7 @@ func TracelnDepth(depth uint, args ...any) {
 // Tracef (if `enable_trace`) logs the provided arguments in specified format. Included in the
 // logging output is the file name and line number of the immediate caller.
 func Tracef(format string, args ...any) {
-	TracefDepth(0, format, args...)
+	tracelog.Output(2, fmt.Sprintf(format, args...))
 }
 
 // TracefDepth (if `enable_trace`) logs the provided arguments in specified format. Included in the
