@@ -18,6 +18,9 @@ package multiset
 
 import (
 	"github.com/cobratbq/goutils/assert"
+	"github.com/cobratbq/goutils/std/builtin"
+	"github.com/cobratbq/goutils/std/builtin/maps"
+	math_ "github.com/cobratbq/goutils/std/math"
 	"github.com/cobratbq/goutils/types"
 )
 
@@ -79,4 +82,42 @@ func Count[K comparable, C types.UnsignedInteger](multiset map[K]C) C {
 		count += n
 	}
 	return count
+}
+
+func Union[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
+	united := maps.Duplicate(a)
+	maps.MergeValuesFunc(united, b, math_.Max[C])
+	return united
+}
+
+func Intersection[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
+	intersect := maps.Duplicate(a)
+	maps.MergeValuesFunc(intersect, b, math_.Min[C])
+	return intersect
+}
+
+func Sum[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
+	sum := maps.Duplicate(a)
+	maps.MergeValuesFunc(sum, b, builtin.Add[C])
+	return sum
+}
+
+func Difference[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
+	difference := maps.Duplicate(a)
+	maps.MergeValuesFunc(difference, b, func(v1, v2 C) C {
+		if v1 < v2 {
+			return 0
+		}
+		return v1 - v2
+	})
+	clean(difference)
+	return difference
+}
+
+func clean[K comparable, C types.UnsignedInteger](multiset map[K]C) {
+	for k, v := range multiset {
+		if v <= 0 {
+			delete(multiset, k)
+		}
+	}
 }
