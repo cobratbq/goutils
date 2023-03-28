@@ -124,15 +124,3 @@ func PowUint[U types.UnsignedInteger](base, power U) U {
 	}
 	return result
 }
-
-// Add is a trivial func. It does not protect its boundaries, e.g. overflowing.
-// It can be referenced, for example in `Reduce`.
-func Add[T types.Number](a, b T) T {
-	return a + b
-}
-
-// Multiply is a trivial func. It does not protect its boundaries, e.g. overflowing.
-// It can be referenced, for example in `Reduce`.
-func Multiply[T types.Number](a, b T) T {
-	return a * b
-}
