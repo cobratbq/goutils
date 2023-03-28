@@ -75,10 +75,10 @@ func Duplicate[T any](src []T) []T {
 	return d
 }
 
-// Transform maps a slice of data-type `I` to a function `idx, I -> O` and returns a result slice of
-// data-type `O`.`
-// The result slice is immediately allocated with equal capacity to minimize allocations.
-func Transform[I, O any](input []I, transform func(int, I) O) []O {
+// TransformWithIndex maps a slice of data-type `I` to a function `idx, I -> O` and returns a result
+// slice of data-type `O`.` The result slice is immediately allocated with equal capacity to
+// minimize allocations.
+func TransformWithIndex[I, O any](input []I, transform func(int, I) O) []O {
 	output := make([]O, 0, len(input))
 	for idx, in := range input {
 		output = append(output, transform(idx, in))
@@ -88,10 +88,10 @@ func Transform[I, O any](input []I, transform func(int, I) O) []O {
 	return output
 }
 
-// TransformValues maps a slice of data-type `I` to a function `I -> O` and returns a result slice
-// of data-type `O`.
-// The result slice is immediately allocated with equal capacity to minimize allocations.
-func TransformValues[I, O any](input []I, transform func(I) O) []O {
+// Transform maps a slice of data-type `I` to a function `I -> O` and returns a result slice of
+// data-type `O`. The result slice is immediately allocated with equal capacity to minimize
+// allocations.
+func Transform[I, O any](input []I, transform func(I) O) []O {
 	output := make([]O, 0, len(input))
 	for _, in := range input {
 		output = append(output, transform(in))
@@ -196,7 +196,7 @@ func ReduceWithIndex[E any, R any](input []E, initial R, reduce func(R, int, E) 
 	return r
 }
 
-// UpdateSlice updates all elements of a slice using the provided `update` func. Elements are passed
+// Update updates all elements of a slice using the provided `update` func. Elements are passed
 // in in isolation, therefore the update logic must operate on individual elements.
 // TODO consider renaming to `UpdateElements` or something to reflect that this function operates on the slice's elements.
 func Update[E any](input []E, update func(int, E) E) {
@@ -229,6 +229,7 @@ func MoveElementN[E any](input []E, idx int, n int) {
 	}
 }
 
+// All checks if all values in a slice satisfy `test`, that is `test` returns true.
 func All[E any](input []E, test func(int, E) bool) bool {
 	return !Any(input, test)
 }

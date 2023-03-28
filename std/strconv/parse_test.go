@@ -10,18 +10,18 @@ import (
 
 func TestMustParseIntEmptyString(t *testing.T) {
 	defer assert.RequirePanic(t)
-	MustParseInt[int64]("", 10)
+	MustParseInt[int64]("", DecimalBase)
 	t.FailNow()
 }
 
 func TestMustParseIntIllegalString(t *testing.T) {
 	defer assert.RequirePanic(t)
-	MustParseInt[int64]("abcdefg", 10)
+	MustParseInt[int64]("abcdefg", DecimalBase)
 	t.FailNow()
 }
 
 func TestMustParseIntZero(t *testing.T) {
-	assert.Equal(t, 0, MustParseInt[int64]("0", 10))
+	assert.Equal(t, 0, MustParseInt[int64]("0", DecimalBase))
 }
 
 func TestParseConsecutiveDigitsNil(t *testing.T) {

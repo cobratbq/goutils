@@ -26,13 +26,13 @@ func ContainsAny[K comparable, V any](map_ map[K]V, keys ...K) bool {
 	return false
 }
 
-// ContainsKey checks a map for the specified key.
+// Contains checks a map for the specified key.
 func Contains[K comparable, V any](map_ map[K]V, key K) bool {
 	_, ok := map_[key]
 	return ok
 }
 
-// DuplicateMap duplicates the map only. A shallow copy of map entries into a new map of equal size.
+// Duplicate duplicates the map only. A shallow copy of map entries into a new map of equal size.
 func Duplicate[K comparable, V any](src map[K]V) map[K]V {
 	dst := make(map[K]V, len(src))
 	for k, v := range src {
@@ -59,7 +59,7 @@ func ExtractValues[K comparable, V any](map_ map[K]V) []V {
 	return vals
 }
 
-// ReduceMapKeys uses provided reduction function to reduce keys into a single resulting value.
+// ReduceKeys uses provided reduction function to reduce keys into a single resulting value.
 func ReduceKeys[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, K) R) R {
 	r := initial
 	for k := range input {
@@ -77,9 +77,9 @@ func ReduceValues[K comparable, V any, R any](input map[K]V, initial R, reduce f
 	return r
 }
 
-// TransformMap transforms both keys and values of a map into the output types for keys and values.
-// TransformMap assumes correct operation of the transformation function `f`. It will allow
-// overlapping keys in the output map, possibly resulting in loss of values.
+// Transform transforms both keys and values of a map into the output types for keys and values.
+// Transform assumes correct operation of the transformation function `f`. It will allow overlapping
+// keys in the output map, possibly resulting in loss of values.
 func Transform[KIN, KOUT comparable, VIN, VOUT any](input map[KIN]VIN,
 	transform func(KIN, VIN) (KOUT, VOUT)) map[KOUT]VOUT {
 
@@ -91,11 +91,11 @@ func Transform[KIN, KOUT comparable, VIN, VOUT any](input map[KIN]VIN,
 	return output
 }
 
-// TransformMapKeyType transforms an input map into an output map, using different types for keys.
+// TransformKeys transforms an input map into an output map, using different types for keys.
 // Given that only keys are transformed, this implementation will assume that destination key types
 // will not overlap. If the transformation maps to the same key more than once, execution will
 // panic. This prevents losing values by overlapping destination keys.
-func TransformKeyType[KIN comparable, KOUT comparable, V any](input map[KIN]V,
+func TransformKeys[KIN comparable, KOUT comparable, V any](input map[KIN]V,
 	transform func(KIN, V) KOUT) map[KOUT]V {
 
 	output := make(map[KOUT]V, len(input))
@@ -108,9 +108,8 @@ func TransformKeyType[KIN comparable, KOUT comparable, V any](input map[KIN]V,
 	return output
 }
 
-// TransformMapValueType transforms an input map into an output map, using different types for
-// values.
-func TransformValueType[K comparable, VIN any, VOUT any](input map[K]VIN,
+// TransformValues transforms an input map into an output map, using different types for values.
+func TransformValues[K comparable, VIN any, VOUT any](input map[K]VIN,
 	transform func(K, VIN) VOUT) map[K]VOUT {
 
 	output := make(map[K]VOUT, len(input))
@@ -128,7 +127,7 @@ func UpdateValue[K comparable, V any](data map[K]V, update func(K, V) V) {
 	}
 }
 
-// FilterMap filters a map according to the provided filter, returning a new map containing the
+// Filter filters a map according to the provided filter, returning a new map containing the
 // filtered result.
 func Filter[K comparable, V any](input map[K]V, filter func(K, V) bool) map[K]V {
 	filtered := make(map[K]V, 0)
@@ -140,8 +139,8 @@ func Filter[K comparable, V any](input map[K]V, filter func(K, V) bool) map[K]V 
 	return filtered
 }
 
-// MergeMap merges `src` map into `dst`. It requires all keys to be distinct. MergeMap will panic if
-// a key is present in both maps. MergeMapFunc can be used if such conflict resolution is needed.
+// Merge merges `src` map into `dst`. It requires all keys to be distinct. MergeMap will panic if a
+// key is present in both maps. MergeMapFunc can be used if such conflict resolution is needed.
 func Merge[K comparable, V any](dst, src map[K]V) {
 	for k, v := range src {
 		assert.False(Contains(dst, k))
@@ -149,7 +148,7 @@ func Merge[K comparable, V any](dst, src map[K]V) {
 	}
 }
 
-// MergeMapFunc merges two distinct maps into one destination map, freshly created. In case a key
+// MergeFunc merges two distinct maps into one destination map, freshly created. In case a key
 // exists in both maps, func `conflict` is called for conflict resolution. It will return the
 // desired value, which can be determined based on provided key and the original values from both
 // maps.
@@ -176,8 +175,8 @@ func MergeValuesFunc[K comparable, V any](dst, src map[K]V, conflict func(V, V) 
 	}
 }
 
-// MapKeysSubset checks, `O(n)` for `n` entries, if all keys of `subset` map are present in `set` map. Values are not
-// considered.
+// KeySubset checks, `O(n)` for `n` entries, if all keys of `subset` map are present in `set` map.
+// Values are not considered.
 func KeySubset[K comparable, V any](set map[K]V, subset map[K]V) bool {
 	for k := range subset {
 		if _, ok := set[k]; !ok {

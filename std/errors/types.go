@@ -2,7 +2,11 @@
 
 package errors
 
-import "strconv"
+import (
+	"strconv"
+
+	strconv_ "github.com/cobratbq/goutils/std/strconv"
+)
 
 // StringError as a base type for const errors.
 //
@@ -40,7 +44,7 @@ func NewUintError(value uint) *UintError {
 }
 
 func (e *UintError) Error() string {
-	return strconv.FormatUint(uint64(e.v), 10)
+	return strconv.FormatUint(uint64(e.v), strconv_.DecimalBase)
 }
 
 // IntError as a base type for const errors.
@@ -59,5 +63,5 @@ func NewIntError(v int) *IntError {
 }
 
 func (e *IntError) Error() string {
-	return strconv.FormatInt(int64(e.v), 10)
+	return strconv.FormatInt(int64(e.v), strconv_.DecimalBase)
 }
