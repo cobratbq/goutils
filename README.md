@@ -61,7 +61,10 @@ Let the ability to apply above pattern also serve as an indicator of quality of 
 
 ## Build/Usage
 
-- build tag `disable_assert` to replace assertions with empty functions to negate overhead, although overhead should be minimal to non-existent.
+__Build-tags__
+
+- `disable_assert` to replace assertions with empty functions to negate overhead, although overhead should be minimal regardless
+- `enable_trace` to enable trace-logging
 
 ## References
 
