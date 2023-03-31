@@ -73,7 +73,7 @@ func Merge[K comparable](dst, src map[K]struct{}) {
 //
 // See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
 //
-// FIXME unused, untested, consider producing separate output (probably should be named `subtract` considering it is a impure function)
+// FIXME unused, untested
 func Subtract[K comparable](set, other map[K]struct{}) {
 	for k := range other {
 		// remove indiscriminately because it doesn't matter if the element isn't present anyways
@@ -81,11 +81,32 @@ func Subtract[K comparable](set, other map[K]struct{}) {
 	}
 }
 
+// Union produces a set of all elements present in either `a` or `b` (or both).
+// FIXME unused, untested
+func Union[K comparable](a, b map[K]struct{}) map[K]struct{} {
+	union := maps.Duplicate(a)
+	maps.MergeFunc(union, b, mergeUnit[K])
+	return union
+}
+
+// Intersection produces a set of all elements present in both `a` and `b`.
+// FIXME unused, untested
+func Intersection[K comparable](a, b map[K]struct{}) map[K]struct{} {
+	intersection := make(map[K]struct{}, 0)
+	// TODO consider checking and working with smallest set, instead of assuming `b`
+	for k := range b {
+		if _, present := a[k]; present {
+			intersection[k] = struct{}{}
+		}
+	}
+	return intersection
+}
+
 // Difference creates a new set containing all elements from `set` that are not present in `other`.
 //
 // See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
 //
-// FIXME unused, untested, consider producing separate output (probably should be named `subtract` considering it is a impure function)
+// FIXME unused, untested
 func Difference[K comparable](set, other map[K]struct{}) map[K]struct{} {
 	difference := make(map[K]struct{}, 0)
 	for k := range set {
@@ -104,7 +125,7 @@ func Difference[K comparable](set, other map[K]struct{}) map[K]struct{} {
 // See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
 //
 // REMARK consider starting at size `0` to avoid excessive use when this function is performed on large sets.
-// FIXME unused, untested, consider producing separate output (probably should be made pure)
+// FIXME unused, untested
 func SymmetricDifference[K comparable](set, other map[K]struct{}) map[K]struct{} {
 	difference := maps.Duplicate(set)
 	for k := range other {
@@ -115,4 +136,8 @@ func SymmetricDifference[K comparable](set, other map[K]struct{}) map[K]struct{}
 		}
 	}
 	return difference
+}
+
+func mergeUnit[K comparable](k K, a, b struct{}) struct{} {
+	return struct{}{}
 }
