@@ -84,40 +84,43 @@ func Count[K comparable, C types.UnsignedInteger](multiset map[K]C) C {
 	return count
 }
 
+// FIXME need tests
 func Union[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	united := maps.Duplicate(a)
 	maps.MergeValuesFunc(united, b, math_.Max[C])
 	return united
 }
 
+// FIXME need tests
 func Intersection[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
-	intersect := maps.Duplicate(a)
-	maps.MergeValuesFunc(intersect, b, math_.Min[C])
+	intersect := make(map[K]C, 0)
+	// TODO consider using length check to determine which set to iterate (smallest)
+	for k, countB := range b {
+		if countA, present := a[k]; present {
+			intersect[k] = math_.Min(countA, countB)
+		}
+	}
 	return intersect
 }
 
+// FIXME need tests
 func Sum[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	sum := maps.Duplicate(a)
 	maps.MergeValuesFunc(sum, b, builtin.Add[C])
 	return sum
 }
 
+// FIXME need tests
 func Difference[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	difference := maps.Duplicate(a)
-	maps.MergeValuesFunc(difference, b, func(v1, v2 C) C {
-		if v1 < v2 {
-			return 0
-		}
-		return v1 - v2
-	})
-	clean(difference)
-	return difference
-}
-
-func clean[K comparable, C types.UnsignedInteger](multiset map[K]C) {
-	for k, v := range multiset {
-		if v <= 0 {
-			delete(multiset, k)
+	for k, countB := range b {
+		if countA, present := a[k]; present && countA > countB {
+			difference[k] = countA - countB
+		} else {
+			// REMARK relies on `delete(difference, k)` being noop if k not present.
+			delete(difference, k)
 		}
 	}
+	// TODO maps do not shrink; consider starting with empty map and inserting.
+	return difference
 }
