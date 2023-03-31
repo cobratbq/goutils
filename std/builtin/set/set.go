@@ -6,6 +6,8 @@
 // suitable specialized implementation.
 package set
 
+import "github.com/cobratbq/goutils/std/builtin/maps"
+
 // Create creates and initializes a new map[K]struct{} for use as a set. All provided elements will
 // immediately be included in the set. Initialization assumes that elements are unique; immediately
 // allocates room for `len(elements)` elements in the map.
@@ -67,30 +69,50 @@ func Merge[K comparable](dst, src map[K]struct{}) {
 	}
 }
 
-// Difference updates `set` by removing any element present in `other`.
+// Subtract updates `set` by removing any element present in `other`.
 //
 // See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
 //
 // FIXME unused, untested, consider producing separate output (probably should be named `subtract` considering it is a impure function)
-func Difference[K comparable](set, other map[K]struct{}) {
+func Subtract[K comparable](set, other map[K]struct{}) {
 	for k := range other {
 		// remove indiscriminately because it doesn't matter if the element isn't present anyways
 		delete(set, k)
 	}
 }
 
-// SymmetricDifference updates `set` by inserting any element present only in `other`, and removing
-// any element present in both.
+// Difference creates a new set containing all elements from `set` that are not present in `other`.
 //
 // See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
 //
+// FIXME unused, untested, consider producing separate output (probably should be named `subtract` considering it is a impure function)
+func Difference[K comparable](set, other map[K]struct{}) map[K]struct{} {
+	difference := make(map[K]struct{}, 0)
+	for k := range set {
+		if _, present := other[k]; present {
+			continue
+		}
+		// remove indiscriminately because it doesn't matter if the element isn't present anyways
+		difference[k] = struct{}{}
+	}
+	return difference
+}
+
+// SymmetricDifference produces the symmetric difference of `set` and `other`, by removing elements
+// that are present in both sets, and keeping elements present in only one set.
+//
+// See: <https://en.wikipedia.org/wiki/Set_(mathematics)#Basic_operations>
+//
+// REMARK consider starting at size `0` to avoid excessive use when this function is performed on large sets.
 // FIXME unused, untested, consider producing separate output (probably should be made pure)
-func SymmetricDifference[K comparable](set, other map[K]struct{}) {
+func SymmetricDifference[K comparable](set, other map[K]struct{}) map[K]struct{} {
+	difference := maps.Duplicate(set)
 	for k := range other {
-		if _, present := set[k]; present {
-			delete(set, k)
+		if _, present := difference[k]; present {
+			delete(difference, k)
 		} else {
-			set[k] = struct{}{}
+			difference[k] = struct{}{}
 		}
 	}
+	return difference
 }
