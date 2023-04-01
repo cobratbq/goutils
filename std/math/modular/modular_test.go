@@ -35,18 +35,18 @@ func TestMod(t *testing.T) {
 		{3, 8, 2},
 	}
 	for _, d := range testdata {
-		assert.Equal(t, d.out, Mod(d.in, d.modulus))
+		assert.Equal(t, d.out, Reduce(d.in, d.modulus))
 	}
 }
 
 func TestModZero(t *testing.T) {
 	defer assert.RequirePanic(t)
-	Mod(1, 0)
+	Reduce(1, 0)
 	t.FailNow()
 }
 
 func TestModNegative(t *testing.T) {
 	defer assert.RequirePanic(t)
-	Mod(1, -1)
+	Reduce(1, -1)
 	t.FailNow()
 }

@@ -42,9 +42,9 @@ func DecrementN[T types.Integer](value, n, modulus T) T {
 	return (value + modulus - n) % modulus
 }
 
-// Mod performs modulo operation on `value` using `modulus`. `modulus` must be a positive integer
-// value.
-func Mod[T types.Integer](value, modulus T) T {
+// Reduce performs modular reduction operation on `value` using `modulus`. `modulus` must be a
+// positive integer value.
+func Reduce[T types.Integer](value, modulus T) T {
 	assert.Require(modulus > 0, "The modulus must be a positive integer.")
 	if value >= 0 {
 		return value % modulus
