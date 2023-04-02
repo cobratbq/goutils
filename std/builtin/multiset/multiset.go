@@ -13,6 +13,7 @@
 //
 // INVARIANT: all elements have a count strictly larger than 0. (I.e. elements that reach 0 are
 // deleted from the multiset.)
+// TODO implement Add/Subtract for mutating functions that operate on first of two provided multisets.
 // FIXME try to set an upper-limit guard for `C` to ensure that multiset does not wrap around undetected.
 package multiset
 
@@ -84,14 +85,12 @@ func Count[K comparable, C types.UnsignedInteger](multiset map[K]C) C {
 	return count
 }
 
-// FIXME need tests
 func Union[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	united := maps.Duplicate(a)
 	maps.MergeValuesFunc(united, b, math_.Max[C])
 	return united
 }
 
-// FIXME need tests
 func Intersection[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	intersect := make(map[K]C, 0)
 	// TODO consider using length check to determine which set to iterate (smallest)
@@ -103,14 +102,12 @@ func Intersection[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	return intersect
 }
 
-// FIXME need tests
 func Sum[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	sum := maps.Duplicate(a)
 	maps.MergeValuesFunc(sum, b, builtin.Add[C])
 	return sum
 }
 
-// FIXME need tests
 func Difference[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	difference := maps.Duplicate(a)
 	for k, countB := range b {
@@ -123,4 +120,16 @@ func Difference[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	}
 	// TODO maps do not shrink; consider starting with empty map and inserting.
 	return difference
+}
+
+func Equal[K comparable, C types.UnsignedInteger](a, b map[K]C) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for key, countA := range a {
+		if countB, present := b[key]; !present || countA != countB {
+			return false
+		}
+	}
+	return true
 }
