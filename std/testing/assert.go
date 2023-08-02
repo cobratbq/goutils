@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-only
 
 // testing contains assertions for use in unit tests. I recommend aliasing the import to 'assert',
 // so that you can call methods with `assert.Equal(t, a, b)` which makes it nicely readable. In

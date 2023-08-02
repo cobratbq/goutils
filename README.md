@@ -73,7 +73,7 @@ __Build-tags__
 - [Effective Go]
 - [Go Fuzzing]
 - [Go-Perfbook]
-- [LICENSE]: [AGPL-3.0-or-later](<https://spdx.org/licenses/AGPL-3.0-or-later.html> "GNU Affero General Public License v3.0 or later")
+- [LICENSE]: [LGPL-3.0-only](<https://spdx.org/licenses/LGPL-3.0-only.html> "GNU Lesser General Public License v3.0 only")
 
 [Go language specification]: <https://go.dev/ref/spec> "The Go Programming Language Specification"
 [Writing Go code]: <https://go.dev/doc/code> "How to Write Go Code"

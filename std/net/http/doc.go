@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-only
 
 // Package http contains utilities for the net/http package.
 // TODO DownloadToFilePathAtomic as DownloadToFilePath variant that only replaces the original content once a download is completed successfully. (check github.com/google/renameio)

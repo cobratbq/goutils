@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-only
 
 // encoding contains all encodings. An encoding is defined as a transformation from (typically) any
 // collection of types into a target type, often a primitive type. The most prevalent target type

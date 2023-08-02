@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-only
 
 // builtin contains additional utility functions for built-in types of the Go programming languages.
 // This package contains the utils that apply to types and functions that are always immediately

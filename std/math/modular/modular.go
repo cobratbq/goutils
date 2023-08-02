@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-only
 
 // modular provides arithmetic functions for modular arithmetic. This helps to avoid gotchas of Go
 // remainder operator such that modulo may (unintentionally) return negative values, which is often
