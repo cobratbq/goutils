@@ -6,4 +6,5 @@
 // efficient computation. Any target type gets its own package, such that encodings are easily
 // located. 'encoding', as a package, is separated from std as it captures an interplay between two
 // types, with varying source-types, and a predefined target-type.
+// TODO actually, this top package should ideally be called `codec`, but I'm not sure if that would confuse because of the strong relation of term with audio/video
 package encoding
