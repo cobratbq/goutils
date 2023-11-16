@@ -4,12 +4,12 @@ package hex
 
 const index string = `0123456789abcdef`
 
-// HexEncodeChars encodes a uint8 value into its two-symbol hexadecimal representation.
+// HexEncodeChars encodes a uint8 value into its two-symbol (lower-case) hexadecimal representation.
 func HexEncodeChars(value uint8) (byte, byte) {
 	return HexEncodeChar((value & 0xf0) >> 4), HexEncodeChar(value & 0x0f)
 }
 
-// HexEncodeChar encodes uint value into its hexadecimal representation [0-9a-f].
+// HexEncodeChar encodes uint value into its (lower-case) hexadecimal representation [0-9a-f].
 func HexEncodeChar(value uint8) byte {
 	return index[value]
 }
@@ -42,17 +42,17 @@ func HexDecodeChar(c byte) uint8 {
 		return 8
 	case '9':
 		return 9
-	case 'a':
+	case 'a', 'A':
 		return 10
-	case 'b':
+	case 'b', 'B':
 		return 11
-	case 'c':
+	case 'c', 'C':
 		return 12
-	case 'd':
+	case 'd', 'D':
 		return 13
-	case 'e':
+	case 'e', 'E':
 		return 14
-	case 'f':
+	case 'f', 'F':
 		return 15
 	default:
 		panic("BUG: invalid character encountered, not part of hexadecimal system")

@@ -7,4 +7,6 @@
 // located. 'encoding', as a package, is separated from std as it captures an interplay between two
 // types, with varying source-types, and a predefined target-type.
 // TODO actually, this top package should ideally be called `codec`, but I'm not sure if that would confuse because of the strong relation of term with audio/video
+// TODO consider adding Kim encoding (Douglas Crockford) for text encoding, as it is mere text representation.
+// TODO consider adding Bitcoin's CompactSize unsigned integer encoding.
 package encoding
