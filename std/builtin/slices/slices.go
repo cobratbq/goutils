@@ -75,10 +75,10 @@ func Duplicate[T any](src []T) []T {
 	return d
 }
 
-// TransformWithIndex maps a slice of data-type `I` to a function `idx, I -> O` and returns a result
+// TransformIndexed maps a slice of data-type `I` to a function `idx, I -> O` and returns a result
 // slice of data-type `O`.` The result slice is immediately allocated with equal capacity to
 // minimize allocations.
-func TransformWithIndex[I, O any](input []I, transform func(int, I) O) []O {
+func TransformIndexed[I, O any](input []I, transform func(int, I) O) []O {
 	output := make([]O, 0, len(input))
 	for idx, in := range input {
 		output = append(output, transform(idx, in))
@@ -162,9 +162,9 @@ func Filter[E any](input []E, filter func(E) bool) []E {
 	return filtered
 }
 
-// FilterWithIndex takes a slice `input` and a function `filter`. If `filter` returns true, the
+// FilterIndexed takes a slice `input` and a function `filter`. If `filter` returns true, the
 // value is preserved. If `filter` returns false, the value is dropped.
-func FilterWithIndex[E any](input []E, filter func(int, E) bool) []E {
+func FilterIndexed[E any](input []E, filter func(int, E) bool) []E {
 	filtered := make([]E, 0)
 	for idx, e := range input {
 		if filter(idx, e) {
@@ -184,11 +184,11 @@ func Reduce[E any, R any](input []E, initial R, reduce func(R, E) R) R {
 	return r
 }
 
-// ReduceWithIndex reduces a slice `input` to a single aggregate value of type `V`, using
+// ReduceIndexed reduces a slice `input` to a single aggregate value of type `V`, using
 // `initial V` as starting value. Function `reduce` defines exactly how `V` is determined with each
 // entry.
 // ReduceIndexed uses a callback function that receives the slice index in addition to the value.
-func ReduceWithIndex[E any, R any](input []E, initial R, reduce func(R, int, E) R) R {
+func ReduceIndexed[E any, R any](input []E, initial R, reduce func(R, int, E) R) R {
 	r := initial
 	for idx, e := range input {
 		r = reduce(r, idx, e)
@@ -230,13 +230,29 @@ func MoveElementN[E any](input []E, idx int, n int) {
 }
 
 // All checks if all values in a slice satisfy `test`, that is `test` returns true.
-func All[E any](input []E, test func(int, E) bool) bool {
+func All[E any](input []E, test func(E) bool) bool {
 	return !Any(input, test)
 }
 
 // Any iterates over elements in the slice and tests if they satisfy `test`. Result is returned upon
 // first element found, and will iterate over all elements if none satisfy the condition.
-func Any[E any](input []E, test func(int, E) bool) bool {
+func Any[E any](input []E, test func(E) bool) bool {
+	for _, e := range input {
+		if test(e) {
+			return true
+		}
+	}
+	return false
+}
+
+// All checks if all values in a slice satisfy `test`, that is `test` returns true.
+func AllIndexed[E any](input []E, test func(int, E) bool) bool {
+	return !AnyIndexed(input, test)
+}
+
+// AnyIndexed iterates over elements in the slice and tests if they satisfy `test`. Result is returned upon
+// first element found, and will iterate over all elements if none satisfy the condition.
+func AnyIndexed[E any](input []E, test func(int, E) bool) bool {
 	for idx, e := range input {
 		if test(idx, e) {
 			return true
