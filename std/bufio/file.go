@@ -74,16 +74,15 @@ func readProcessTypedLinesFunc[T ~[]byte | ~string, V any](
 			// user judge whether those are useful.
 			return results, readErr
 		}
-		v, procErr := process(line)
-		if procErr == ErrProcessingIgnore {
+		v, processErr := process(line)
+		if processErr == ErrProcessingIgnore {
 			// Error indicates resulting value should be ignored.
-		} else if procErr == ErrProcessingCompleted {
+		} else if processErr == ErrProcessingCompleted {
 			// Allow `process` function to signal early exit.
-			results = append(results, v)
 			break
-		} else if procErr != nil {
+		} else if processErr != nil {
 			// Error occurred while processing line, so abort with processing failure.
-			return results, errors.Context(ErrProcessingFailure, procErr.Error())
+			return results, errors.Context(ErrProcessingFailure, processErr.Error())
 		} else {
 			results = append(results, v)
 		}
@@ -125,14 +124,14 @@ func ReadBytesLinesFunc(reader *bufio.Reader, delim byte, process func([]byte) e
 			// Error occurred while reading line, so abort.
 			return readErr
 		}
-		procErr := process(line)
-		if procErr == ErrProcessingCompleted {
+		processErr := process(line)
+		if processErr == ErrProcessingCompleted {
 			// Allow `process` function to signal early exit.
 			break
 		}
-		if procErr != nil {
+		if processErr != nil {
 			// Error occurred while processing line, so abort with processing failure.
-			return errors.Context(ErrProcessingFailure, procErr.Error())
+			return errors.Context(ErrProcessingFailure, processErr.Error())
 		}
 		if errors.Is(readErr, io.EOF) {
 			break
