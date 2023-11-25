@@ -124,3 +124,11 @@ func PowUint[U types.UnsignedInteger](base, power U) U {
 	}
 	return result
 }
+
+func Even[N types.Integer](x N) bool {
+	return x&2 == 0
+}
+
+func Odd[N types.Integer](x N) bool {
+	return x%2 == 1
+}
