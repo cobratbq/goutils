@@ -130,5 +130,6 @@ func Even[N types.Integer](x N) bool {
 }
 
 func Odd[N types.Integer](x N) bool {
-	return x%2 == 1
+	// compare `!= 0` so negative values are allowed to result in `-1` without issue
+	return x%2 != 0
 }
