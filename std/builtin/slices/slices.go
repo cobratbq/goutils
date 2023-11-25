@@ -231,7 +231,12 @@ func MoveElementN[E any](input []E, idx int, n int) {
 
 // All checks if all values in a slice satisfy `test`, that is `test` returns true.
 func All[E any](input []E, test func(E) bool) bool {
-	return !Any(input, test)
+	for _, e := range input {
+		if !test(e) {
+			return false
+		}
+	}
+	return true
 }
 
 // Any iterates over elements in the slice and tests if they satisfy `test`. Result is returned upon
@@ -247,7 +252,12 @@ func Any[E any](input []E, test func(E) bool) bool {
 
 // All checks if all values in a slice satisfy `test`, that is `test` returns true.
 func AllIndexed[E any](input []E, test func(int, E) bool) bool {
-	return !AnyIndexed(input, test)
+	for idx, e := range input {
+		if !test(idx, e) {
+			return false
+		}
+	}
+	return true
 }
 
 // AnyIndexed iterates over elements in the slice and tests if they satisfy `test`. Result is returned upon
