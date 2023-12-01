@@ -85,7 +85,7 @@ func Subtract[K comparable](set, other map[K]struct{}) {
 // FIXME unused, untested
 func Union[K comparable](a, b map[K]struct{}) map[K]struct{} {
 	union := maps.Duplicate(a)
-	maps.MergeFunc(union, b, mergeUnit[K])
+	maps.MergeIntoKeyedFunc(union, b, mergeUnit[K])
 	return union
 }
 

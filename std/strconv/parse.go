@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"unsafe"
 
-	"github.com/cobratbq/goutils/encoding/bytes/digit"
+	"github.com/cobratbq/goutils/codec/bytes/digit"
 	"github.com/cobratbq/goutils/std/builtin"
 	"github.com/cobratbq/goutils/types"
 )

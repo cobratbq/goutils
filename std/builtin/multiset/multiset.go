@@ -87,7 +87,7 @@ func Count[K comparable, C types.UnsignedInteger](multiset map[K]C) C {
 
 func Union[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	united := maps.Duplicate(a)
-	maps.MergeValuesFunc(united, b, math_.Max[C])
+	maps.MergeIntoFunc(united, b, math_.Max[C])
 	return united
 }
 
@@ -104,7 +104,7 @@ func Intersection[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 
 func Sum[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	sum := maps.Duplicate(a)
-	maps.MergeValuesFunc(sum, b, builtin.Add[C])
+	maps.MergeIntoFunc(sum, b, builtin.Add[C])
 	return sum
 }
 

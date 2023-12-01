@@ -16,6 +16,11 @@ The _goutils_ module provides common operations that operate on a single type or
 
 The goal for these utils is _not_ to provide advanced, best-of-breed implementations or scientifically perfected algorithms. In the first place, it is to provide workable solutions, that may be fine-tuned if reasonable/feasible. That way, we can select external dependencies based on highly optimized or highly specialized function.
 
+## Conventions
+
+- `Keyed` to indicate that the function is a variant with a _key_ (e.g. map key) parameter included.
+- `Indexed` to indicate that the function is a variant with an _index_ (e.g. array/slice index) parameter included.
+
 ## Don't Repeat Yourself (DRY)
 
 An often-heard argument is that _don't repeat yourself_ is overrated. This utility library is composed with the idea that these utils are an extension to the standard library provided by Go. It contains functions that capture common, domain-agnostic logic. The logic should serve a single purpose, or be split up in multiple functions.
@@ -65,6 +70,12 @@ __Build-tags__
 
 - `disable_assert` to replace assertions with empty functions to negate overhead, although overhead should be minimal regardless
 - `enable_trace` to enable trace-logging
+
+## Notes
+
+Random notes. One day I might sort these out. :-)
+
+- _unexported method on interface_ makes it possible to define interfaces that can only be implemented within the same package. Otherwise the requirement, that is the unexported method, cannot be satisfied.
 
 ## References
 

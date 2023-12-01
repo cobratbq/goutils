@@ -139,36 +139,43 @@ func Filter[K comparable, V any](input map[K]V, filter func(K, V) bool) map[K]V 
 	return filtered
 }
 
+func Merge[K comparable, V any](map1, map2 map[K]V) map[K]V {
+	// TODO consider setting the capacity to len(map1)+len(map2)
+	dst := Duplicate[K, V](map1)
+	MergeInto(dst, map2)
+	return dst
+}
+
 // Merge merges `src` map into `dst`. It requires all keys to be distinct. MergeMap will panic if a
 // key is present in both maps. MergeMapFunc can be used if such conflict resolution is needed.
-func Merge[K comparable, V any](dst, src map[K]V) {
+func MergeInto[K comparable, V any](dst, src map[K]V) {
 	for k, v := range src {
 		assert.False(Contains(dst, k))
 		dst[k] = v
 	}
 }
 
-// MergeFunc merges two distinct maps into one destination map, freshly created. In case a key
-// exists in both maps, func `conflict` is called for conflict resolution. It will return the
-// desired value, which can be determined based on provided key and the original values from both
-// maps.
-func MergeFunc[K comparable, V any](dst, src map[K]V, conflict func(K, V, V) V) {
+// MergeFunc merges two maps, and calls `conflict` in case a key exists in both maps.
+// `conflict` takes only values (see `MergeFunc` for conflict func that includes parameter for `K`)
+// and uses the value returned by `conflict`.
+func MergeIntoFunc[K comparable, V any](dst, src map[K]V, conflict func(V, V) V) {
 	for k, v2 := range src {
 		if v1, present := dst[k]; present {
-			dst[k] = conflict(k, v1, v2)
+			dst[k] = conflict(v1, v2)
 		} else {
 			dst[k] = v2
 		}
 	}
 }
 
-// MergeValuesFunc merges two maps, and calls `conflict` in case a key exists in both maps.
-// `conflict` takes only values (see `MergeFunc` for conflict func that includes parameter for `K`)
-// and uses the value returned by `conflict`.
-func MergeValuesFunc[K comparable, V any](dst, src map[K]V, conflict func(V, V) V) {
+// MergeKeyedFunc merges two distinct maps into one destination map, freshly created. In case a key
+// exists in both maps, func `conflict` is called for conflict resolution. It will return the
+// desired value, which can be determined based on provided key and the original values from both
+// maps.
+func MergeIntoKeyedFunc[K comparable, V any](dst, src map[K]V, conflict func(K, V, V) V) {
 	for k, v2 := range src {
 		if v1, present := dst[k]; present {
-			dst[k] = conflict(v1, v2)
+			dst[k] = conflict(k, v1, v2)
 		} else {
 			dst[k] = v2
 		}
