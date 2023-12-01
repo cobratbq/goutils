@@ -10,6 +10,26 @@ func IsDigit(in byte) bool {
 		in == '6' || in == '7' || in == '8' || in == '9'
 }
 
+func IsDigitRune(in rune) bool {
+	// There are only 10 possibilities. Let's just test each one, that way even for obscure
+	// character encodings where other characters are in-between these seemingly consecutive chars
+	// it will not pose a problem.
+	return in == '0' || in == '1' || in == '2' || in == '3' || in == '4' || in == '5' ||
+		in == '6' || in == '7' || in == '8' || in == '9'
+}
+
+// FindDigit finds the digits and their location in provided data.
+func FindDigit(data []byte) map[int]uint8 {
+	finds := make(map[int]uint8)
+	for i := 0; i < len(data); i++ {
+		if IsDigit(data[i]) {
+			finds[i] = DecodeDigit(data[i])
+		}
+	}
+	return finds
+}
+
+// DecodeDigit decodes a byte-representation of a digit into a unsigned integer value.
 func DecodeDigit(in byte) uint8 {
 	switch in {
 	case '0':
@@ -37,6 +57,7 @@ func DecodeDigit(in byte) uint8 {
 	}
 }
 
+// EncodeDigit encodes a integer value as a digit-character.
 func EncodeDigit(in uint8) byte {
 	switch in {
 	case 0:
