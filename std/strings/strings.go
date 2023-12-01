@@ -4,6 +4,32 @@ package strings
 
 import "strings"
 
+func FindNonOverlapping(text string, substr string) []int {
+	var finds []int
+	var idx, next int
+	for idx >= 0 && idx < len(text) {
+		if next = strings.Index(text[idx:], substr); next < 0 {
+			break
+		}
+		finds = append(finds, idx+next)
+		idx += next + len(substr)
+	}
+	return finds
+}
+
+func FindOverlapping(text string, substr string) []int {
+	var finds []int
+	var idx, next int
+	for idx >= 0 && idx < len(text) {
+		if next = strings.Index(text[idx:], substr); next < 0 {
+			break
+		}
+		finds = append(finds, idx+next)
+		idx += next + 1
+	}
+	return finds
+}
+
 // AnyPrefix tests for any of series of prefixes.
 func AnyPrefix(s string, prefixes ...string) bool {
 	for _, p := range prefixes {
