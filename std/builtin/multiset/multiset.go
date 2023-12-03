@@ -49,9 +49,23 @@ func Insert[K comparable, C types.UnsignedInteger](multiset map[K]C, e K) {
 	multiset[e] += 1
 }
 
+// InsertSet increments count of each element of `set` (by 1) in `multiset`.
+func InsertSet[K comparable, C types.UnsignedInteger](multiset map[K]C, set map[K]struct{}) {
+	for e := range set {
+		Insert[K, C](multiset, e)
+	}
+}
+
 // InsertN increments the count of an element with n, inserting the element if necessary.
 func InsertN[K comparable, C types.UnsignedInteger](multiset map[K]C, e K, n C) {
 	multiset[e] += n
+}
+
+// InsertSetN increments count of each element of `set` by `n` in `multiset`.
+func InsertSetN[K comparable, C types.UnsignedInteger](multiset map[K]C, set map[K]struct{}, n C) {
+	for e := range set {
+		InsertN[K, C](multiset, e, n)
+	}
 }
 
 // Remove decrements the count of an element, deleting the element from the map (multiset) if the
