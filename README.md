@@ -18,6 +18,7 @@ The goal for these utils is _not_ to provide advanced, best-of-breed implementat
 
 ## Conventions
 
+- `N` to indicate that the function takes a parameter specifying a _count_, _number_ or similar value. This is typically a variant that allows the caller to specify a value rather than the default.
 - `Keyed` to indicate that the function is a variant with a _key_ (e.g. map key) parameter included.
 - `Indexed` to indicate that the function is a variant with an _index_ (e.g. array/slice index) parameter included.
 
