@@ -59,6 +59,15 @@ func ExtractValues[K comparable, V any](map_ map[K]V) []V {
 	return vals
 }
 
+// Reduce reduces a map into a single representation of type R, based on both its keys and values.
+func Reduce[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, K, V) R) R {
+	r := initial
+	for k, v := range input {
+		r = reduce(r, k, v)
+	}
+	return r
+}
+
 // ReduceKeys uses provided reduction function to reduce keys into a single resulting value.
 func ReduceKeys[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, K) R) R {
 	r := initial
