@@ -37,6 +37,12 @@ func MustParseInt[T types.SignedInteger](s string, base int) T {
 	return builtin.Expect(ParseInt[T](s, base))
 }
 
+// MustParseBytesInt parses a byte-array for a signed integer value of at most specified bitsize. Success is
+// assumed and the function will panic on error.
+func MustParseBytesInt[T types.SignedInteger](data []byte, base int) T {
+	return MustParseInt[T](string(data), base)
+}
+
 // ParseInt is generics-enabled variant of `strconv.ParseUint`, which derives the bitsize from the
 // specified parametric type.
 func ParseInt[T types.SignedInteger](s string, base int) (T, error) {
@@ -51,10 +57,22 @@ func MustParseUintDecimal[T types.UnsignedInteger](s string) T {
 	return MustParseUint[T](s, DecimalBase)
 }
 
+// MustParseBytesUintDecimal parses a string represented as raw bytes for a unsigned decimal value. Success
+// is assumed and the function will panic on error.
+func MustParseBytesUintDecimal[T types.UnsignedInteger](data []byte) T {
+	return MustParseUintDecimal[T](string(data))
+}
+
 // MustParseUint parses a string for an unsigned integer value of at most specified bitsize. Success
 // is assumed and the function will panic on error.
 func MustParseUint[T types.UnsignedInteger](s string, base int) T {
 	return builtin.Expect(ParseUint[T](s, base))
+}
+
+// MustParseBytesUint parses a string represented as raw bytes for a unsigned integer value. Success
+// is assumed and the function will panic on error.
+func MustParseBytesUint[T types.UnsignedInteger](data []byte, base int) T {
+	return MustParseUint[T](string(data), base)
 }
 
 // ParseUint is generics-enabled variant of `strconv.ParseUint`, which derives the bitsize from the
@@ -64,4 +82,10 @@ func ParseUint[T types.UnsignedInteger](s string, base int) (T, error) {
 	var bitsize = int(unsafe.Sizeof(T(0))) * 8
 	result, err := strconv.ParseUint(s, base, bitsize)
 	return T(result), err
+}
+
+// ParseUintBytes is generics-enabled variant of `strconv.ParseUint` that parses a byte-string and converts
+// the data on-the-fly to string.
+func ParseUintBytes[T types.UnsignedInteger](data []byte, base int) (T, error) {
+	return ParseUint[T](string(data), base)
 }
