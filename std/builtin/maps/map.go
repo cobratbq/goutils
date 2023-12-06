@@ -4,6 +4,15 @@ package maps
 
 import "github.com/cobratbq/goutils/assert"
 
+// GetOr gets the value for `key` from a map, or returns `defvalue` if key is not present.
+func GetOr[K comparable, V any](map_ map[K]V, key K, defvalue V) V {
+	if v, ok := map_[key]; ok {
+		return v
+	} else {
+		return defvalue
+	}
+}
+
 // ContainsAll checks whether all specified keys are present in the map. Returns `true` if all
 // exist, or `false` otherwise.
 func ContainsAll[K comparable, V any](map_ map[K]V, keys ...K) bool {
