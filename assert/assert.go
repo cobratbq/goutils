@@ -64,5 +64,5 @@ func NonPositive[T types.SignedInteger](v T) {
 	if v <= 0 {
 		return
 	}
-	panic("assertion failed: negative value")
+	panic("assertion failed: non-positive value")
 }
