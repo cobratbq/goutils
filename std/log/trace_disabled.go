@@ -4,6 +4,10 @@
 
 package log
 
+func Tracing() bool {
+	return false
+}
+
 func Traceln(args ...any) {}
 
 func TracelnDepth(depth uint, args ...any) {}

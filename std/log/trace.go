@@ -12,6 +12,10 @@ import (
 
 var tracelog = log.New(os.Stderr, "[TRACE] ", log.LstdFlags|log.Llongfile)
 
+func Tracing() bool {
+	return true
+}
+
 // Traceln (if `enable_trace`) logs the provided arguments. Included in the logging output is the
 // file name and line number of the immediate caller.
 func Traceln(args ...any) {
