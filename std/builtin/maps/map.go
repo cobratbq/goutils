@@ -68,31 +68,31 @@ func ExtractValues[K comparable, V any](map_ map[K]V) []V {
 	return vals
 }
 
-// Reduce reduces a map into a single representation of type R, based on both its keys and values.
-func Reduce[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, K, V) R) R {
-	r := initial
+// Fold folds a map into a single representation of type R, based on both its keys and values.
+func Fold[K comparable, V any, F any](input map[K]V, initial F, fold func(F, K, V) F) F {
+	z := initial
 	for k, v := range input {
-		r = reduce(r, k, v)
+		z = fold(z, k, v)
 	}
-	return r
+	return z
 }
 
-// ReduceKeys uses provided reduction function to reduce keys into a single resulting value.
-func ReduceKeys[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, K) R) R {
-	r := initial
+// FoldKeys uses provided folding function to fold keys into a single resulting value.
+func FoldKeys[K comparable, V any, F any](input map[K]V, initial F, fold func(F, K) F) F {
+	z := initial
 	for k := range input {
-		r = reduce(r, k)
+		z = fold(z, k)
 	}
-	return r
+	return z
 }
 
-// ReduceValues uses provided reduction function to reduce values into a single resulting value.
-func ReduceValues[K comparable, V any, R any](input map[K]V, initial R, reduce func(R, V) R) R {
-	r := initial
+// FoldValues uses provided folding function to fold values into a single resulting value.
+func FoldValues[K comparable, V any, F any](input map[K]V, initial F, fold func(F, V) F) F {
+	z := initial
 	for _, v := range input {
-		r = reduce(r, v)
+		z = fold(z, v)
 	}
-	return r
+	return z
 }
 
 // Transform transforms both keys and values of a map into the output types for keys and values.
@@ -157,14 +157,15 @@ func Filter[K comparable, V any](input map[K]V, filter func(K, V) bool) map[K]V 
 	return filtered
 }
 
+// Merge merges `map1` and `map2` into a new merged map with same key and value type.
 func Merge[K comparable, V any](map1, map2 map[K]V) map[K]V {
 	// TODO consider setting the capacity to len(map1)+len(map2)
-	dst := Duplicate[K, V](map1)
+	dst := Duplicate(map1)
 	MergeInto(dst, map2)
 	return dst
 }
 
-// Merge merges `src` map into `dst`. It requires all keys to be distinct. MergeMap will panic if a
+// MergeInto merges `src` map into `dst`. It requires all keys to be distinct. MergeMap will panic if a
 // key is present in both maps. MergeMapFunc can be used if such conflict resolution is needed.
 func MergeInto[K comparable, V any](dst, src map[K]V) {
 	for k, v := range src {
@@ -173,7 +174,7 @@ func MergeInto[K comparable, V any](dst, src map[K]V) {
 	}
 }
 
-// MergeFunc merges two maps, and calls `conflict` in case a key exists in both maps.
+// MergeIntoFunc merges two maps, and calls `conflict` in case a key exists in both maps.
 // `conflict` takes only values (see `MergeFunc` for conflict func that includes parameter for `K`)
 // and uses the value returned by `conflict`.
 func MergeIntoFunc[K comparable, V any](dst, src map[K]V, conflict func(V, V) V) {
@@ -186,7 +187,7 @@ func MergeIntoFunc[K comparable, V any](dst, src map[K]V, conflict func(V, V) V)
 	}
 }
 
-// MergeKeyedFunc merges two distinct maps into one destination map, freshly created. In case a key
+// MergeIntoKeyedFunc merges two distinct maps into one destination map, freshly created. In case a key
 // exists in both maps, func `conflict` is called for conflict resolution. It will return the
 // desired value, which can be determined based on provided key and the original values from both
 // maps.
