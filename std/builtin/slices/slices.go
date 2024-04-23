@@ -181,26 +181,25 @@ func FilterIndexed[E any](input []E, filter func(int, E) bool) []E {
 	return filtered
 }
 
-// Reduce reduces a slice `input` to a single aggregate value of type `V`, using `initial V` as
-// starting value. Function `reduce` defines exactly how `V` is determined with each entry.
-func Reduce[E any, R any](input []E, initial R, reduce func(R, E) R) R {
-	r := initial
+// Fold folds a slice `input` to a single aggregate value of type `V`, using `initial V` as starting value.
+// Function `fold` defines exactly how `V` is determined from each entry.
+func Fold[E any, V any](input []E, initial V, fold func(V, E) V) V {
+	v := initial
 	for _, e := range input {
-		r = reduce(r, e)
+		v = fold(v, e)
 	}
-	return r
+	return v
 }
 
-// ReduceIndexed reduces a slice `input` to a single aggregate value of type `V`, using
-// `initial V` as starting value. Function `reduce` defines exactly how `V` is determined with each
-// entry.
-// ReduceIndexed uses a callback function that receives the slice index in addition to the value.
-func ReduceIndexed[E any, R any](input []E, initial R, reduce func(R, int, E) R) R {
-	r := initial
+// FoldIndexed folds a slice `input` to a single aggregate value of type `V`, using `initial V` as starting
+// value. Function `reduce` defines exactly how `V` is determined with each entry.
+// FoldIndexed uses callback function `fold` that receives the slice index in addition to the value.
+func FoldIndexed[E any, V any](input []E, initial V, fold func(V, int, E) V) V {
+	v := initial
 	for idx, e := range input {
-		r = reduce(r, idx, e)
+		v = fold(v, idx, e)
 	}
-	return r
+	return v
 }
 
 // Update updates all elements of a slice using the provided `update` func. Elements are passed
