@@ -140,9 +140,7 @@ func ConvertToMapKeys[K comparable, V any](input []K, transform func(int, K) V) 
 // FIXME reconsider name for something shorter.
 func DistinctElementCount[E comparable](data []E) map[E]uint {
 	counts := make(map[E]uint)
-	for _, e := range data {
-		multiset.Insert(counts, e)
-	}
+	multiset.InsertMany(counts, data)
 	return counts
 }
 

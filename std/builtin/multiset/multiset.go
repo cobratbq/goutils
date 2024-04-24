@@ -11,7 +11,7 @@
 // These multiset functions are just functions that operate on a map. Therefore there is no caching
 // or any other kind of optimization possible/available.
 //
-// INVARIANT: all elements have a count strictly larger than 0. (I.e. elements that reach 0 are
+// INVARIANT: all elements have a count strictly larger than 0. (I.e. elements that reach 0 are --must be--
 // deleted from the multiset.)
 // TODO implement Add/Subtract for mutating functions that operate on first of two provided multisets.
 // FIXME try to set an upper-limit guard for `C` to ensure that multiset does not wrap around undetected.
@@ -49,22 +49,29 @@ func Insert[K comparable, C types.UnsignedInteger](multiset map[K]C, e K) {
 	multiset[e] += 1
 }
 
-// InsertSet increments count of each element of `set` (by 1) in `multiset`.
-func InsertSet[K comparable, C types.UnsignedInteger](multiset map[K]C, set map[K]struct{}) {
-	for e := range set {
-		Insert[K, C](multiset, e)
-	}
-}
-
 // InsertN increments the count of an element with n, inserting the element if necessary.
 func InsertN[K comparable, C types.UnsignedInteger](multiset map[K]C, e K, n C) {
 	multiset[e] += n
 }
 
+// InsertMany increments the count of an element for each element provided in `elements`.
+func InsertMany[K comparable, C types.UnsignedInteger](multiset map[K]C, elements []K) {
+	for _, e := range elements {
+		Insert(multiset, e)
+	}
+}
+
+// InsertSet increments count of each element of `set` (by 1) in `multiset`.
+func InsertSet[K comparable, C types.UnsignedInteger](multiset map[K]C, set map[K]struct{}) {
+	for e := range set {
+		Insert(multiset, e)
+	}
+}
+
 // InsertSetN increments count of each element of `set` by `n` in `multiset`.
 func InsertSetN[K comparable, C types.UnsignedInteger](multiset map[K]C, set map[K]struct{}, n C) {
 	for e := range set {
-		InsertN[K, C](multiset, e, n)
+		InsertN(multiset, e, n)
 	}
 }
 
@@ -86,6 +93,20 @@ func RemoveN[K comparable, C types.UnsignedInteger](multiset map[K]C, e K, n C) 
 	multiset[e] -= n
 	if multiset[e] == 0 {
 		delete(multiset, e)
+	}
+}
+
+// RemoveMany removes all values in `elements` from `multiset`.
+func RemoveMany[K comparable, C types.UnsignedInteger](multiset map[K]C, elements []K) {
+	for _, e := range elements {
+		Remove(multiset, e)
+	}
+}
+
+// RemoveSet removes all elements in `set` from `multiset`.
+func RemoveSet[K comparable, C types.UnsignedInteger](multiset map[K]C, set map[K]struct{}) {
+	for e := range set {
+		Remove(multiset, e)
 	}
 }
 

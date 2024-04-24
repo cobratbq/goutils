@@ -44,9 +44,9 @@ func Insert[K comparable](set map[K]struct{}, e K) {
 }
 
 // InsertMany allows inserting any number of elements provided through vararg.
-func InsertMany[K comparable](set map[K]struct{}, elms ...K) {
+func InsertMany[K comparable](set map[K]struct{}, elms []K) {
 	for _, e := range elms {
-		set[e] = struct{}{}
+		Insert(set, e)
 	}
 }
 
@@ -56,9 +56,9 @@ func Remove[K comparable](set map[K]struct{}, e K) {
 }
 
 // RemoveMany removes any number of elements as provided through vararg.
-func RemoveMany[K comparable](set map[K]struct{}, elms ...K) {
+func RemoveMany[K comparable](set map[K]struct{}, elms []K) {
 	for _, e := range elms {
-		delete(set, e)
+		Remove(set, e)
 	}
 }
 
