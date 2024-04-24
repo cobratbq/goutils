@@ -202,6 +202,24 @@ func FoldIndexed[E any, V any](input []E, initial V, fold func(V, int, E) V) V {
 	return v
 }
 
+// Reduce reduces a slice `input` to a single element (of same type), using function `reduce`. The first
+// input element is assumed as the initial reduction result. `reduce` is applied to the result and next input
+// element, until the last element is processed. The reduction result is then returned.
+//
+// A singleton-slice will have its first/only element as a result.
+//
+// (See `Fold` for folding/"reducing" to another data-type or with special initial values.)
+func Reduce[E any](input []E, reduce func(e1, e2 E) E) E {
+	if len(input) == 1 {
+		return input[0]
+	}
+	reduced := input[0]
+	for i := 1; i < len(input); i++ {
+		reduced = reduce(reduced, input[i])
+	}
+	return reduced
+}
+
 // Update updates all elements of a slice using the provided `update` func. Elements are passed
 // in in isolation, therefore the update logic must operate on individual elements.
 // TODO consider renaming to `UpdateElements` or something to reflect that this function operates on the slice's elements.
