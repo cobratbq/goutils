@@ -23,6 +23,14 @@ func DebuglnSlice[T any](prefix string, data []T) {
 	}
 }
 
+// DebuglnMap prints each entry in `data` (every key in the map) on a new line. Every debug-line is prefixed
+// with `prefix`.
+func DebuglnMap[K comparable, V any](prefix string, data map[K]V) {
+	for k, v := range data {
+		Debugln(prefix, k, v)
+	}
+}
+
 // Debugf writes a line to os.Stderr with prefix 'debug', using fmt formatting options.
 func Debugf(format string, args ...any) {
 	log.Printf("[debug] "+format+"\n", args...)
