@@ -6,13 +6,21 @@ import (
 	"log"
 )
 
-// Debug writes a line to os.Stderr with prefix 'debug'.
+// Debug writes output to os.Stderr with prefix 'debug'.
 func Debug(line string) {
 	log.Println("[debug] " + line)
 }
 
+// Debugln writes a line to os.Stderr with prefix `debug`, then ends with newline.
 func Debugln(args ...any) {
 	log.Println(append([]any{"[debug]"}, args...)...)
+}
+
+// DebuglnSlice prints each entry in `data` on a new line. Every debug-line is prefixed with `prefix`.
+func DebuglnSlice[T any](prefix string, data []T) {
+	for i, e := range data {
+		Debugln(prefix, i, e)
+	}
 }
 
 // Debugf writes a line to os.Stderr with prefix 'debug', using fmt formatting options.
