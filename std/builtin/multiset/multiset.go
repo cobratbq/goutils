@@ -22,6 +22,7 @@ import (
 	"github.com/cobratbq/goutils/std/builtin"
 	"github.com/cobratbq/goutils/std/builtin/maps"
 	math_ "github.com/cobratbq/goutils/std/math"
+	"github.com/cobratbq/goutils/std/sort"
 	"github.com/cobratbq/goutils/types"
 )
 
@@ -184,5 +185,15 @@ func Elements[K comparable, C types.UnsignedInteger](multiset map[K]C) []K {
 	for e := range multiset {
 		elements = append(elements, e)
 	}
+	return elements
+}
+
+// ElementsOrdered generates a slice (`[]K`) with all elements of the multiset, ordered according to the
+// provided `lessFunc`.
+func ElementsOrdered[K comparable, C types.UnsignedInteger](multiset map[K]C, lessFunc func(key1, key2 K) bool) []K {
+	elements := Elements(multiset)
+	sort.Slice(elements, func(i, j int) bool {
+		return lessFunc(elements[i], elements[j])
+	})
 	return elements
 }
