@@ -2,7 +2,7 @@ __⚠ warning__ This library is still in development. There will be changes in s
 
 # GoUtils
 
-Common utilities for Go. The boundary to inclusion is that these utilities (primarily) work on a single type and rely only on the Go standard library.
+Common utilities for Go. The boundary to inclusion is that these utilities (primarily) work on a single type and rely only on the Go standard library. These utilities aim to be useful when a specialized solution is not (yet) necessary.
 
 The _goutils_ module provides common operations that operate on a single type or within a single package. These are all simple sequences of logical operations that are context-independent. The module does not rely on any external dependencies. Therefore, it provides a minimal threshold to inclusion in any project. That is, these functions are not geared towards a specific functional domain.
 
@@ -12,7 +12,9 @@ The _goutils_ module provides common operations that operate on a single type or
   - `errors` - provides error handling utils: basic functions, `Context(..)`, `Stacktrace(..)`.
   - `testing` - additional functions for `testing`, useful specifically for writing tests.
   - ...
-- `encoding` - various encodings, grouped by encoding-type.
+- `structure` - composite data-structures that represent basic concepts.
+- `codec` - encoding/decoding, various codings for representing a concept as a basic data-type, grouped by coding-type.
+- `types` - (syntax) type-based constants and definitions.
 
 The goal for these utils is _not_ to provide advanced, best-of-breed implementations or scientifically perfected algorithms. In the first place, it is to provide workable solutions, that may be fine-tuned if reasonable/feasible. That way, we can select external dependencies based on highly optimized or highly specialized function.
 

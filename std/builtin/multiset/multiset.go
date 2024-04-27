@@ -157,6 +157,7 @@ func Difference[K comparable, C types.UnsignedInteger](a, b map[K]C) map[K]C {
 	return difference
 }
 
+// Equal compares to multisets for equality, i.e. same elements with same counts.
 func Equal[K comparable, C types.UnsignedInteger](a, b map[K]C) bool {
 	if len(a) != len(b) {
 		return false
