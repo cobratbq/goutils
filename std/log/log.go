@@ -41,6 +41,7 @@ func Info(line string) {
 	log.Println("[info] " + line)
 }
 
+// Infoln writes a line to os.Stderr with prefix 'info', closing with newline.
 func Infoln(args ...any) {
 	log.Println(append([]any{"[info]"}, args...)...)
 }
@@ -55,6 +56,7 @@ func Warn(line string) {
 	log.Println("[warn] " + line)
 }
 
+// Warnln writes a line to os.Stderr with prefix 'warn', closing with newline.
 func Warnln(args ...any) {
 	log.Println(append([]any{"[warn]"}, args...)...)
 }
@@ -69,6 +71,7 @@ func Error(line string) {
 	log.Println("ERROR: " + line)
 }
 
+// Errorln writes a line to os.Stderr with prefix 'ERROR', closing with newline.
 func Errorln(args ...any) {
 	log.Println(append([]any{"ERROR:"}, args...)...)
 }
