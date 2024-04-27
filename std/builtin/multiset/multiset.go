@@ -168,3 +168,21 @@ func Equal[K comparable, C types.UnsignedInteger](a, b map[K]C) bool {
 	}
 	return true
 }
+
+// Set generates a set (`map[K]struct{}`) with all elements of the multiset.
+func Set[K comparable, C types.UnsignedInteger](multiset map[K]C) map[K]struct{} {
+	set := make(map[K]struct{}, len(multiset))
+	for k := range multiset {
+		set[k] = struct{}{}
+	}
+	return set
+}
+
+// Elements generates a slice (`[]K`) with all elements of the multiset.
+func Elements[K comparable, C types.UnsignedInteger](multiset map[K]C) []K {
+	elements := make([]K, 0, len(multiset))
+	for e := range multiset {
+		elements = append(elements, e)
+	}
+	return elements
+}
