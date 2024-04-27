@@ -13,7 +13,6 @@
 //
 // INVARIANT: all elements have a count strictly larger than 0. (I.e. elements that reach 0 are --must be--
 // deleted from the multiset.)
-// TODO implement Add/Subtract for mutating functions that operate on first of two provided multisets.
 // FIXME try to set an upper-limit guard for `C` to ensure that multiset does not wrap around undetected.
 package multiset
 
@@ -168,6 +167,18 @@ func Equal[K comparable, C types.UnsignedInteger](a, b map[K]C) bool {
 		}
 	}
 	return true
+}
+
+// Update updates the counts for each key.
+// `update` is the update-function, the returned value is used as new count-value for this key. A value of 0
+// will result in the key being deleted.
+func Update[K comparable, C types.UnsignedInteger](multiset map[K]C, update func(K, C) C) {
+	for k, n := range multiset {
+		multiset[k] = update(k, n)
+		if multiset[k] == 0 {
+			delete(multiset, k)
+		}
+	}
 }
 
 // Set generates a set (`map[K]struct{}`) with all elements of the multiset.
