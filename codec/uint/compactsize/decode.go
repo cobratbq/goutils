@@ -1,5 +1,4 @@
-// TODO return 'int' for read number of bytes instead of `uint`? (Although, now we guarantee by data-type that the value is always non-negative.)
-// FIXME write CompactSize encoding
+// TODO return uint8 as we are guaranteed to read at most 9 bytes for a decode. (previously: 'int' for read number of bytes instead of `uint`? Although, now we guarantee by data-type that the value is always non-negative.)
 // FIXME needs testing
 package compactsize
 
@@ -8,7 +7,7 @@ package compactsize
 // Returns value as uint8, and number of bytes read.
 // In case of 0 bytes read, either the encoding is bad or the value is too big to fit in the data-type.
 func DecodeUint8(buffer []byte) (uint8, uint) {
-	if len(buffer) < 1 || (buffer[0] == 0xfd && buffer[2] > 0) || buffer[0] > 0xfd {
+	if len(buffer) < 1 || (buffer[0] == 0xfd && (len(buffer) < 3 || buffer[2] > 0)) || buffer[0] > 0xfd {
 		return 0, 0
 	}
 	if buffer[0] < 0xfd {
