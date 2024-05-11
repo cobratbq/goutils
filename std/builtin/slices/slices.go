@@ -218,10 +218,17 @@ func Reduce[E any](input []E, reduce func(e1, e2 E) E) E {
 	return reduced
 }
 
-// Update updates all elements of a slice using the provided `update` func. Elements are passed
-// in in isolation, therefore the update logic must operate on individual elements.
-// TODO consider renaming to `UpdateElements` or something to reflect that this function operates on the slice's elements.
-func Update[E any](input []E, update func(int, E) E) {
+// Update updates all elements of a slice using the provided `update` func. Elements are passed in in
+// isolation, therefore the update logic must operate on individual elements.
+func Update[E any](input []E, update func(E) E) {
+	for i := 0; i < len(input); i++ {
+		input[i] = update(input[i])
+	}
+}
+
+// UpdateIndexed updates all elements of a slice using the provided `update` func. Elements are passed in in
+// isolation, therefore the update logic must operate on individual elements.
+func UpdateIndexed[E any](input []E, update func(int, E) E) {
 	for i := 0; i < len(input); i++ {
 		input[i] = update(i, input[i])
 	}
