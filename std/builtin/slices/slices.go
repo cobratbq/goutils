@@ -370,10 +370,12 @@ func UniformDimensions2D[E any](slice [][]E) bool {
 }
 
 // Create2D creates a fully-allocated 2D dynamic array.
+// FIXME function as bug (not applying initial value), but not always needed. Make this two separate functions?
 func Create2D[E any](sizeX, sizeY uint, initial E) [][]E {
 	outer := make([][]E, sizeY)
 	for y := uint(0); y < sizeY; y++ {
 		outer[y] = make([]E, sizeX)
+		Update(outer[y], func(E) E { return initial })
 	}
 	return outer
 }
