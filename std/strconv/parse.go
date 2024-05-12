@@ -43,6 +43,12 @@ func MustParseBytesInt[T types.SignedInteger](data []byte, base int) T {
 	return MustParseInt[T](string(data), base)
 }
 
+// MustParseBytesIntDecimal parses a byte-array for a signed decimal integer value of at most specified
+// bitsize. Success is assumed and the function will panic on error.
+func MustParseBytesIntDecimal[T types.SignedInteger](data []byte) T {
+	return MustParseInt[T](string(data), DecimalBase)
+}
+
 // ParseInt is generics-enabled variant of `strconv.ParseUint`, which derives the bitsize from the
 // specified parametric type.
 func ParseInt[T types.SignedInteger](s string, base int) (T, error) {
