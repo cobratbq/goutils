@@ -23,6 +23,14 @@ func DebuglnSlice[T any](prefix string, data []T) {
 	}
 }
 
+// DebuglnSliceAnsi prints each entry in `data` on a new line. Every debug-line is prefixed with `prefix`.
+// Each line of data (bytes), are printed as ANSI characters, thus converted to a string.
+func DebuglnSliceAnsi(prefix string, data [][]byte) {
+	for i, e := range data {
+		Debugln(prefix, i, string(e))
+	}
+}
+
 // DebuglnMap prints each entry in `data` (every key in the map) on a new line. Every debug-line is prefixed
 // with `prefix`.
 func DebuglnMap[K comparable, V any](prefix string, data map[K]V) {
