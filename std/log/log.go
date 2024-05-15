@@ -19,15 +19,15 @@ func Debugln(args ...any) {
 // DebuglnSlice prints each entry in `data` on a new line. Every debug-line is prefixed with `prefix`.
 func DebuglnSlice[T any](prefix string, data []T) {
 	for i, e := range data {
-		Debugln(prefix, i, e)
+		Debugln(prefix, i, "->", e)
 	}
 }
 
-// DebuglnSliceAnsi prints each entry in `data` on a new line. Every debug-line is prefixed with `prefix`.
+// DebuglnSliceAsString prints each entry in `data` on a new line. Every debug-line is prefixed with `prefix`.
 // Each line of data (bytes), are printed as ANSI characters, thus converted to a string.
-func DebuglnSliceAnsi(prefix string, data [][]byte) {
+func DebuglnSliceAsString(prefix string, data [][]byte) {
 	for i, e := range data {
-		Debugln(prefix, i, string(e))
+		Debugln(prefix, i, "->", string(e))
 	}
 }
 
@@ -35,7 +35,7 @@ func DebuglnSliceAnsi(prefix string, data [][]byte) {
 // with `prefix`.
 func DebuglnMap[K comparable, V any](prefix string, data map[K]V) {
 	for k, v := range data {
-		Debugln(prefix, k, v)
+		Debugln(prefix, k, "->", v)
 	}
 }
 
