@@ -44,6 +44,12 @@ func Debugf(format string, args ...any) {
 	log.Printf("[debug] "+format+"\n", args...)
 }
 
+func DebugReportln(assert bool, message string) {
+	if !assert {
+		Debugln(message, "Failed assertion:")
+	}
+}
+
 // Info writes a line to os.Stderr with prefix 'info'.
 func Info(line string) {
 	log.Println("[info] " + line)
