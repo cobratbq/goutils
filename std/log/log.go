@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var debuglog = log.New(os.Stderr, "[debug] ", log.LstdFlags|log.Lmsgprefix)
+var debuglog = log.New(os.Stderr, "[debug] ", log.Ltime|log.LUTC|log.Lmicroseconds|log.Lmsgprefix)
 
 const calldepth = 2
 
@@ -50,13 +50,14 @@ func Debugf(format string, args ...any) {
 	debuglog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
 
-func DebugReportln(assert bool, message string) {
+// DebugReport logs a debug-level message in case the assertion does not hold.
+func DebugReport(assert bool, format string, args ...any) {
 	if !assert {
-		debuglog.Output(calldepth, fmt.Sprintln("Failed assertion:", message))
+		debuglog.Output(calldepth, fmt.Sprintf("Failed assertion: "+format+"\n", args...))
 	}
 }
 
-var infolog = log.New(os.Stderr, " [info] ", log.LstdFlags|log.Lmsgprefix)
+var infolog = log.New(os.Stderr, " [info] ", log.Ltime|log.LUTC|log.Lmicroseconds|log.Lmsgprefix)
 
 // Info writes a line to os.Stderr with prefix 'info'.
 func Info(line string) {
@@ -73,7 +74,7 @@ func Infof(format string, args ...any) {
 	infolog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
 
-var warnlog = log.New(os.Stderr, " [warn] ", log.LstdFlags|log.Lmsgprefix)
+var warnlog = log.New(os.Stderr, " [warn] ", log.Ltime|log.LUTC|log.Lmicroseconds|log.Lmsgprefix)
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warn(line string) {
@@ -90,7 +91,7 @@ func Warnf(format string, args ...any) {
 	warnlog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
 
-var errorlog = log.New(os.Stderr, "[ERROR] ", log.LstdFlags|log.Lmsgprefix)
+var errorlog = log.New(os.Stderr, "[ERROR] ", log.Ltime|log.LUTC|log.Lmicroseconds|log.Lmsgprefix)
 
 // Error writes a line to os.Stderr with prefix 'ERROR'.
 func Error(line string) {
@@ -105,4 +106,15 @@ func Errorln(args ...any) {
 // Errorf writes a line to os.Stderr with prefix 'ERROR', using fmt formatting options.
 func Errorf(format string, args ...any) {
 	errorlog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
+}
+
+func Flags() int {
+	return debuglog.Flags()
+}
+
+func SetFlags(flags int) {
+	debuglog.SetFlags(flags)
+	infolog.SetFlags(flags)
+	warnlog.SetFlags(flags)
+	errorlog.SetFlags(flags)
 }

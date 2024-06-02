@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-var tracelog = log.New(os.Stderr, "[trace] ", log.LstdFlags|log.Lshortfile|log.Lmsgprefix)
+var tracelog = log.New(os.Stderr, "[trace] ", log.Ltime|log.LUTC|log.Lmicroseconds|log.Lmsgprefix|log.Lshortfile)
 
 func Tracing() bool {
 	return true
@@ -58,8 +58,19 @@ func TracelnMap[K comparable, V any](prefix string, data map[K]V) {
 	}
 }
 
-func TraceReportln(assert bool, message string) {
+// TraceReport logs a trace-message in case the assertion does not hold.
+func TraceReport(assert bool, format string, args ...any) {
 	if !assert {
-		tracelog.Output(calldepth, fmt.Sprintln("Failed assertion:", message))
+		tracelog.Output(calldepth, fmt.Sprintf("Failed assertion: "+format+"\n", args...))
 	}
+}
+
+// TraceFlags returns the flags set for trace-logging. (If trace-logging is enabled.)
+func TraceFlags() int {
+	return tracelog.Flags()
+}
+
+// SetTraceFlags sets the flags for trace-logging. (If trace-logging is enabled.)
+func SetTraceFlags(flags int) {
+	tracelog.SetFlags(flags)
 }

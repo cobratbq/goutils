@@ -20,4 +20,8 @@ func TracelnSliceAsString(prefix string, data [][]byte) {}
 
 func TracelnMap[K comparable, V any](prefix string, data map[K]V) {}
 
-func TraceReportln(assert bool, message string) {}
+func TraceReport(assert bool, format string, args ...any) {}
+
+func TraceFlags() int { return 0 }
+
+func SetTraceFlags(flags int) {}
