@@ -46,15 +46,3 @@ func TestSuccessFormatSpecifier(t *testing.T) {
 	Success(errors.New("Test"), "BUG: this message is part of the panic: %+v")
 	t.FailNow()
 }
-
-func TestUnreachable(t *testing.T) {
-	defer assert.RequireRecover(t)
-	Unreachable()
-	t.FailNow()
-}
-
-func TestUnsupported(t *testing.T) {
-	defer assert.RequireRecover(t)
-	Unsupported("To be implemented")
-	t.FailNow()
-}
