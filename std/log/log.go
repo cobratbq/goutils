@@ -3,23 +3,29 @@
 package log
 
 import (
+	"fmt"
 	"log"
+	"os"
 )
+
+var debuglog = log.New(os.Stderr, "[debug] ", log.LstdFlags|log.Lmsgprefix)
+
+const calldepth = 2
 
 // Debug writes output to os.Stderr with prefix 'debug'.
 func Debug(line string) {
-	log.Println("[debug] " + line)
+	debuglog.Output(calldepth, fmt.Sprintln(line))
 }
 
 // Debugln writes a line to os.Stderr with prefix `debug`, then ends with newline.
 func Debugln(args ...any) {
-	log.Println(append([]any{"[debug]"}, args...)...)
+	debuglog.Output(calldepth, fmt.Sprintln(args...))
 }
 
 // DebuglnSlice prints each entry in `data` on a new line. Every debug-line is prefixed with `prefix`.
 func DebuglnSlice[T any](prefix string, data []T) {
 	for i, e := range data {
-		Debugln(prefix, i, "->", e)
+		debuglog.Output(calldepth, fmt.Sprintln(prefix, i, "->", e))
 	}
 }
 
@@ -27,7 +33,7 @@ func DebuglnSlice[T any](prefix string, data []T) {
 // Each line of data (bytes), are printed as ANSI characters, thus converted to a string.
 func DebuglnSliceAsString(prefix string, data [][]byte) {
 	for i, e := range data {
-		Debugln(prefix, i, "->", string(e))
+		debuglog.Output(calldepth, fmt.Sprintln(prefix, i, "->", string(e)))
 	}
 }
 
@@ -35,62 +41,68 @@ func DebuglnSliceAsString(prefix string, data [][]byte) {
 // with `prefix`.
 func DebuglnMap[K comparable, V any](prefix string, data map[K]V) {
 	for k, v := range data {
-		Debugln(prefix, k, "->", v)
+		debuglog.Output(calldepth, fmt.Sprintln(prefix, k, "->", v))
 	}
 }
 
 // Debugf writes a line to os.Stderr with prefix 'debug', using fmt formatting options.
 func Debugf(format string, args ...any) {
-	log.Printf("[debug] "+format+"\n", args...)
+	debuglog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
 
 func DebugReportln(assert bool, message string) {
 	if !assert {
-		Debugln(message, "Failed assertion:")
+		debuglog.Output(calldepth, fmt.Sprintln("Failed assertion:", message))
 	}
 }
 
+var infolog = log.New(os.Stderr, " [info] ", log.LstdFlags|log.Lmsgprefix)
+
 // Info writes a line to os.Stderr with prefix 'info'.
 func Info(line string) {
-	log.Println("[info] " + line)
+	infolog.Output(calldepth, fmt.Sprintln(line))
 }
 
 // Infoln writes a line to os.Stderr with prefix 'info', closing with newline.
 func Infoln(args ...any) {
-	log.Println(append([]any{"[info]"}, args...)...)
+	infolog.Output(calldepth, fmt.Sprintln(args...))
 }
 
 // Info writes a line to os.Stderr with prefix 'info'.
 func Infof(format string, args ...any) {
-	log.Printf("[info] "+format+"\n", args...)
+	infolog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
+
+var warnlog = log.New(os.Stderr, " [warn] ", log.LstdFlags|log.Lmsgprefix)
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warn(line string) {
-	log.Println("[warn] " + line)
+	warnlog.Output(calldepth, fmt.Sprintln(line))
 }
 
 // Warnln writes a line to os.Stderr with prefix 'warn', closing with newline.
 func Warnln(args ...any) {
-	log.Println(append([]any{"[warn]"}, args...)...)
+	warnlog.Output(calldepth, fmt.Sprintln(args...))
 }
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warnf(format string, args ...any) {
-	log.Printf("[warn] "+format+"\n", args...)
+	warnlog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
+
+var errorlog = log.New(os.Stderr, "[ERROR] ", log.LstdFlags|log.Lmsgprefix)
 
 // Error writes a line to os.Stderr with prefix 'ERROR'.
 func Error(line string) {
-	log.Println("ERROR: " + line)
+	errorlog.Output(calldepth, fmt.Sprintln(line))
 }
 
 // Errorln writes a line to os.Stderr with prefix 'ERROR', closing with newline.
 func Errorln(args ...any) {
-	log.Println(append([]any{"ERROR:"}, args...)...)
+	errorlog.Output(calldepth, fmt.Sprintln(args...))
 }
 
 // Errorf writes a line to os.Stderr with prefix 'ERROR', using fmt formatting options.
 func Errorf(format string, args ...any) {
-	log.Printf("ERROR: "+format+"\n", args...)
+	errorlog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
