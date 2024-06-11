@@ -19,14 +19,11 @@ func AppendCond[E any](cond bool, slice []E, value ...E) []E {
 	return slice
 }
 
-// TODO move this somewhere as generic error (buffer-overflows, integer-overflows, collection-overflows, stack-overflows, ...)
-var ErrOverflow = errors.NewStringError("overflowing")
-
 // ExtendFrom appends to a slice as far as capacity allows, without reallocation.
 func ExtendFrom[E any](slice []E, additions []E) ([]E, error) {
 	n := len(slice)
 	if cap(slice) < n+len(additions) {
-		return nil, ErrOverflow
+		return nil, errors.ErrOverflow
 	}
 	slice = slice[:n+len(additions)]
 	copy(slice[n:], additions)

@@ -82,7 +82,7 @@ func readProcessTypedLinesFunc[T ~[]byte | ~string, V any](
 			break
 		} else if processErr != nil {
 			// Error occurred while processing line, so abort with processing failure.
-			return results, errors.Context(ErrProcessingFailure, processErr.Error())
+			return results, errors.Aggregate(errors.ErrFailure, "ReadProcessTypedLines", processErr)
 		} else {
 			results = append(results, v)
 		}
@@ -131,7 +131,7 @@ func ReadBytesLinesFunc(reader *bufio.Reader, delim byte, process func([]byte) e
 		}
 		if processErr != nil {
 			// Error occurred while processing line, so abort with processing failure.
-			return errors.Context(ErrProcessingFailure, processErr.Error())
+			return errors.Aggregate(errors.ErrFailure, "ReadBytesLines processing", processErr)
 		}
 		if errors.Is(readErr, io.EOF) {
 			break
@@ -176,7 +176,7 @@ func ReadStringLinesFunc(reader *bufio.Reader, delim byte, process func(string) 
 		}
 		if processErr != nil {
 			// Error occurred while processing line, so abort with processing failure.
-			return errors.Context(ErrProcessingFailure, processErr.Error())
+			return errors.Aggregate(errors.ErrFailure, "ReadStringLines processing", processErr)
 		}
 		if errors.Is(readErr, io.EOF) {
 			break
@@ -184,11 +184,6 @@ func ReadStringLinesFunc(reader *bufio.Reader, delim byte, process func(string) 
 	}
 	return nil
 }
-
-// ErrProcessingFailure will be returned if the `process` func produces an error. This is
-// interpreted as a failure that is critical enough to stop further processing. Instead,
-// ErrProcessingCompleted will be returned with the processing error as context information.
-var ErrProcessingFailure = errors.NewStringError("failure encountered during processing")
 
 // ErrProcessingCompleted signals that all expected processing has been completed and we do not want
 // to continue to process any possible lines to follow. Instead, when this is received, we shall

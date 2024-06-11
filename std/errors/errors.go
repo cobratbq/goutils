@@ -20,6 +20,16 @@ import (
 	"strings"
 )
 
+// ErrFailure indicates that there was a processing failure.
+var ErrFailure = NewStringError("failure during processing")
+
+// TODO move this somewhere as generic error (buffer-overflows, integer-overflows, collection-overflows, stack-overflows, ...)
+var ErrOverflow = NewStringError("overflowing")
+
+// ErrEmpty indicates that stack is empty, either at present or after the operation.
+// FIXME move to somewhere more general, general, common error
+var ErrUnderflow = NewStringError("underflowing")
+
 // Is repeatedly unwraps an error and compares to target on each unwrapping.
 // Is uses the implementation from std/errors.
 func Is(err error, target error) bool {

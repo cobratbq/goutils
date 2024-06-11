@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/cobratbq/goutils/std/builtin"
-	"github.com/cobratbq/goutils/std/builtin/slices"
+	"github.com/cobratbq/goutils/std/errors"
 	assert "github.com/cobratbq/goutils/std/testing"
 )
 
@@ -12,7 +12,7 @@ func TestPushOntoFullStack(t *testing.T) {
 	var store [3]byte
 	stack := store[:3]
 	assert.True(t, IsFull(stack))
-	assert.IsError(t, slices.ErrOverflow, builtin.Error(Push(stack, 1)))
+	assert.IsError(t, errors.ErrOverflow, builtin.Error(Push(stack, 1)))
 }
 
 func TestPushOntoEmptyStack(t *testing.T) {
@@ -35,7 +35,7 @@ func TestPopFromEmptyStack(t *testing.T) {
 	var store [3]byte
 	stack := store[:0]
 	assert.True(t, IsEmpty(stack))
-	assert.IsError(t, ErrUnderflow, builtin.Error2(Pop(stack)))
+	assert.IsError(t, errors.ErrUnderflow, builtin.Error2(Pop(stack)))
 }
 
 func TestPopFromFullStack(t *testing.T) {
