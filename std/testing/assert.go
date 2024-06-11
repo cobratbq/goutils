@@ -5,7 +5,10 @@
 // addition, one would either use `assert` in production logic, or `std/testing` in unit tests.
 package testing
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func True(t testing.TB, v bool) {
 	t.Helper()
@@ -103,5 +106,12 @@ func ValueAbsent[K comparable, V comparable](t testing.TB, map_ map[K]V, value V
 		if v == value {
 			t.Errorf("Expected value '%v' to be absent in map.", value)
 		}
+	}
+}
+
+func IsError(t testing.TB, cause, actual error) {
+	t.Helper()
+	if !errors.Is(cause, actual) {
+		t.Errorf("Actual error '%v' does not have expected root-cause: %v", actual, cause)
 	}
 }
