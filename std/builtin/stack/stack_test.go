@@ -4,8 +4,49 @@ import (
 	"testing"
 
 	"github.com/cobratbq/goutils/std/builtin"
+	"github.com/cobratbq/goutils/std/builtin/slices"
 	assert "github.com/cobratbq/goutils/std/testing"
 )
+
+func TestPushOntoFullStack(t *testing.T) {
+	var store [3]byte
+	stack := store[:3]
+	assert.True(t, IsFull(stack))
+	assert.IsError(t, slices.ErrOverflow, builtin.Error(Push(stack, 1)))
+}
+
+func TestPushOntoEmptyStack(t *testing.T) {
+	var store [3]byte
+	stack := store[:0]
+	assert.True(t, IsEmpty(stack))
+	stack, err := Push(stack, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(stack))
+}
+
+func TestPushMany(t *testing.T) {
+	var store [3]byte = [...]byte{1, 4, 5}
+	stack := store[:0]
+	stack, err := PushMany(stack, []byte{2, 3})
+	assert.Nil(t, err)
+}
+
+func TestPopFromEmptyStack(t *testing.T) {
+	var store [3]byte
+	stack := store[:0]
+	assert.True(t, IsEmpty(stack))
+	assert.IsError(t, ErrUnderflow, builtin.Error2(Pop(stack)))
+}
+
+func TestPopFromFullStack(t *testing.T) {
+	var store [3]byte = [...]byte{1, 2, 3}
+	stack := store[:3]
+	assert.True(t, IsFull(stack))
+	stack, v, err := Pop(stack)
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(stack))
+	assert.Equal(t, 3, v)
+}
 
 func TestPush(t *testing.T) {
 	var store [3]uint
