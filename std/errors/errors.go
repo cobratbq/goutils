@@ -20,14 +20,19 @@ import (
 	"strings"
 )
 
+// ErrIllegal indicates an illegal/bad value.
+var ErrIllegal = NewStringError("illegal value")
+
+// ErrInternalState indicates a problem with internal state, or use while in incorrect state.
+var ErrInternalState = NewStringError("illegal state")
+
 // ErrFailure indicates that there was a processing failure.
 var ErrFailure = NewStringError("failure during processing")
 
-// TODO move this somewhere as generic error (buffer-overflows, integer-overflows, collection-overflows, stack-overflows, ...)
+// ErrOverflow indicates that the operation causes an overflow of some kind.
 var ErrOverflow = NewStringError("overflowing")
 
-// ErrEmpty indicates that stack is empty, either at present or after the operation.
-// FIXME move to somewhere more general, general, common error
+// ErrUnderflow indicates that stack is empty, either at present or after the operation.
 var ErrUnderflow = NewStringError("underflowing")
 
 // Is repeatedly unwraps an error and compares to target on each unwrapping.
