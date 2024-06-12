@@ -35,6 +35,9 @@ var ErrOverflow = NewStringError("overflowing")
 // ErrUnderflow indicates that stack is empty, either at present or after the operation.
 var ErrUnderflow = NewStringError("underflowing")
 
+// ErrUnsupported indicates that an error occurred because of an unsupported operation or value.
+var ErrUnsupported = NewStringError("unsupported")
+
 // Is repeatedly unwraps an error and compares to target on each unwrapping.
 // Is uses the implementation from std/errors.
 func Is(err error, target error) bool {
