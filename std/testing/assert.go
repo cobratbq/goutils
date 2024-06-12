@@ -7,6 +7,7 @@ package testing
 
 import (
 	"errors"
+	"slices"
 	"testing"
 )
 
@@ -113,5 +114,12 @@ func IsError(t testing.TB, cause, actual error) {
 	t.Helper()
 	if !errors.Is(cause, actual) {
 		t.Errorf("Actual error '%v' does not have expected root-cause: %v", actual, cause)
+	}
+}
+
+func EqualSlices[E comparable](t testing.TB, expected, actual []E) {
+	t.Helper()
+	if !slices.Equal(expected, actual) {
+		t.Errorf("Slices %v and %v are not equal.", expected, actual)
 	}
 }
