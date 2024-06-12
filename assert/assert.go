@@ -76,3 +76,17 @@ func NonPositive[T types.SignedInteger](v T) {
 	log.Traceln("assert.NonPositive:", v)
 	panic("assertion failed: non-positive value")
 }
+
+// TODO is it possible to define a function `Empty` that accepts string, slice, map, etc. all at once, then perform a `len(c) == 0` check?
+
+func EmptySlice[E any](collection []E) {
+	if len(collection) > 0 {
+		panic("assertion failed: slice is not empty")
+	}
+}
+
+func EmptyMap[K comparable, V any](collection map[K]V) {
+	if len(collection) > 0 {
+		panic("assertion failed: map is not empty")
+	}
+}

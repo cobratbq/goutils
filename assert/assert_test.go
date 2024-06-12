@@ -99,3 +99,12 @@ func TestNegativeMaxInt(t *testing.T) {
 	Negative(types.MaxInt)
 	t.FailNow()
 }
+
+func TestEmptySlice(t *testing.T) {
+	EmptySlice([]byte{})
+}
+
+func TestEmptyMap(t *testing.T) {
+	m := make(map[uint]string, 0)
+	EmptyMap(m)
+}
