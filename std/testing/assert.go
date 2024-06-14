@@ -112,7 +112,7 @@ func ValueAbsent[K comparable, V comparable](t testing.TB, map_ map[K]V, value V
 
 func IsError(t testing.TB, cause, actual error) {
 	t.Helper()
-	if !errors.Is(cause, actual) {
+	if !errors.Is(actual, cause) {
 		t.Errorf("Actual error '%v' does not have expected root-cause: %v", actual, cause)
 	}
 }
