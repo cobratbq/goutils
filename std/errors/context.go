@@ -25,7 +25,7 @@ type context struct {
 }
 
 func (c context) Error() string {
-	return c.cause.Error() + ": " + c.message
+	return c.message + ": " + c.cause.Error()
 }
 
 func (c context) Unwrap() error {
