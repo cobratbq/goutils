@@ -203,7 +203,7 @@ func MergeIntoKeyedFunc[K comparable, V any](dst, src map[K]V, conflict func(K, 
 
 // KeySubset checks, `O(n)` for `n` entries, if all keys of `subset` map are present in `set` map.
 // Values are not considered.
-func KeySubset[K comparable, V any](set map[K]V, subset map[K]V) bool {
+func KeySubset[K comparable, V any](set, subset map[K]V) bool {
 	for k := range subset {
 		if _, ok := set[k]; !ok {
 			return false
