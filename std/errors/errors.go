@@ -20,7 +20,7 @@ import (
 	"strings"
 )
 
-// ErrIllegal indicates an illegal/bad value.
+// ErrIllegal indicates an illegal/bad value(s) for provided parameter(s).
 var ErrIllegal = NewStringError("illegal value")
 
 // ErrInternalState indicates a problem with internal state, or use while in incorrect state.
