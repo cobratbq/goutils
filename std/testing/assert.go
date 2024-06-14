@@ -117,7 +117,7 @@ func IsError(t testing.TB, cause, actual error) {
 	}
 }
 
-func EqualSlices[E comparable](t testing.TB, expected, actual []E) {
+func SlicesEqual[E comparable](t testing.TB, expected, actual []E) {
 	t.Helper()
 	if !slices.Equal(expected, actual) {
 		t.Errorf("Slices %v and %v are not equal.", expected, actual)
