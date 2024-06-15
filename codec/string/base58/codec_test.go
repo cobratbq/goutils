@@ -19,7 +19,7 @@ func TestEncodeBase58Check(t *testing.T) {
 	for _, entry := range testdata {
 		result, err := CheckEncode(entry.data)
 		assert.Nil(t, err)
-		assert.EqualSlices(t, entry.encoded, result)
+		assert.SlicesEqual(t, entry.encoded, result)
 	}
 }
 
@@ -35,6 +35,6 @@ func TestDecodeBase58Check(t *testing.T) {
 	for _, entry := range testdata {
 		result, err := CheckDecode(entry.data)
 		assert.Nil(t, err)
-		assert.EqualSlices(t, entry.decoded, result)
+		assert.SlicesEqual(t, entry.decoded, result)
 	}
 }
