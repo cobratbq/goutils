@@ -21,16 +21,16 @@ func ReadUint16(in io.Reader) (uint16, error) {
 	if err := io_.ReadFull(in, b[:]); err != nil {
 		return 0, err
 	}
-	return ToUint16(b[0], b[1]), nil
+	return Uint16(b[0], b[1]), nil
 }
 
 func MustReadUint16(in io.Reader) uint16 {
 	var b [2]byte
 	io_.MustReadBytes(in, b[:])
-	return ToUint16(b[0], b[1])
+	return Uint16(b[0], b[1])
 }
 
-func ToUint16(b0, b1 byte) uint16 {
+func Uint16(b0, b1 byte) uint16 {
 	return uint16(b1)<<8 + uint16(b0)
 }
 
@@ -39,16 +39,16 @@ func ReadUint32(in io.Reader) (uint32, error) {
 	if err := io_.ReadFull(in, b[:]); err != nil {
 		return 0, err
 	}
-	return ToUint32(b[0], b[1], b[2], b[3]), nil
+	return Uint32(b[0], b[1], b[2], b[3]), nil
 }
 
 func MustReadUint32(in io.Reader) uint32 {
 	var b [4]byte
 	io_.MustReadBytes(in, b[:])
-	return ToUint32(b[0], b[1], b[2], b[3])
+	return Uint32(b[0], b[1], b[2], b[3])
 }
 
-func ToUint32(b0, b1, b2, b3 byte) uint32 {
+func Uint32(b0, b1, b2, b3 byte) uint32 {
 	return uint32(b3)<<24 + uint32(b2)<<16 + uint32(b1)<<8 + uint32(b0)
 }
 
@@ -57,16 +57,16 @@ func ReadUint64(in io.Reader) (uint64, error) {
 	if err := io_.ReadFull(in, b[:]); err != nil {
 		return 0, err
 	}
-	return ToUint64(b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]), nil
+	return Uint64(b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]), nil
 }
 
 func MustReadUint64(in io.Reader) uint64 {
 	var b [8]byte
 	io_.MustReadBytes(in, b[:])
-	return ToUint64(b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7])
+	return Uint64(b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7])
 }
 
-func ToUint64(b0, b1, b2, b3, b4, b5, b6, b7 byte) uint64 {
+func Uint64(b0, b1, b2, b3, b4, b5, b6, b7 byte) uint64 {
 	return uint64(b7)<<56 + uint64(b6)<<48 + uint64(b5)<<40 + uint64(b4)<<32 +
 		uint64(b3)<<24 + uint64(b2)<<16 + uint64(b1)<<8 + uint64(b0)
 }
