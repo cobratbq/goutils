@@ -2,6 +2,12 @@
 // FIXME needs testing
 package compactsize
 
+import (
+	"math"
+
+	"github.com/cobratbq/goutils/types"
+)
+
 // Decode next value in buffer into `uint8`.
 //
 // Returns value as uint8, and number of bytes read.
@@ -79,4 +85,13 @@ func DecodeUint64(buffer []byte) (uint64, uint) {
 	result += uint64(buffer[7]) << 48
 	result += uint64(buffer[8]) << 56
 	return result, 9
+}
+
+func DecodeUint(buffer []byte) (uint, uint) {
+	if types.MaxUint == math.MaxUint32 {
+		value, n := DecodeUint32(buffer)
+		return uint(value), n
+	}
+	value, n := DecodeUint64(buffer)
+	return uint(value), n
 }
