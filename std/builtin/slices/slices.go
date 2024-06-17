@@ -4,6 +4,7 @@ package slices
 
 import (
 	"os"
+	"slices"
 
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/std/builtin/multiset"
@@ -336,11 +337,16 @@ func MiddleIndex[E any](slice []E) (int, error) {
 	return len(slice) / 2, nil
 }
 
+// Reverse a slice in-place. (Calls into Go std slices.Reverse)
+func Reverse[E any](slice []E) {
+	slices.Reverse(slice)
+}
+
 // Reversed creates a new slice with the contents of provided slice in reversed order.
 func Reversed[E any](slice []E) []E {
-	result := make([]E, 0, len(slice))
-	for i := len(slice) - 1; i >= 0; i-- {
-		result = append(result, slice[i])
+	result := make([]E, len(slice))
+	for i := range slice {
+		result[i] = slice[len(slice)-1-i]
 	}
 	return result
 }
