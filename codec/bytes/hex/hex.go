@@ -2,7 +2,21 @@
 
 package hex
 
+import (
+	"encoding/hex"
+
+	"github.com/cobratbq/goutils/std/builtin"
+)
+
 const index string = `0123456789abcdef`
+
+// MustDecodeString decodes an arbitrary-length hex-encoded string.
+//
+// `encoded` must be a valid hexadecimal-encoded string, i.e. even-length and containing only hexadecimal
+// characters.
+func MustDecodeString(encoded string) []byte {
+	return builtin.Expect(hex.DecodeString(encoded))
+}
 
 // HexEncodeChars encodes a uint8 value into its two-symbol (lower-case) hexadecimal representation.
 func HexEncodeChars(value uint8) (byte, byte) {
