@@ -38,6 +38,10 @@ var ErrUnderflow = NewStringError("underflowing")
 // ErrUnsupported indicates that an error occurred because of an unsupported operation or value.
 var ErrUnsupported = NewStringError("unsupported")
 
+// ErrBug indicates that an error occurred that should not have happened, for example if an unreachable state
+// is reached.
+var ErrBug = NewStringError("BUG: this error should not have happened")
+
 // Is repeatedly unwraps an error and compares to target on each unwrapping.
 // Is uses the implementation from std/errors.
 func Is(err error, target error) bool {
