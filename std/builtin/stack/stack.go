@@ -53,8 +53,7 @@ func Pop[T any](stack []T) ([]T, T, error) {
 		var zero T
 		return stack, zero, errors.ErrUnderflow
 	}
-	v := stack[len(stack)-1]
-	return stack[:len(stack)-1], v, nil
+	return stack[:len(stack)-1], stack[len(stack)-1], nil
 }
 
 // PopN pops `n` elements off the stack.
