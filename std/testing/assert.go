@@ -11,6 +11,15 @@ import (
 	"testing"
 )
 
+// StopOnFailure halts the test immediately if it failed and logs provided message to provide context.
+func StopOnFailure(t testing.TB, message ...any) {
+	t.Helper()
+	if t.Failed() {
+		t.Log(message...)
+		t.FailNow()
+	}
+}
+
 func True(t testing.TB, v bool) {
 	t.Helper()
 	if !v {
