@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
-//go:build enable_trace
+//go:build tracelog
 
 package log
 
