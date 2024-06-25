@@ -11,6 +11,14 @@ import (
 	"testing"
 )
 
+// LogOnFailure logs a message if the test is registered as "failed".
+func LogOnFailure(t testing.TB, message ...any) {
+	t.Helper()
+	if t.Failed() {
+		t.Log(message...)
+	}
+}
+
 // StopOnFailure halts the test immediately if it failed and logs provided message to provide context.
 func StopOnFailure(t testing.TB, message ...any) {
 	t.Helper()
