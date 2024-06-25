@@ -4,6 +4,8 @@
 
 package log
 
+import "io"
+
 func Tracing() bool {
 	return false
 }
@@ -25,3 +27,5 @@ func TraceReport(assert bool, format string, args ...any) {}
 func TraceFlags() int { return 0 }
 
 func SetTraceFlags(flags int) {}
+
+func SetTraceOutput(output io.Writer) {}

@@ -4,6 +4,7 @@ package log
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 )
@@ -117,4 +118,11 @@ func SetFlags(flags int) {
 	infolog.SetFlags(flags)
 	warnlog.SetFlags(flags)
 	errorlog.SetFlags(flags)
+}
+
+func SetOutput(output io.Writer) {
+	debuglog.SetOutput(output)
+	infolog.SetOutput(output)
+	warnlog.SetOutput(output)
+	errorlog.SetOutput(output)
 }

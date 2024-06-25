@@ -6,6 +6,7 @@ package log
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 )
@@ -73,4 +74,9 @@ func TraceFlags() int {
 // SetTraceFlags sets the flags for trace-logging. (If trace-logging is enabled.)
 func SetTraceFlags(flags int) {
 	tracelog.SetFlags(flags)
+}
+
+// SetTraceOutput sets the output writer for trace-logging. (If trace-logging is enabled.)
+func SetTraceOutput(output io.Writer) {
+	tracelog.SetOutput(output)
 }
