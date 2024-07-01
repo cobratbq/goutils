@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
+// TODO consider providing option for adding terminal coloring. It would be nice to de-emphasize timestamp, emphasize log-level, and normalize at logged content. (os.Stdout.Fd() == 1, etc. Makes for easy testing if output is Std{Err,Out})
 package log
 
 import (

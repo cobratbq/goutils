@@ -90,3 +90,15 @@ func EmptyMap[K comparable, V any](collection map[K]V) {
 		panic("assertion failed: map is not empty")
 	}
 }
+
+func AtLeast[C types.Ordered](least C, value C) {
+	if value < least {
+		panic("assertion failed: value below (inclusive) lower bound")
+	}
+}
+
+func AtMost[C types.Ordered](most C, value C) {
+	if value > most {
+		panic("assertion failed: value above (inclusive) upper bound")
+	}
+}
