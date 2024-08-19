@@ -4,6 +4,26 @@ package builtin
 
 import "github.com/cobratbq/goutils/assert"
 
+func Ok[T any](result T, ok bool) T {
+	assert.True(ok)
+	return result
+}
+
+func Ok2[T any, T2 any](result T, result2 T2, ok bool) (T, T2) {
+	assert.True(ok)
+	return result, result2
+}
+
+func Ok3[T any, T2 any, T3 any](result T, result2 T2, result3 T3, ok bool) (T, T2, T3) {
+	assert.True(ok)
+	return result, result2, result3
+}
+
+func Ok4[T any, T2 any, T3 any, T4 any](result T, result2 T2, result3 T3, result4 T4, ok bool) (T, T2, T3, T4) {
+	assert.True(ok)
+	return result, result2, result3, result4
+}
+
 // Expect checks for error and either panics on error, or passes through only the result.
 func Expect[T any](result T, err error) T {
 	assert.Success(err, "unexpected failure")
