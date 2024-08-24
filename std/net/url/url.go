@@ -29,3 +29,20 @@ func PortOrProtocolDefault(uri *url.URL) (string, error) {
 		return "", ErrSchemeUnknown
 	}
 }
+
+func DeriveOrigin(url *url.URL, allowPort bool) (string, error) {
+	var origin string
+	switch url.Scheme {
+	case "http", "ws":
+		origin = "http://"
+	case "https", "wss":
+		origin = "https://"
+	default:
+		return "", errors.ErrIllegal
+	}
+	if allowPort {
+		return origin + url.Host, nil
+	} else {
+		return origin + url.Hostname(), nil
+	}
+}
