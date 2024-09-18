@@ -5,7 +5,9 @@ package hex
 import (
 	"encoding/hex"
 
+	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/std/builtin"
+	"github.com/cobratbq/goutils/std/errors"
 )
 
 const index string = `0123456789abcdef`
@@ -16,6 +18,24 @@ const index string = `0123456789abcdef`
 // characters.
 func MustDecodeString(encoded string) []byte {
 	return builtin.Expect(hex.DecodeString(encoded))
+}
+
+func Decode(encoded []byte) ([]byte, error) {
+	assert.Equal(0, len(encoded)%2)
+	var decoded = make([]byte, len(encoded)/2)
+	var n int
+	var err error
+	if n, err = hex.Decode(decoded, encoded); err != nil {
+		return nil, err
+	}
+	if n != len(decoded) {
+		return nil, errors.ErrIllegal
+	}
+	return decoded, nil
+}
+
+func MustDecode(encoded []byte) []byte {
+	return builtin.Expect(Decode(encoded))
 }
 
 // HexEncodeChars encodes a uint8 value into its two-symbol (lower-case) hexadecimal representation.
@@ -71,4 +91,16 @@ func HexDecodeChar(c byte) uint8 {
 	default:
 		panic("BUG: invalid character encountered, not part of hexadecimal system")
 	}
+}
+
+func AllHexadecimal(data []byte) bool {
+	for i := range data {
+		switch data[i] {
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F':
+			continue
+		default:
+			return false
+		}
+	}
+	return true
 }
