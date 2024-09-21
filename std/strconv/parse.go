@@ -92,6 +92,6 @@ func ParseUint[T types.UnsignedInteger](s string, base int) (T, error) {
 
 // ParseUintBytes is generics-enabled variant of `strconv.ParseUint` that parses a byte-string and converts
 // the data on-the-fly to string.
-func ParseUintBytes[T types.UnsignedInteger](data []byte, base int) (T, error) {
+func ParseBytesUint[T types.UnsignedInteger](data []byte, base int) (T, error) {
 	return ParseUint[T](string(data), base)
 }
