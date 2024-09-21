@@ -22,7 +22,7 @@ func factor() big.Int {
 }
 
 // Encode encodes the content into Base58.
-func Encode(data []byte) []byte {
+func encode(data []byte) []byte {
 	var x big.Int
 	x.SetBytes(data)
 	var zero big.Int
@@ -48,7 +48,7 @@ func ChecksumEncode(data []byte) []byte {
 	content := make([]byte, 0, len(data)+4)
 	content = append(content, data...)
 	content = append(content, check[:4]...)
-	return Encode(content)
+	return encode(content)
 }
 
 // CheckEncode checks the concatenated 4-byte checksum then encodes the data to Base58.
@@ -58,7 +58,7 @@ func CheckEncode(dataWithChecksum []byte) ([]byte, error) {
 	if subtle.ConstantTimeCompare(check[:4], dataWithChecksum[len(dataWithChecksum)-4:]) != 1 {
 		return nil, errors.Context(errors.ErrIllegal, "Base58 check-code does not match")
 	}
-	return Encode(dataWithChecksum), nil
+	return encode(dataWithChecksum), nil
 }
 
 // Decode decodes the Base58-encoded content.
@@ -85,6 +85,7 @@ func Decode(encoded []byte) ([]byte, error) {
 }
 
 // Decodes the Base58-content then checks the checksum.
+// Returns content without the checksum.
 func CheckDecode(encoded []byte) ([]byte, error) {
 	result, err := Decode(encoded)
 	if err != nil {
@@ -95,5 +96,5 @@ func CheckDecode(encoded []byte) ([]byte, error) {
 	if subtle.ConstantTimeCompare(check[:4], result[len(result)-4:]) != 1 {
 		return nil, errors.Context(errors.ErrIllegal, "Base58 check-code does not match")
 	}
-	return result, err
+	return result[:len(result)-4], err
 }
