@@ -72,8 +72,19 @@ func ForEachIndexed[E any](data []E, process func(idx int, e E)) {
 
 // Index looks for a value linearly in the slice and returns its index if found, or -1 otherwise.
 func Index[E comparable](data []E, value E) int {
-	for i, v := range data {
-		if v == value {
+	for i := range data {
+		if data[i] == value {
+			return i
+		}
+	}
+	return -1
+}
+
+// LastIndex looks for an element linearly from the end and returns the index if found, which would be the
+// last occurrence of specified value, or `-1` if not found.
+func LastIndex[E comparable](data []E, value E) int {
+	for i := len(data) - 1; i >= 0; i-- {
+		if data[i] == value {
 			return i
 		}
 	}
@@ -83,8 +94,19 @@ func Index[E comparable](data []E, value E) int {
 // IndexFunc looks for an element linearly in the slice and returns its index if found, or -1
 // otherwise. Func `test` is used to test if the value is found.
 func IndexFunc[E any](data []E, test func(E) bool) int {
-	for i, v := range data {
-		if test(v) {
+	for i := range data {
+		if test(data[i]) {
+			return i
+		}
+	}
+	return -1
+}
+
+// LastIndexFunc tests elements linearly from the end and returns the index of the first element that tests
+// positively, which would be the last occurrence of a value that satisfies `test`, or `-1` if not found.
+func LastIndexFunc[E any](data []E, test func(E) bool) int {
+	for i := len(data) - 1; i >= 0; i-- {
+		if test(data[i]) {
 			return i
 		}
 	}
