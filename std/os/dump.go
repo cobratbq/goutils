@@ -9,6 +9,8 @@ import (
 	io_ "github.com/cobratbq/goutils/std/io"
 )
 
+// DumpToFile writes provided content to file at `path`. This is a one-shot function that writes the content
+// and closes the file. This is particularly useful during development and for debugging.
 func DumpToFile(path string, content []byte) error {
 	var out, err = os.Create(path)
 	if err != nil {
@@ -26,10 +28,35 @@ func DumpToFile(path string, content []byte) error {
 	return nil
 }
 
+// MustDumpToFile executes DumpToFile and panics on failure.
 func MustDumpToFile(path string, content []byte) {
 	assert.Success(DumpToFile(path, content), "Failed to dump content to file.")
 }
 
+// DumpToFileThroughFunc1 dumps contents to file that are produced by a function that performs something like
+// a serialization and accepts a writer as input.
+func DumpToFileThroughFunc1(path string, writeIntoFunc func(out io.Writer) error) error {
+	var out, err = os.Create(path)
+	if err != nil {
+		return errors.Context(err, "failed to create/truncate out-file for writing")
+	}
+	defer io_.CloseLogged(out, "failed to gracefully close out-file")
+	return writeIntoFunc(out)
+}
+
+// DumpToFileThroughFunc2 dumps contents to file that are produced by a function that performs something like
+// a serialization and accepts a writer as input.
+func DumpToFileThroughFunc2(path string, writeIntoFunc func(out io.Writer) (int, error)) (int, error) {
+	var out, err = os.Create(path)
+	if err != nil {
+		return 0, errors.Context(err, "failed to create/truncate out-file for writing")
+	}
+	defer io_.CloseLogged(out, "failed to gracefully close out-file")
+	return writeIntoFunc(out)
+}
+
+// DumpReaderToFile dumps the reader to a file at `path`. This is a one-shot function that writes the content
+// and closes the file. This is particularly useful during development and for debugging.
 func DumpReaderToFile(path string, in io.Reader) error {
 	var out, err = os.Create(path)
 	if err != nil {
@@ -42,6 +69,7 @@ func DumpReaderToFile(path string, in io.Reader) error {
 	return nil
 }
 
-func MustReaderToFile(path string, in io.Reader) {
+// MustDumpReaderToFile executes DumpReaderToFile and panics on failure.
+func MustDumpReaderToFile(path string, in io.Reader) {
 	assert.Success(DumpReaderToFile(path, in), "Failed to stream `in` to out-file.")
 }
