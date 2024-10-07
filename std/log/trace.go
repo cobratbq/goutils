@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-var tracelog = log.New(os.Stderr, "[trace] ", log.Ltime|log.LUTC|log.Lmicroseconds|log.Lmsgprefix|log.Lshortfile)
+var tracelog = log.New(os.Stderr, "[trace] ", log.Ltime|log.LUTC|log.Lmicroseconds|log.Lshortfile)
 
 func Tracing() bool {
 	return true
