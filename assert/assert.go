@@ -45,7 +45,15 @@ func Unequal[T comparable](v1, v2 T) {
 	}
 }
 
-func Positive[T types.SignedInteger](v T) {
+func Zero[T types.Integer](v T) {
+	if v == 0 {
+		return
+	}
+	log.Traceln("assert.Zero:", v)
+	panic("assertion failed: zero value")
+}
+
+func Positive[T types.Integer](v T) {
 	if v > 0 {
 		return
 	}
@@ -69,7 +77,7 @@ func Negative[T types.SignedInteger](v T) {
 	panic("assertion failed: negative value")
 }
 
-func NonPositive[T types.SignedInteger](v T) {
+func NonPositive[T types.Integer](v T) {
 	if v <= 0 {
 		return
 	}
