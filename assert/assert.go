@@ -5,6 +5,9 @@
 package assert
 
 import (
+	"maps"
+	"slices"
+
 	"github.com/cobratbq/goutils/std/log"
 	"github.com/cobratbq/goutils/types"
 )
@@ -35,6 +38,20 @@ func Equal[T comparable](v1, v2 T) {
 	if v1 != v2 {
 		log.Traceln("assert.Equal:", v1, v2)
 		panic("assertion failed: Equal")
+	}
+}
+
+func EqualSlices[S ~[]E, E comparable](s1, s2 S) {
+	if !slices.Equal(s1, s2) {
+		log.Traceln("assert.EqualSlices:", s1, s2)
+		panic("assertion failed: EqualSlices")
+	}
+}
+
+func EqualMaps[M1, M2 ~map[K]V, K, V comparable](m1 M1, m2 M2) {
+	if !maps.Equal(m1, m2) {
+		log.Tracef("assert.EqualMaps: %+v %+v", m1, m2)
+		panic("assertion failed: EqualMaps")
 	}
 }
 
