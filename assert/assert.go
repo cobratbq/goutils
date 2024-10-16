@@ -86,27 +86,44 @@ func NonPositive[T types.Integer](v T) {
 }
 
 // TODO is it possible to define a function `Empty` that accepts string, slice, map, etc. all at once, then perform a `len(c) == 0` check?
+// FIXME the panic and tracelog messages must be better, now ambiguous in nature
+
+func EmptyString(s string) {
+	if len(s) == 0 {
+		return
+	}
+	log.Traceln("assert.EmptyString:", s)
+	panic("assertion failed: string is not empty/blank")
+}
 
 func EmptySlice[E any](collection []E) {
-	if len(collection) > 0 {
-		panic("assertion failed: slice is not empty")
+	if len(collection) == 0 {
+		return
 	}
+	log.Traceln("assert.EmptySlice:", len(collection), "elements")
+	panic("assertion failed: slice is not empty")
 }
 
 func EmptyMap[K comparable, V any](collection map[K]V) {
-	if len(collection) > 0 {
-		panic("assertion failed: map is not empty")
+	if len(collection) == 0 {
+		return
 	}
+	log.Traceln("assert.EmptyMap:", len(collection), "entries")
+	panic("assertion failed: map is not empty")
 }
 
 func AtLeast[C types.Ordered](least C, value C) {
-	if value < least {
-		panic("assertion failed: value below (inclusive) lower bound")
+	if value >= least {
+		return
 	}
+	log.Traceln("assert.AtLeast:", value)
+	panic("assertion failed: value below (inclusive) lower bound")
 }
 
 func AtMost[C types.Ordered](most C, value C) {
-	if value > most {
-		panic("assertion failed: value above (inclusive) upper bound")
+	if value <= most {
+		return
 	}
+	log.Traceln("assert.AtMost:", value)
+	panic("assertion failed: value above (inclusive) upper bound")
 }
