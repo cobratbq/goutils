@@ -297,6 +297,26 @@ func MoveElementN[E any](input []E, idx int, n int) {
 	}
 }
 
+// AllEqual checks if all values in a slice are equal to the specified value.
+func AllEqual[S ~[]E, E comparable](value E, input S) bool {
+	for i := range input {
+		if input[i] != value {
+			return false
+		}
+	}
+	return true
+}
+
+// AllSame checks if all values in a slice are the same.
+func AllSame[S ~[]E, E comparable](input S) bool {
+	for i := range input {
+		if i > 0 && input[i] != input[i-1] {
+			return false
+		}
+	}
+	return true
+}
+
 // All checks if all values in a slice satisfy `test`, that is `test` returns true.
 func All[E any](input []E, test func(E) bool) bool {
 	for _, e := range input {
