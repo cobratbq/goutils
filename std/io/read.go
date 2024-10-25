@@ -4,7 +4,6 @@ package io
 
 import (
 	"io"
-	"io/ioutil"
 
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/std/errors"
@@ -44,12 +43,12 @@ func MustReadFull(in io.Reader, dst []byte) {
 }
 
 func ReadAll(in io.Reader) ([]byte, error) {
-	return ioutil.ReadAll(in)
+	return io.ReadAll(in)
 }
 
 // MustReadAll reads all data from reader and panics in case an error occurs.
 func MustReadAll(in io.Reader) []byte {
-	data, err := ioutil.ReadAll(in)
+	data, err := io.ReadAll(in)
 	assert.Success(err, "Failed to read all data from reader")
 	return data
 }
@@ -73,24 +72,23 @@ func ReadExpect(next byte, in io.Reader) (bool, error) {
 }
 
 // ReadUntil reads until a specific byte is encountered.
+//
 // All bytes read before the stop-byte are returned. If an error is encountered, everything read until the
-// error is returned together with the error.
-func ReadUntil(stop byte, in io.Reader) ([]byte, error) {
+// error is returned together with the error. Following the behavior of `io.ReadFull`, ReadUntil will return
+// io.EOF if end-of-file is reached.
+//
+// For more sophisticated and more capable functions, use `bufio` (buffered-io). These functions are provided
+// for one-off cases and cases where reading ahead is not desirable or not allowed.
+func ReadUntil(in io.Reader, stop byte) ([]byte, error) {
 	var buffer []byte
 	var b [1]byte
-	var n int
-	var err error
 	for {
-		if n, err = io.ReadFull(in, b[:]); err != nil {
+		if _, err := io.ReadFull(in, b[:]); err != nil {
 			return buffer, err
 		}
-		if n == 0 {
-			continue
-		}
 		if b[0] == stop {
-			break
+			return buffer, nil
 		}
 		buffer = append(buffer, b[0])
 	}
-	return buffer, nil
 }
