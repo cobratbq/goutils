@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -20,7 +19,7 @@ func TestCloseDiscardedNil(t *testing.T) {
 }
 
 func TestCloseDiscardedGraceful(t *testing.T) {
-	c := ioutil.NopCloser(nil)
+	c := io.NopCloser(nil)
 	CloseIgnored(c)
 }
 
@@ -35,7 +34,7 @@ func TestCloseLoggedNilCloser(t *testing.T) {
 }
 
 func TestCloseLoggedSuccess(t *testing.T) {
-	CloseLogged(ioutil.NopCloser(nil), "failed to close no-op")
+	CloseLogged(io.NopCloser(nil), "failed to close no-op")
 }
 
 func TestCloseLoggedFailure(t *testing.T) {
@@ -53,7 +52,7 @@ func TestClosePanickedNil(t *testing.T) {
 }
 
 func TestClosePanickedSuccess(t *testing.T) {
-	ClosePanicked(ioutil.NopCloser(nil), "closing successfully, right ...")
+	ClosePanicked(io.NopCloser(nil), "closing successfully, right ...")
 }
 
 func TestClosePanickedFailure(t *testing.T) {
