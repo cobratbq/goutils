@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
+// TODO consider migration to package `twos` or smth for Two's Complement, both BigEndian and LittleEndian.
 package bigendian
 
 import "io"
