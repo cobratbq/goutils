@@ -1,13 +1,18 @@
-package compact1
+package prefixed
 
 import (
 	"io"
 
+	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/codec/bytes/bigendian"
+	"github.com/cobratbq/goutils/std/math"
 )
 
 // FIXME do error handling
-func writeData(out io.Writer, data []byte, typeflags byte) (int64, error) {
+// FIXME properly update count
+// WriteRaw writes raw bytes, usually a byte-array with prefixed header byte(s).
+// Type-flags need to be provided.
+func WriteRaw(out io.Writer, data []byte, typeflags byte) (int64, error) {
 	var count int
 	if len(data) <= int(SIZE_1BYTE_MAX) {
 		out.Write([]byte{byte(len(data)) | typeflags | FLAG_TERMINATION})
@@ -26,7 +31,7 @@ func writeData(out io.Writer, data []byte, typeflags byte) (int64, error) {
 		out.Write(header)
 		out.Write(dataHead)
 		var countNext int64
-		countNext, _ = writeData(out, data[SIZE_2BYTE_MAX:], typeflags)
+		countNext, _ = WriteRaw(out, data[SIZE_2BYTE_MAX:], typeflags)
 		return int64(count) + countNext, nil
 	}
 }
@@ -34,10 +39,8 @@ func writeData(out io.Writer, data []byte, typeflags byte) (int64, error) {
 // Type 0, 0 (singular, plain value) for any length.
 type Bytes []byte
 
-func (v Bytes) _sealed() {}
-
 func (v Bytes) WriteTo(out io.Writer) (int64, error) {
-	return writeData(out, v, 0)
+	return WriteRaw(out, v, 0)
 }
 
 // Type 0, 1 (singular, key-value-pair) for any length.
@@ -50,20 +53,18 @@ type KeyValue struct {
 	V Value
 }
 
-func (v KeyValue) _sealed() {}
-
 // FIXME add proper error handling
+// FIXME properly update count
 func (v KeyValue) WriteTo(out io.Writer) (int64, error) {
-	writeData(out, []byte(v.K), FLAG_KEYVALUE)
+	WriteRaw(out, []byte(v.K), FLAG_KEYVALUE)
 	return v.V.WriteTo(out)
 }
 
 // Type 1, 0 (multiple, plain value) for any length.
 type SequenceValue []Value
 
-func (v SequenceValue) _sealed() {}
-
 // FIXME add proper error handling
+// FIXME properly update count
 func (v SequenceValue) WriteTo(out io.Writer) (int64, error) {
 	var count int
 	if len(v) <= int(SIZE_1BYTE_MAX) {
@@ -97,14 +98,14 @@ func (v SequenceValue) WriteTo(out io.Writer) (int64, error) {
 // Type 1, 1 (multiple, key-value-pairs) for any length.
 type MapValue map[string]Value
 
-func (v MapValue) _sealed() {}
-
+// FIXME add proper error handling
+// FIXME properly update count
 func (v MapValue) WriteTo(out io.Writer) (int64, error) {
 	var count int64
 	if len(v) <= int(SIZE_1BYTE_MAX) {
 		out.Write([]byte{byte(len(v)) | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE})
 		for key, value := range v {
-			writeData(out, []byte(key), FLAG_KEYVALUE)
+			WriteRaw(out, []byte(key), FLAG_KEYVALUE)
 			value.WriteTo(out)
 		}
 		return count, nil
@@ -113,12 +114,35 @@ func (v MapValue) WriteTo(out io.Writer) (int64, error) {
 		header[0] |= FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE | FLAG_HEADERSIZE
 		out.Write(header)
 		for key, value := range v {
-			writeData(out, []byte(key), FLAG_KEYVALUE)
+			WriteRaw(out, []byte(key), FLAG_KEYVALUE)
 			value.WriteTo(out)
 		}
 		return count, nil
 	} else {
-		// FIXME implement exceedingly large maps
-		panic("To be implemented: exceedingly large maps")
+		var cum, part uint
+		for key, value := range v {
+			if part == 0 {
+				part = math.Min(uint(len(v))-cum, SIZE_2BYTE_MAX)
+				if part <= SIZE_1BYTE_MAX {
+					out.Write([]byte{byte(part) | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE})
+				} else if part <= SIZE_2BYTE_MAX {
+					header := bigendian.FromUint16(uint16(part) - 1)
+					header[0] |= FLAG_MULTIPLICITY | FLAG_KEYVALUE | FLAG_HEADERSIZE
+					if part <= SIZE_2BYTE_MAX {
+						header[0] |= FLAG_TERMINATION
+					}
+					// FIXME test if 1/2 bytes written, no error
+					out.Write(header)
+				} else {
+					panic("BUG: we should have selected at most SIZE_2BYTE_MAX for part")
+				}
+			}
+			WriteRaw(out, []byte(key), FLAG_KEYVALUE)
+			value.WriteTo(out)
+			cum, part = cum+1, part-1
+		}
+		assert.Equal(0, part)
+		assert.Equal(uint(len(v)), cum)
+		return count, nil
 	}
 }

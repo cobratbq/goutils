@@ -1,4 +1,4 @@
-package compact1
+package prefixed
 
 type CompositeType uint8
 
@@ -90,9 +90,12 @@ func ReadMap(data []byte, count uint16) (uint, MapValue) {
 	return pos, entries
 }
 
+// TODO currently borrows data from input-array when constructing types, i.e. no cloning.
+// TODO future: add support for custom mapping of type-to-readFunction mapping for custom types
 func ReadValue(data []byte) (uint, Value) {
 	// FIXME support termination-flag for continued values
 	n, vtype, size, _ := ReadHeader(data)
+	// TODO needs bounds-checking to detect bad data/encoding early
 	switch vtype {
 	case TYPE_BYTES:
 		return n + uint(size), Bytes(data[n : n+uint(size)])
