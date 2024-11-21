@@ -27,7 +27,7 @@
 // TODO decide on a name once proven to be effective.
 // TODO In-development, changes are likely...
 // TODO document, make explicit that size-bits are encoded in big-endian, such that MSB from first byte are available to use as flags.
-// TODO consider making shorted possible header mandatory, i.e. any size/count of <= 15, must use 1-byte header, that way the initial overlap of 2-byte header could be used to signal other characteristics in the future(?)
+// TODO consider making shortest possible header mandatory, i.e. any size/count of <= 15, must use 1-byte header, that way the initial overlap of 2-byte header could be used to signal other characteristics in the future(?)
 package prefixed
 
 import "io"
@@ -80,8 +80,8 @@ const SIZE_1BYTE_MAX uint = 15
 // SIZE_2BYTE_MAX is the (inclusive) maximum for 2-byte headers.
 // 12 bits available to indicate size, to indicate 1-4096 bytes/count.
 //
-// note: implementations must add `1`, as we can express 0 in 1-byte variant already. This allows us to
-// express exactly up to size/count 4096, i.e. [1, 4096] or 4KiB.
+// note: implementations must correct for `±1`, as we can express 0 in 1-byte variant already. This allows us
+// to express exactly up to size/count 4096, i.e. [1, 4096] or 4KiB, in 12 bits.
 // TODO consider if we want to shift values by +16, such that first 2-byte-header value is 16, and last is 4095+16 (Does not seem to touch on any significant benefits, unless we consider a few increments past 4096 to be an advantage)
 const SIZE_2BYTE_MAX uint = 4096
 

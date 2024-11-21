@@ -102,36 +102,36 @@ type MapValue map[string]Value
 // FIXME properly update count
 func (v MapValue) WriteTo(out io.Writer) (int64, error) {
 	var count int64
-	if len(v) <= int(SIZE_1BYTE_MAX) {
-		out.Write([]byte{byte(len(v)) | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE})
+	var total = uint(len(v))
+	if total <= SIZE_1BYTE_MAX {
+		out.Write([]byte{byte(total) | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE})
 		for key, value := range v {
 			WriteRaw(out, []byte(key), FLAG_KEYVALUE)
 			value.WriteTo(out)
 		}
-		return count, nil
-	} else if len(v) <= int(SIZE_2BYTE_MAX) {
-		header := bigendian.FromUint16(uint16(len(v)) - 1)
+	} else if total <= SIZE_2BYTE_MAX {
+		header := bigendian.FromUint16(uint16(total) - 1)
 		header[0] |= FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE | FLAG_HEADERSIZE
 		out.Write(header)
 		for key, value := range v {
 			WriteRaw(out, []byte(key), FLAG_KEYVALUE)
 			value.WriteTo(out)
 		}
-		return count, nil
 	} else {
 		var cum, part uint
 		for key, value := range v {
 			if part == 0 {
-				part = math.Min(uint(len(v))-cum, SIZE_2BYTE_MAX)
+				// Whenever part==0, start a new batch, i.e. new map-value with its own items.
+				part = math.Min(total-cum, SIZE_2BYTE_MAX)
+				assert.Positive(part)
 				if part <= SIZE_1BYTE_MAX {
 					out.Write([]byte{byte(part) | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE})
 				} else if part <= SIZE_2BYTE_MAX {
 					header := bigendian.FromUint16(uint16(part) - 1)
 					header[0] |= FLAG_MULTIPLICITY | FLAG_KEYVALUE | FLAG_HEADERSIZE
-					if part <= SIZE_2BYTE_MAX {
+					if part < SIZE_2BYTE_MAX {
 						header[0] |= FLAG_TERMINATION
 					}
-					// FIXME test if 1/2 bytes written, no error
 					out.Write(header)
 				} else {
 					panic("BUG: we should have selected at most SIZE_2BYTE_MAX for part")
@@ -142,7 +142,7 @@ func (v MapValue) WriteTo(out io.Writer) (int64, error) {
 			cum, part = cum+1, part-1
 		}
 		assert.Equal(0, part)
-		assert.Equal(uint(len(v)), cum)
-		return count, nil
+		assert.Equal(total, cum)
 	}
+	return count, nil
 }
