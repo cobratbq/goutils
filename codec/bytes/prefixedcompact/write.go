@@ -5,35 +5,36 @@ import (
 
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/codec/bytes/bigendian"
+	io_ "github.com/cobratbq/goutils/std/io"
 	"github.com/cobratbq/goutils/std/math"
 )
+
+// FIXME there is going to be excessive wrapping of _out into CountingWriter with recursive calls to various value-types. This is probably not ideal. :-P
 
 // FIXME do error handling
 // FIXME properly update count
 // WriteRaw writes raw bytes, usually a byte-array with prefixed header byte(s).
 // Type-flags need to be provided.
-func WriteRaw(out io.Writer, data []byte, typeflags byte) (int64, error) {
-	var count int
+func WriteRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
+	out := io_.NewCountingWriter(_out)
 	if len(data) <= int(SIZE_1BYTE_MAX) {
 		out.Write([]byte{byte(len(data)) | typeflags | FLAG_TERMINATION})
 		out.Write(data)
-		return int64(count), nil
 	} else if len(data) <= int(SIZE_2BYTE_MAX) {
 		var header = bigendian.FromUint16(uint16(len(data)) - 1)
 		header[0] |= typeflags | FLAG_TERMINATION | FLAG_HEADERSIZE
 		out.Write(header)
 		out.Write(data)
-		return int64(count), nil
 	} else {
 		dataHead := data[:SIZE_2BYTE_MAX]
 		var header = bigendian.FromUint16(uint16(len(dataHead)) - 1)
 		header[0] |= typeflags | FLAG_HEADERSIZE
 		out.Write(header)
 		out.Write(dataHead)
-		var countNext int64
-		countNext, _ = WriteRaw(out, data[SIZE_2BYTE_MAX:], typeflags)
-		return int64(count) + countNext, nil
+		_, _ = WriteRaw(&out, data[SIZE_2BYTE_MAX:], typeflags)
+		// FIXME countNext is probably not necessary, as the counting-writer will also record its use when passed in.
 	}
+	return out.Cum, nil
 }
 
 // Type 0, 0 (singular, plain value) for any length.
@@ -65,34 +66,33 @@ type SequenceValue []Value
 
 // FIXME add proper error handling
 // FIXME properly update count
-func (v SequenceValue) WriteTo(out io.Writer) (int64, error) {
-	var count int
+func (v SequenceValue) WriteTo(_out io.Writer) (int64, error) {
+	out := io_.NewCountingWriter(_out)
 	if len(v) <= int(SIZE_1BYTE_MAX) {
 		out.Write([]byte{byte(len(v)) | FLAG_TERMINATION | FLAG_MULTIPLICITY})
 		for _, e := range v {
-			e.WriteTo(out)
+			// FIXME check if counting writer misses anything when calling WriteTo? Can we dismiss the returned value from WriteTo?
+			e.WriteTo(&out)
 		}
-		return int64(count), nil
 	} else if len(v) <= int(SIZE_2BYTE_MAX) {
 		header := bigendian.FromUint16(uint16(len(v)) - 1)
 		header[0] |= FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_HEADERSIZE
 		out.Write(header)
 		for _, e := range v {
-			e.WriteTo(out)
+			e.WriteTo(&out)
 		}
-		return int64(count), nil
 	} else {
 		subset := v[:SIZE_2BYTE_MAX]
 		header := bigendian.FromUint16(uint16(len(subset)) - 1)
 		header[0] |= FLAG_MULTIPLICITY | FLAG_HEADERSIZE
 		out.Write(header)
 		for _, e := range subset {
-			e.WriteTo(out)
+			e.WriteTo(&out)
 		}
-		var countNext int64
-		countNext, _ = SequenceValue(v[SIZE_2BYTE_MAX:]).WriteTo(out)
-		return int64(count) + countNext, nil
+		_, _ = SequenceValue(v[SIZE_2BYTE_MAX:]).WriteTo(&out)
+		// FIXME can we dismiss the countNext value because included into out.Cum?
 	}
+	return out.Cum, nil
 }
 
 // Type 1, 1 (multiple, key-value-pairs) for any length.
@@ -100,22 +100,22 @@ type MapValue map[string]Value
 
 // FIXME add proper error handling
 // FIXME properly update count
-func (v MapValue) WriteTo(out io.Writer) (int64, error) {
-	var count int64
+func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
+	out := io_.NewCountingWriter(_out)
 	var total = uint(len(v))
 	if total <= SIZE_1BYTE_MAX {
 		out.Write([]byte{byte(total) | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE})
 		for key, value := range v {
-			WriteRaw(out, []byte(key), FLAG_KEYVALUE)
-			value.WriteTo(out)
+			WriteRaw(&out, []byte(key), FLAG_KEYVALUE)
+			value.WriteTo(&out)
 		}
 	} else if total <= SIZE_2BYTE_MAX {
 		header := bigendian.FromUint16(uint16(total) - 1)
 		header[0] |= FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE | FLAG_HEADERSIZE
 		out.Write(header)
 		for key, value := range v {
-			WriteRaw(out, []byte(key), FLAG_KEYVALUE)
-			value.WriteTo(out)
+			WriteRaw(&out, []byte(key), FLAG_KEYVALUE)
+			value.WriteTo(&out)
 		}
 	} else {
 		var cum, part uint
@@ -137,12 +137,12 @@ func (v MapValue) WriteTo(out io.Writer) (int64, error) {
 					panic("BUG: we should have selected at most SIZE_2BYTE_MAX for part")
 				}
 			}
-			WriteRaw(out, []byte(key), FLAG_KEYVALUE)
-			value.WriteTo(out)
+			WriteRaw(&out, []byte(key), FLAG_KEYVALUE)
+			value.WriteTo(&out)
 			cum, part = cum+1, part-1
 		}
 		assert.Equal(0, part)
 		assert.Equal(total, cum)
 	}
-	return count, nil
+	return out.Cum, nil
 }
