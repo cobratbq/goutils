@@ -42,6 +42,7 @@ import "io"
 // from parts of varying lengths, possibly benefiting small devices or variable/unpredictable input-streams.
 // TODO there was originally an idea to make a zero-size without termination-bit a special case for a list/map of unspecified length. However, this requires some form of termination to indicate the end, and that is currently not yet decided on.
 // TODO document: if not set, must be followed by entry of same type-flags optionally FLAG_TERMINATION set, of any (allowed) size.
+// FIXME use "termination"-flag or the reverse?
 const FLAG_TERMINATION uint8 = 1 << 7
 
 // FLAG_KEYVALUE indicates whether this concerns just a value or a key-value-pair. In case of the key-value-

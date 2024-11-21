@@ -15,8 +15,16 @@ const (
 
 // FIXME redo Read... implementations now that encoding/writing has matured
 
-// FIXME proper error handling for n == 0, array-size-bounds
-func ReadHeader(data []byte) (uint, CompositeType, uint16, bool) {
+type Header struct {
+	Vtype      CompositeType
+	Size       uint16
+	Terminated bool
+}
+
+func ReadHeader(data []byte) (uint, Header) {
+	if len(data) < 1 {
+		return 0, Header{}
+	}
 	var vtype CompositeType
 	if data[0]&FLAG_KEYVALUE == FLAG_KEYVALUE {
 		vtype |= 1
@@ -27,34 +35,37 @@ func ReadHeader(data []byte) (uint, CompositeType, uint16, bool) {
 	var term = data[0]&FLAG_TERMINATION == FLAG_TERMINATION
 	var size = uint16(data[0] & MASK_SIZEBITS)
 	if data[0]&FLAG_HEADERSIZE == 0 {
-		return 1, vtype, size, term
+		return 1, Header{vtype, size, term}
+	}
+	if len(data) < 2 {
+		return 0, Header{}
 	}
 	size <<= 8
 	size |= uint16(data[1])
-	// Add `1` to size for 2-byte header, as we can already express 0, and adding 1 allows us to express
-	// sizes/counts up to 2**12 == 4096.
-	// TODO check if works as expected
-	size += 1
-	return 2, vtype, size, term
+	size += SIZE_2BYTE_OFFSET
+	return 2, Header{vtype, size, term}
 }
 
 // FIXME support non-terminated key-entry
 func ReadKeyValue(data []byte, keysize uint16) (uint, KeyValue) {
-	// FIXME edge-case with key being non-continuous?
-	// FIXME proper error handling for n == 0, array-size-bounds
+	if len(data) < int(keysize)+1 {
+		return 0, KeyValue{}
+	}
 	key := string(data[:keysize])
-	n, val := ReadValue(data[keysize:])
+	var n uint
+	var val Value
+	if n, val = ReadValue(data[keysize:]); n == 0 {
+		return 0, KeyValue{}
+	}
 	return uint(keysize) + n, KeyValue{K: key, V: val}
 }
 
-// FIXME proper error handling for n == 0, array-size-bounds
+// FIXME support non-terminated sequence
 func ReadSequence(data []byte, count uint16) (uint, SequenceValue) {
 	var entries = make([]Value, count)
 	var pos, n uint
 	for i := uint(0); i < uint(count); i++ {
-		n, entries[i] = ReadValue(data[pos:])
-		if n == 0 {
-			// FIXME handle errors
+		if n, entries[i] = ReadValue(data[pos:]); n == 0 {
 			return 0, nil
 		}
 		pos += n
@@ -62,29 +73,28 @@ func ReadSequence(data []byte, count uint16) (uint, SequenceValue) {
 	return pos, entries
 }
 
-// FIXME proper error handling for n == 0, array-size-bounds
+// FIXME support non-terminated map
+// TODO map assumes distinct keys, hence count is exact number of map entries.
 func ReadMap(data []byte, count uint16) (uint, MapValue) {
-	// TODO map assumes distinct keys, hence count is exact number of map entries.
 	entries := make(map[string]Value, count)
 	var pos, n uint
-	var vtype CompositeType
-	var size uint16
+	var h Header
 	for i := uint(0); i < uint(count); i++ {
 		// FIXME support termination-flag for continued values
-		n, vtype, size, _ = ReadHeader(data[pos:])
-		if n == 0 || vtype > 0 {
+		if n, h = ReadHeader(data[pos:]); n == 0 || h.Vtype != TYPE_KEYVALUE {
 			// require key-entry to be plain data (byte-array)
 			return 0, nil
 		}
-		pos += n
-		var key []byte
-		var val Value
-		// FIXME handle term==false for keys
-		n, val := ReadKeyValue(data[pos:], size)
-		if n == 0 {
+		if len(data[pos+n:]) < int(h.Size)+1 {
 			return 0, nil
 		}
-		entries[string(key)] = val
+		pos += n
+		var v KeyValue
+		// FIXME handle term==false for keys
+		if n, v = ReadKeyValue(data[pos:], h.Size); n == 0 {
+			return 0, nil
+		}
+		entries[v.K] = v.V
 		pos += n
 	}
 	return pos, entries
@@ -94,17 +104,20 @@ func ReadMap(data []byte, count uint16) (uint, MapValue) {
 // TODO future: add support for custom mapping of type-to-readFunction mapping for custom types
 func ReadValue(data []byte) (uint, Value) {
 	// FIXME support termination-flag for continued values
-	n, vtype, size, _ := ReadHeader(data)
-	// TODO needs bounds-checking to detect bad data/encoding early
-	switch vtype {
+	var h Header
+	var n uint
+	if n, h = ReadHeader(data); n == 0 {
+		return 0, nil
+	}
+	switch h.Vtype {
 	case TYPE_BYTES:
-		return n + uint(size), Bytes(data[n : n+uint(size)])
+		return n + uint(h.Size), Bytes(data[n : n+uint(h.Size)])
 	case TYPE_KEYVALUE:
-		return ReadKeyValue(data[n:], size)
+		return ReadKeyValue(data[n:], h.Size)
 	case TYPE_SEQUENCE:
-		return ReadSequence(data[n:], size)
+		return ReadSequence(data[n:], h.Size)
 	case TYPE_MAP:
-		return ReadMap(data[n:], size)
+		return ReadMap(data[n:], h.Size)
 	default:
 		panic("BUG: should not be reached")
 	}
