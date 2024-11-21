@@ -9,7 +9,7 @@ import (
 	"github.com/cobratbq/goutils/std/math"
 )
 
-// FIXME there is going to be nested wrapping of _out into CountingWriter with recursive calls to various value-types. This is probably not ideal. :-P
+// TODO there is going to be nested wrapping of _out into CountingWriter with recursive calls to various value-types. This is probably not ideal. :-P
 
 // WriteRaw writes raw bytes, usually a byte-array with prefixed header byte(s).
 // Type-flags need to be provided.
@@ -26,7 +26,7 @@ func WriteRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
 	} else if len(data) <= int(SIZE_2BYTE_MAX) {
 		var header = bigendian.FromUint16(uint16(len(data)) - SIZE_2BYTE_OFFSET)
 		header[0] |= typeflags | FLAG_TERMINATION | FLAG_HEADERSIZE
-		if _, err = out.Write(header); err != nil {
+		if _, err = out.Write(header[:]); err != nil {
 			return out.Cum, err
 		}
 		if _, err = out.Write(data); err != nil {
@@ -36,7 +36,7 @@ func WriteRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
 		dataHead := data[:SIZE_2BYTE_MAX]
 		var header = bigendian.FromUint16(uint16(len(dataHead)) - SIZE_2BYTE_OFFSET)
 		header[0] |= typeflags | FLAG_HEADERSIZE
-		if _, err = out.Write(header); err != nil {
+		if _, err = out.Write(header[:]); err != nil {
 			return out.Cum, err
 		}
 		if _, err = out.Write(dataHead); err != nil {
@@ -94,7 +94,7 @@ func (v SequenceValue) WriteTo(_out io.Writer) (int64, error) {
 	} else if len(v) <= int(SIZE_2BYTE_MAX) {
 		header := bigendian.FromUint16(uint16(len(v)) - SIZE_2BYTE_OFFSET)
 		header[0] |= FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_HEADERSIZE
-		if _, err = out.Write(header); err != nil {
+		if _, err = out.Write(header[:]); err != nil {
 			return out.Cum, err
 		}
 		for _, e := range v {
@@ -106,7 +106,7 @@ func (v SequenceValue) WriteTo(_out io.Writer) (int64, error) {
 		subset := v[:SIZE_2BYTE_MAX]
 		header := bigendian.FromUint16(uint16(len(subset)) - SIZE_2BYTE_OFFSET)
 		header[0] |= FLAG_MULTIPLICITY | FLAG_HEADERSIZE
-		if _, err = out.Write(header); err != nil {
+		if _, err = out.Write(header[:]); err != nil {
 			return out.Cum, err
 		}
 		for _, e := range subset {
@@ -143,7 +143,7 @@ func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
 	} else if total <= SIZE_2BYTE_MAX {
 		header := bigendian.FromUint16(uint16(total) - SIZE_2BYTE_OFFSET)
 		header[0] |= FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE | FLAG_HEADERSIZE
-		if _, err = out.Write(header); err != nil {
+		if _, err = out.Write(header[:]); err != nil {
 			return out.Cum, err
 		}
 		for key, value := range v {
@@ -172,7 +172,7 @@ func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
 					if processed+part == total {
 						header[0] |= FLAG_TERMINATION
 					}
-					if _, err = out.Write(header); err != nil {
+					if _, err = out.Write(header[:]); err != nil {
 						return out.Cum, err
 					}
 				} else {
