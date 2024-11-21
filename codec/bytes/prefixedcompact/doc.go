@@ -82,8 +82,11 @@ const SIZE_1BYTE_MAX uint = 15
 //
 // note: implementations must correct for `±1`, as we can express 0 in 1-byte variant already. This allows us
 // to express exactly up to size/count 4096, i.e. [1, 4096] or 4KiB, in 12 bits.
-// TODO consider if we want to shift values by +16, such that first 2-byte-header value is 16, and last is 4095+16 (Does not seem to touch on any significant benefits, unless we consider a few increments past 4096 to be an advantage)
 const SIZE_2BYTE_MAX uint = 4096
+
+// SIZE_2BYTE_OFFSET represents the correction performed while the 2-byte size-value is stored.
+// TODO consider if we want to shift values by +16, such that first 2-byte-header value is 16, and last is 4095+16 (Does not seem to touch on any significant benefits, unless we consider a few increments past 4096 to be an advantage)
+const SIZE_2BYTE_OFFSET uint16 = 1
 
 // Value is the collective type for bytes, key-value-pairs, sequences and maps.
 //
