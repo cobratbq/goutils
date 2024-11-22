@@ -1,4 +1,8 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 package prefixed
+
+import "bytes"
 
 type CompositeType uint8
 
@@ -44,6 +48,41 @@ func ReadHeader(data []byte) (uint, Header) {
 	size |= uint16(data[1])
 	size += SIZE_2BYTE_OFFSET
 	return 2, Header{vtype, size, term}
+}
+
+func ReadBytes(data []byte, hdr *Header) (uint, Bytes) {
+	if len(data) < 1 {
+		return 0, nil
+	}
+	var n uint
+	var h Header
+	if hdr == nil {
+		if n, h = ReadHeader(data); n == 0 {
+			return 0, nil
+		}
+	} else {
+		h = *hdr
+	}
+	// FIXME make expected Vtype a parameter and allow use of ReadBytes for both plain values and keys?
+	if h.Vtype != TYPE_BYTES {
+		return 0, nil
+	}
+	var pos = n
+	var b bytes.Buffer
+	for {
+		if len(data[pos:]) < int(h.Size) {
+			return 0, nil
+		}
+		b.Write(data[pos : pos+uint(h.Size)])
+		pos += uint(h.Size)
+		if h.Terminated {
+			return pos, Bytes(bytes.Clone(b.Bytes()))
+		}
+		if n, h = ReadHeader(data[pos:]); n == 0 || h.Vtype != TYPE_BYTES {
+			return 0, nil
+		}
+		pos += n
+	}
 }
 
 // FIXME support non-terminated key-entry
@@ -111,7 +150,7 @@ func ReadValue(data []byte) (uint, Value) {
 	}
 	switch h.Vtype {
 	case TYPE_BYTES:
-		return n + uint(h.Size), Bytes(data[n : n+uint(h.Size)])
+		return ReadBytes(data[n:], &h)
 	case TYPE_KEYVALUE:
 		return ReadKeyValue(data[n:], h.Size)
 	case TYPE_SEQUENCE:

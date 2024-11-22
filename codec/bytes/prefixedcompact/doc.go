@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 // Specification: "prefixed-compact" (temporary name)
 //
 // A very basic protocol and encoding that allows for encoding values in a limited structure. The protocol
