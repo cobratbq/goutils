@@ -17,7 +17,7 @@
 //
 // - termination: whether the value terminates now, or a follow-up record is expected carrying the remainder,
 // - value-type: a plain value or key-value-pair ("labeled" value),
-// - multiplicity: a single value or multiple (sequence of) values,
+// - multiplicity: a single value or multiple (collection of) values,
 // - header-size: a 1-byte header, indicating sizes `[0, 15]`, or 2-byte header, indicating sizes `[1, 4096]`,
 //
 // The `termination`-bit is used to indicate whether this value is completed, meaning that if the bit is set,
@@ -48,8 +48,8 @@
 // In terms of interpreting values into data-types: this encoding does not provide any support towards that
 // goal. 8-byte values could indicate a big-endian/little-endian signed/unsigned 64-bit integer value. This
 // would need to be aligned between communicating parties, either by convention or by agreement.
-// "Labeled" values could be used to indicate a format. However, e.g. intra-process communication may not be
-// concerned with these kinds of issues as it is all built from the same basic functions/libraries.
+// "Labeled" values could be used to indicate a format. However, e.g. inter-process communication may not be
+// concerned with these kinds of issues if it is all built from the same basic functions/libraries.
 //
 // TODO when stream-data is manipulated, all bets are off. E.g. if size-bits are tweaked, subsequent data is wrongly interpreted, so you might take on too much data and you might subsequently misinterpret data as header. (Do we care at this abstraction?)
 // TODO document, make explicit that size-bits are encoded in big-endian, such that MSB from first byte are available to use as flags.
