@@ -59,10 +59,16 @@ func (v Bytes) WriteTo(out io.Writer) (int64, error) {
 }
 
 // Type 0, 1 (singular, key-value-pair).
+//
 // Write a key and corresponding value. Syntactically enforced key with value, requiring no assumptions on
-// conventions. These "labeled" values prove valuable when a number of properties need to be checked, e.g.
-// a version or identifier before one can decide on the type of (composite) encoded data structure. The
-// "labeled" value is a guarantee that there is a identifier with corresponding value.
+// conventions.
+//
+// These "labeled" values prove valuable when a number of properties need to be checked, e.g. a version or
+// identifier before one can decide on the type of (composite) encoded data structure. The "labeled" value is
+// a guarantee that there is a identifier with corresponding value.
+//
+// Note: data-type `string` chosen here for convenience, because Go swaps between string and []byte without
+// active conversion necessary.
 type KeyValue struct {
 	K string
 	V Value

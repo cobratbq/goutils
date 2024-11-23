@@ -36,6 +36,79 @@ func TestWriteRaw(t *testing.T) {
 	}
 }
 
+func TestWriteKeyValue(t *testing.T) {
+	var testdata = []struct {
+		value    KeyValue
+		encoded  []byte
+		expected error
+	}{
+		{value: KeyValue{K: "", V: Bytes([]byte{})}, encoded: []byte{0 | FLAG_TERMINATION | FLAG_KEYVALUE, 0 | FLAG_TERMINATION}, expected: nil},
+		{value: KeyValue{K: string([]byte{0}), V: Bytes([]byte{})}, encoded: []byte{1 | FLAG_TERMINATION | FLAG_KEYVALUE, 0, 0 | FLAG_TERMINATION}, expected: nil},
+		{value: KeyValue{K: "Hello to all earthlings.", V: Bytes([]byte{})}, encoded: []byte{0 | FLAG_TERMINATION | FLAG_KEYVALUE | FLAG_HEADERSIZE, 23, 'H', 'e', 'l', 'l', 'o', ' ', 't', 'o', ' ', 'a', 'l', 'l', ' ', 'e', 'a', 'r', 't', 'h', 'l', 'i', 'n', 'g', 's', '.', 0 | FLAG_TERMINATION}, expected: nil},
+	}
+	var b bytes.Buffer
+	var n int64
+	var err error
+	for i, d := range testdata {
+		b.Reset()
+		t.Log("Iteration:", i)
+		n, err = d.value.WriteTo(&b)
+		assert.IsError(t, d.expected, err)
+		assert.Equal(t, len(d.encoded), b.Len())
+		assert.Equal(t, n, int64(b.Len()))
+		raw := b.Bytes()
+		assert.SlicesEqual(t, d.encoded, raw)
+	}
+}
+
+func TestWriteSequence(t *testing.T) {
+	var testdata = []struct {
+		value    SequenceValue
+		encoded  []byte
+		expected error
+	}{
+		{value: SequenceValue([]Value{}), encoded: []byte{0 | FLAG_MULTIPLICITY | FLAG_TERMINATION}, expected: nil},
+		{value: SequenceValue([]Value{Bytes([]byte{})}), encoded: []byte{1 | FLAG_MULTIPLICITY | FLAG_TERMINATION, 0 | FLAG_TERMINATION}, expected: nil},
+	}
+	var b bytes.Buffer
+	var n int64
+	var err error
+	for i, d := range testdata {
+		b.Reset()
+		t.Log("Iteration:", i)
+		n, err = d.value.WriteTo(&b)
+		assert.IsError(t, d.expected, err)
+		assert.Equal(t, len(d.encoded), b.Len())
+		assert.Equal(t, n, int64(b.Len()))
+		raw := b.Bytes()
+		assert.SlicesEqual(t, d.encoded, raw)
+	}
+}
+
+func TestWriteMap(t *testing.T) {
+	var testdata = []struct {
+		value    MapValue
+		encoded  []byte
+		expected error
+	}{
+		{value: map[string]Value{}, encoded: []byte{0 | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE}, expected: nil},
+		{value: map[string]Value{"": Bytes([]byte{})}, encoded: []byte{1 | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE, 0 | FLAG_TERMINATION | FLAG_KEYVALUE, 0 | FLAG_TERMINATION}, expected: nil},
+	}
+	var b bytes.Buffer
+	var n int64
+	var err error
+	for i, d := range testdata {
+		b.Reset()
+		t.Log("Iteration:", i)
+		n, err = d.value.WriteTo(&b)
+		assert.IsError(t, d.expected, err)
+		assert.Equal(t, len(d.encoded), b.Len())
+		assert.Equal(t, n, int64(b.Len()))
+		raw := b.Bytes()
+		assert.SlicesEqual(t, d.encoded, raw)
+	}
+}
+
 func TestWriteRawVeryLarge(t *testing.T) {
 	var b [6000]byte
 	rand.MustReadBytes(b[:])
