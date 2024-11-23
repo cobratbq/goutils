@@ -7,13 +7,13 @@ import "bytes"
 type CompositeType uint8
 
 const (
-	// value, singular = value, i.e. bytes
+	// singular, value = value, i.e. bytes
 	TYPE_BYTES CompositeType = iota
-	// key-value, singular = key-value-pair
+	// singular, key-value = key-value-pair
 	TYPE_KEYVALUE
-	// value, multiple = sequence of values (ordered by virtue of position in data)
+	// multiple, value = sequence of values (ordered by virtue of position in data)
 	TYPE_SEQUENCE
-	// key-value, multiple = map of key-value-pairs (ordered by virtue of position in data)
+	// multiple, key-value = map of key-value-pairs (ordered by virtue of position in data)
 	TYPE_MAP
 )
 

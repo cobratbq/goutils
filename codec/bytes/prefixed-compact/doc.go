@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
-// Specification: "prefixed-compact" (temporary name)
+// ## Specification: "prefixed-compact"
 //
-// A very basic protocol and encoding that allows for encoding values in a limited structure. The protocol
-// essentially offers "byte-carriers", either in singular form or (multiple) in sequence. Values are either
-// plain (a number of bytes) or key-value-pair.
-// Given its streamable nature, one may assume that order of occurrence is meaningful, e.g. earlier occurrence
-// indicating higher priority or later occurrence superseding earlier occurrence, as needed.
+// A very basic encoding that allows for encoding values in a limited structure. The protocol essentially
+// offers "byte-carriers", either in singular form or (multiple) in sequence. Values are either plain (a
+// number of bytes) or key-value-pair. Given its streamable nature, one may assume that order of occurrence is
+// meaningful, e.g. earlier occurrence indicating higher priority or later occurrence superseding earlier
+// occurrence, as needed.
 //
-// Note: although at first glance a key-value-pair wouldn't make much sense, it does allow specifying
-// predefined keys, such that multiple versions of a protocol can identify which specific "labeled" value they
-// receive as opposed to relying solely on (assumed) positional values. Furthermore, unknown labels may be
-// ignored or alternative may indicate unsupported or unknown elements.
+// Note: although at first glance a key-value-pair wouldn't make much sense, it does allow encoding predefined
+// keys, such that multiple versions of a protocol can identify which specific "labeled" value they receive as
+// opposed to relying solely on (assumed) positional values. Furthermore, unknown labels may be ignored or
+// alternatively may indicate unsupported or unknown elements.
 //
 // 4 Flags are provided to indicate:
 //
@@ -23,13 +23,39 @@
 // The `termination`-bit is used to indicate whether this value is completed, meaning that if the bit is set,
 // this entry concludes a value (possibly in a single entry), while an unset bit indicates that the following
 // entry will continue the present value, effectively as concatenated bytes.
-// Note: the continuation must be of the same type.
+// Note: the non-terminated value must be continued with the same type.
 //
-// Interpretation of values (bytes) is left to be determined by the reader (application).
-// TODO decide on a name once proven to be effective.
-// TODO In-development, changes are likely...
+// This encoding does not provide any redundancy, error-correction or "value-type finished"-indicators.
+// Consequently, corruption of the header-bytes will result in misinterpretation of subsequent data. (This
+// must be solved outside of the encoding, if there is risk of corruption.)
+//
+// ## Interpretation of values (bytes) is left to be determined by the reader (application).
+//
+// This includes the exact meaning of the data-types. For example, duplicate keys in a map may indicate an
+// error, or a replacement value, or an addition of a second value, or an concatenation onto the first value,
+// or ...
+//
+// There is inherent order through the position in the data-stream, consequently a sequence (which itself
+// defines the size, i.e. number of elements) has an order, which may be ignored (sets), or could indicate
+// priority (list), or age i.e. history of prior values, ...
+//
+// The termination-bit which is used to indicate the end of a value-type, could be used to partition data in
+// smaller chunks, either to benefit limited processing capabilities of embedded devices, or to transfer data
+// as it is incoming at irregular intervals, or to signal an artificial boundary as a new batch refreshes/
+// updates the data from the previous batch, or for streams of data for which the number is not yet known.
+// (One could signal the end of the value-type with a 0-size terminated entry, if needed.)
+//
+// In terms of interpreting values into data-types: this encoding does not provide any support towards that
+// goal. 8-byte values could indicate a big-endian/little-endian signed/unsigned 64-bit integer value. This
+// would need to be aligned between communicating parties, either by convention or by agreement.
+// "Labeled" values could be used to indicate a format. However, e.g. intra-process communication may not be
+// concerned with these kinds of issues as it is all built from the same basic functions/libraries.
+//
+// TODO when stream-data is manipulated, all bets are off. E.g. if size-bits are tweaked, subsequent data is wrongly interpreted, so you might take on too much data and you might subsequently misinterpret data as header. (Do we care at this abstraction?)
 // TODO document, make explicit that size-bits are encoded in big-endian, such that MSB from first byte are available to use as flags.
 // TODO consider making shortest possible header mandatory, i.e. any size/count of <= 15, must use 1-byte header, that way the initial overlap of 2-byte header could be used to signal other characteristics in the future(?)
+// TODO if shortest-possible header is mandatory, the first few values for 2-byte header could be used to signal a (custom) extension of the encoding and/or format that unsupporting readers would process as invalid. (Alternatively, it would be more flexible to process any valid value.)
+// TODO decide on explicit null-value (would need to be indicated in the redundant space of a 2-byte header) or to leave implicit, i.e. 0-size bytes, absence of key-entry in map, etc.
 package prefixed
 
 import "io"
@@ -49,7 +75,7 @@ const FLAG_TERMINATION uint8 = 1 << 7
 
 // FLAG_KEYVALUE indicates whether this concerns just a value or a key-value-pair. In case of the key-value-
 // pair, `size` indicates the size of the key.
-// unset: plain value, set: key-value-pair.
+// unset: plain value, set: key-value-pair, i.e. a "labeled" value.
 // Note that we don't actually support type-information for values. We merely specify "containers"
 // ("byte-carriers") of a certain size.
 // The key-value pair is redundant in the sense that it could be expressed as 2 plain values in sequence,
@@ -92,9 +118,6 @@ const SIZE_2BYTE_MAX uint = 4096
 const SIZE_2BYTE_OFFSET uint16 = 1
 
 // Value is the collective type for bytes, key-value-pairs, sequences and maps.
-//
-// note: `_sealed()` prevents alternative implementations not part of this package.
 type Value interface {
-	// TODO does `_sealed` properly prevent third-party implementations?
 	io.WriterTo
 }
