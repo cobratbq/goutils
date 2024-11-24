@@ -73,3 +73,22 @@ func TestParseWrittenBytes(t *testing.T) {
 	assert.Equal(t, true, h.Terminated)
 	assert.SlicesEqual(t, b[4096:], raw[4100:])
 }
+
+func TestParseMap(t *testing.T) {
+	var testdata = []struct {
+		value   MapValue
+		keys    []string
+		encoded []byte
+	}{
+		{value: map[string]Value{}, encoded: []byte{0 | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE}, keys: []string{}},
+		{value: map[string]Value{"": Bytes([]byte{})}, encoded: []byte{1 | FLAG_TERMINATION | FLAG_MULTIPLICITY | FLAG_KEYVALUE, 0 | FLAG_TERMINATION | FLAG_KEYVALUE, 0 | FLAG_TERMINATION}, keys: []string{""}},
+	}
+	for i, d := range testdata {
+		t.Log("Iteration:", i)
+		n, v := ParseMap(d.encoded, nil)
+		assert.Equal(t, uint(len(d.encoded)), n)
+		assert.Equal(t, len(d.keys), len(v))
+		assert.AllKeysPresent(t, v, d.keys)
+		// FIXME could use a assert.EqualMaps
+	}
+}

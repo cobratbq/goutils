@@ -186,21 +186,24 @@ func ParseMap(data []byte, _hdr *Header) (uint, MapValue) {
 // TODO currently borrows data from input-array when constructing types, i.e. no cloning.
 // TODO future: add support for custom mapping of type-to-readFunction mapping for custom types
 func ParseValue(data []byte) (uint, Value) {
+	var n_h uint
 	var h Header
-	var n uint
-	if n, h = ParseHeader(data); n == 0 {
+	if n_h, h = ParseHeader(data); n_h == 0 {
 		return 0, nil
 	}
+	var n_v uint
+	var v Value
 	switch h.Vtype {
 	case TYPE_BYTES:
-		return ParseBytes(data[n:], &h)
+		n_v, v = ParseBytes(data[n_h:], &h)
 	case TYPE_KEYVALUE:
-		return ParseKeyValue(data[n:], &h)
+		n_v, v = ParseKeyValue(data[n_h:], &h)
 	case TYPE_SEQUENCE:
-		return ParseSequence(data[n:], &h)
+		n_v, v = ParseSequence(data[n_h:], &h)
 	case TYPE_MAP:
-		return ParseMap(data[n:], &h)
+		n_v, v = ParseMap(data[n_h:], &h)
 	default:
 		panic("BUG: should not be reached")
 	}
+	return n_h + n_v, v
 }
