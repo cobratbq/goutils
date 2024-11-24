@@ -74,7 +74,7 @@ type KeyValue struct {
 	V Value
 }
 
-func (v KeyValue) WriteTo(_out io.Writer) (int64, error) {
+func (v *KeyValue) WriteTo(_out io.Writer) (int64, error) {
 	var err error
 	out := io_.NewCountingWriter(_out)
 	if _, err = WriteRaw(&out, []byte(v.K), FLAG_KEYVALUE); err != nil {

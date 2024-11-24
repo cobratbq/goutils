@@ -63,7 +63,6 @@ func parseOrCopyHeader(data []byte, _hdr *Header) (uint, Header) {
 // ParseBytes reads plain bytes.
 // - data: input-data
 // - _hdr: the header is first read if it is not already provided.
-// FIXME check/redo size-checks, especially inside the loops
 func ParseBytes(data []byte, _hdr *Header) (uint, Bytes) {
 	if len(data) < 1 {
 		return 0, nil
@@ -96,33 +95,31 @@ func ParseBytes(data []byte, _hdr *Header) (uint, Bytes) {
 // - _hdr: the header is first read if it is not already provided.
 // FIXME check/redo size-checks, especially inside the loops
 // FIXME support non-terminated key-entry
-// FIXME return a *KeyValue (pointer) instead? (Would match better with SequenceValue and MapValue due to "by-reference" nature of those inner types)
-func ParseKeyValue(data []byte, _hdr *Header) (uint, KeyValue) {
+func ParseKeyValue(data []byte, _hdr *Header) (uint, *KeyValue) {
 	if len(data) < 1 {
-		return 0, KeyValue{}
+		return 0, nil
 	}
 	var pos, n uint
 	var h Header
 	if n, h = parseOrCopyHeader(data, _hdr); (_hdr == nil && n == 0) || h.Vtype != TYPE_KEYVALUE {
-		return 0, KeyValue{}
+		return 0, nil
 	}
 	pos += n
 	if len(data[pos:]) < int(h.Size)+1 {
-		return 0, KeyValue{}
+		return 0, nil
 	}
 	key := string(data[pos : pos+uint(h.Size)])
 	pos += uint(h.Size)
 	var val Value
 	if n, val = ParseValue(data[pos:]); n == 0 {
-		return 0, KeyValue{}
+		return 0, nil
 	}
-	return pos + n, KeyValue{K: key, V: val}
+	return pos + n, &KeyValue{K: key, V: val}
 }
 
 // ParseSequence reads a sequence-value from input-data.
 // - data: input-data
 // - _hdr: the header is first read if it is not already provided.
-// FIXME check/redo size-checks, especially inside the loops
 func ParseSequence(data []byte, _hdr *Header) (uint, SequenceValue) {
 	if len(data) < 1 {
 		return 0, nil
@@ -135,7 +132,7 @@ func ParseSequence(data []byte, _hdr *Header) (uint, SequenceValue) {
 	pos += n
 	var entries = make([]Value, 0, h.Size)
 	for {
-		for i := uint(0); i < uint(h.Size); i++ {
+		for i := uint16(0); i < h.Size; i++ {
 			n, entry := ParseValue(data[pos:])
 			if n == 0 {
 				return 0, nil
@@ -165,9 +162,9 @@ func ParseMap(data []byte, _hdr *Header) (uint, MapValue) {
 	}
 	pos += n
 	entries := make(map[string]Value, h.Size)
-	var v KeyValue
+	var v *KeyValue
 	for {
-		for i := uint(0); i < uint(h.Size); i++ {
+		for i := uint16(0); i < h.Size; i++ {
 			if n, v = ParseKeyValue(data[pos:], nil); n == 0 {
 				return 0, nil
 			}
