@@ -101,10 +101,29 @@ func KeyPresent[K comparable, V any](t testing.TB, set map[K]V, key K) {
 	}
 }
 
+// TODO or call KeysAllPresent or something like that? Naming could probably improve here.
+func AllKeysPresent[K comparable, V any](t testing.TB, set map[K]V, keys []K) {
+	t.Helper()
+	for _, k := range keys {
+		if _, ok := set[k]; !ok {
+			t.Errorf("Expected key '%v' to be present in map.", k)
+		}
+	}
+}
+
 func KeyAbsent[K comparable, V any](t testing.TB, set map[K]V, key K) {
 	t.Helper()
 	if _, ok := set[key]; ok {
 		t.Errorf("Expected key '%v' to be absent in map.", key)
+	}
+}
+
+func AllKeysAbsent[K comparable, V any](t testing.TB, set map[K]V, keys []K) {
+	t.Helper()
+	for _, k := range keys {
+		if _, ok := set[k]; ok {
+			t.Errorf("Expected key '%v' to be absent in map.", k)
+		}
 	}
 }
 
