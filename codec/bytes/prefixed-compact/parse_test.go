@@ -10,7 +10,7 @@ import (
 	assert "github.com/cobratbq/goutils/std/testing"
 )
 
-func TestReadBytes(t *testing.T) {
+func TestParseBytes(t *testing.T) {
 	//var testdata = []struct {
 	//	encoded []byte
 	//	data    []byte
@@ -47,7 +47,7 @@ func TestReadBytes(t *testing.T) {
 	//}
 }
 
-func TestReadWrittenBytes(t *testing.T) {
+func TestParseWrittenBytes(t *testing.T) {
 	var b [6000]byte
 	rand.MustReadBytes(b[:])
 	var result bytes.Buffer
@@ -60,13 +60,13 @@ func TestReadWrittenBytes(t *testing.T) {
 	raw := result.Bytes()
 	var h Header
 	var n2 uint
-	n2, h = ReadHeader(raw)
+	n2, h = ParseHeader(raw)
 	assert.Equal(t, 2, n2)
 	assert.Equal(t, 0, h.Vtype)
 	assert.Equal(t, 4096, h.Size)
 	assert.Equal(t, false, h.Terminated)
 	assert.SlicesEqual(t, b[:4096], raw[2:4098])
-	n2, h = ReadHeader(raw[4098:])
+	n2, h = ParseHeader(raw[4098:])
 	assert.Equal(t, 2, n2)
 	assert.Equal(t, 0, h.Vtype)
 	assert.Equal(t, 1904, h.Size)
