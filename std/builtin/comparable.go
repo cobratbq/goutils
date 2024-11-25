@@ -26,3 +26,11 @@ func EqualsAnyOf[T comparable](matches ...T) func(v T) bool {
 		return EqualsAny(v, matches...)
 	}
 }
+
+type Equaler[T any] interface {
+	Equal(o T) bool
+}
+
+func EqualT[T Equaler[T]](a, b T) bool {
+	return a.Equal(b)
+}

@@ -64,9 +64,29 @@ func Equal[T comparable](t testing.TB, a, b T) {
 	t.Errorf("Strings '%v' and '%v' should be equal", a, b)
 }
 
+// Note: copy of builtin.Equaler to avoid cyclic imports.
+type equaler[T any] interface {
+	Equal(o T) bool
+}
+
+func EqualT[T equaler[T]](t testing.TB, a, b T) {
+	t.Helper()
+	if a.Equal(b) {
+		return
+	}
+	t.Errorf("Values '%v' and '%v' should be equal", a, b)
+}
+
 func Unequal[T comparable](t testing.TB, a, b T) {
 	t.Helper()
 	if a == b {
+		t.Errorf("Strings '%v' and '%v' should not be equal", a, b)
+	}
+}
+
+func UnequalT[T equaler[T]](t testing.TB, a, b T) {
+	t.Helper()
+	if a.Equal(b) {
 		t.Errorf("Strings '%v' and '%v' should not be equal", a, b)
 	}
 }
