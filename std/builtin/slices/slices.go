@@ -56,6 +56,34 @@ func ContainsFunc[E any](slice []E, test func(E) bool) bool {
 	return false
 }
 
+// FIXME needs testing
+func Equal[E comparable](s1, s2 []E) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	for i := range s1 {
+		if s1[i] != s2[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// TODO create EqualT for elements that implement func Equal(a,b) bool.
+
+// FIXME needs testing
+func EqualFunc[E any](s1, s2 []E, test func(e1, e2 E) bool) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	for i := range s1 {
+		if !test(s1[i], s2[i]) {
+			return false
+		}
+	}
+	return true
+}
+
 // ForEach executes a closure for every value in `data`
 func ForEach[E any](data []E, process func(e E)) {
 	for _, e := range data {
