@@ -121,4 +121,5 @@ const SIZE_2BYTE_OFFSET uint16 = 1
 // Value is the collective type for bytes, key-value-pairs, sequences and maps.
 type Value interface {
 	io.WriterTo
+	Equal(other Value) bool
 }

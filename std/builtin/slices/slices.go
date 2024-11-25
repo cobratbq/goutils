@@ -70,6 +70,7 @@ func Equal[E comparable](s1, s2 []E) bool {
 	return true
 }
 
+// EqualT tests equality of slices by pair-wise testing equality of elements based on builtin.Equaler.
 // FIXME needs testing
 func EqualT[E builtin.Equaler[E]](s1, s2 []E) bool {
 	if len(s1) != len(s2) {

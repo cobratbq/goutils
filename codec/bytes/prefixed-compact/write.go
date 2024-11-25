@@ -3,10 +3,13 @@
 package prefixed
 
 import (
+	"bytes"
 	"io"
 
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/codec/bytes/bigendian"
+	"github.com/cobratbq/goutils/std/builtin/maps"
+	"github.com/cobratbq/goutils/std/builtin/slices"
 	io_ "github.com/cobratbq/goutils/std/io"
 	"github.com/cobratbq/goutils/std/math"
 )
@@ -54,6 +57,13 @@ func WriteRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
 // Type 0, 0 (singular, plain value) for any length.
 type Bytes []byte
 
+func (v Bytes) Equal(other Value) bool {
+	if o, ok := other.(Bytes); ok {
+		return bytes.Equal(v, o)
+	}
+	return false
+}
+
 func (v Bytes) WriteTo(out io.Writer) (int64, error) {
 	return WriteRaw(out, v, 0)
 }
@@ -74,6 +84,13 @@ type KeyValue struct {
 	V Value
 }
 
+func (v *KeyValue) Equal(other Value) bool {
+	if o, ok := other.(*KeyValue); ok {
+		return v.K == o.K && v.V.Equal(o.V)
+	}
+	return false
+}
+
 func (v *KeyValue) WriteTo(_out io.Writer) (int64, error) {
 	var err error
 	out := io_.NewCountingWriter(_out)
@@ -86,6 +103,13 @@ func (v *KeyValue) WriteTo(_out io.Writer) (int64, error) {
 
 // Type 1, 0 (multiple, plain value) for any length.
 type SequenceValue []Value
+
+func (v SequenceValue) Equal(other Value) bool {
+	if o, ok := other.(SequenceValue); ok {
+		return slices.EqualT(v, o)
+	}
+	return false
+}
 
 func (v SequenceValue) WriteTo(_out io.Writer) (int64, error) {
 	var err error

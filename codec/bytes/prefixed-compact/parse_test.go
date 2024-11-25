@@ -74,6 +74,23 @@ func TestParseWrittenBytes(t *testing.T) {
 	assert.SlicesEqual(t, b[4096:], raw[4100:])
 }
 
+func TestParseKeyValue(t *testing.T) {
+	var testdata = []struct {
+		value   KeyValue
+		encoded []byte
+	}{
+		{value: KeyValue{K: "", V: Bytes([]byte{})}, encoded: []byte{0 | FLAG_TERMINATION | FLAG_KEYVALUE, 0 | FLAG_TERMINATION}},
+		{value: KeyValue{K: string([]byte{0}), V: Bytes([]byte{})}, encoded: []byte{1 | FLAG_TERMINATION | FLAG_KEYVALUE, 0, 0 | FLAG_TERMINATION}},
+		{value: KeyValue{K: "Hello to all earthlings.", V: Bytes([]byte{})}, encoded: []byte{0 | FLAG_TERMINATION | FLAG_KEYVALUE | FLAG_HEADERSIZE, 23, 'H', 'e', 'l', 'l', 'o', ' ', 't', 'o', ' ', 'a', 'l', 'l', ' ', 'e', 'a', 'r', 't', 'h', 'l', 'i', 'n', 'g', 's', '.', 0 | FLAG_TERMINATION}},
+	}
+	for i, d := range testdata {
+		t.Log("Iteration:", i)
+		n, v := ParseKeyValue(d.encoded, nil)
+		assert.Equal(t, len(d.encoded), int(n))
+		assert.EqualT[Value](t, &d.value, v)
+	}
+}
+
 func TestParseMap(t *testing.T) {
 	var testdata = []struct {
 		value   MapValue
