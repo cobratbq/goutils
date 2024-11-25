@@ -156,6 +156,13 @@ func (v SequenceValue) WriteTo(_out io.Writer) (int64, error) {
 // Type 1, 1 (multiple, key-value-pairs) for any length.
 type MapValue map[string]Value
 
+func (v MapValue) Equal(other Value) bool {
+	if o, ok := other.(MapValue); ok {
+		return maps.EqualT(v, o)
+	}
+	return false
+}
+
 func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
 	var err error
 	out := io_.NewCountingWriter(_out)
