@@ -2,7 +2,10 @@
 
 package maps
 
-import "github.com/cobratbq/goutils/assert"
+import (
+	"github.com/cobratbq/goutils/assert"
+	"github.com/cobratbq/goutils/std/builtin"
+)
 
 // GetOr gets the value for `key` from a map, or returns `defvalue` if key is not present.
 func GetOr[K comparable, V any](map_ map[K]V, key K, defvalue V) V {
@@ -39,6 +42,45 @@ func ContainsAny[K comparable, V any](map_ map[K]V, keys ...K) bool {
 func Contains[K comparable, V any](map_ map[K]V, key K) bool {
 	_, ok := map_[key]
 	return ok
+}
+
+// FIXME needs testing
+func Equal[K comparable, V comparable](m1, m2 map[K]V) bool {
+	if len(m1) != len(m2) {
+		return false
+	}
+	for k, v := range m1 {
+		if v2, ok := m2[k]; !ok || v != v2 {
+			return false
+		}
+	}
+	return true
+}
+
+// FIXME needs testing
+func EqualT[K comparable, V builtin.Equaler[V]](m1, m2 map[K]V) bool {
+	if len(m1) != len(m2) {
+		return false
+	}
+	for k, v := range m1 {
+		if v2, ok := m2[k]; !ok || !v.Equal(v2) {
+			return false
+		}
+	}
+	return true
+}
+
+// FIXME needs testing
+func EqualFunc[K comparable, V any](m1, m2 map[K]V, test func(v1, v2 V) bool) bool {
+	if len(m1) != len(m2) {
+		return false
+	}
+	for k, v := range m1 {
+		if v2, ok := m2[k]; !ok || !test(v, v2) {
+			return false
+		}
+	}
+	return true
 }
 
 // Duplicate duplicates the map only. A shallow copy of map entries into a new map of equal size.
