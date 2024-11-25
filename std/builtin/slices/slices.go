@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"github.com/cobratbq/goutils/assert"
+	"github.com/cobratbq/goutils/std/builtin"
 	"github.com/cobratbq/goutils/std/builtin/multiset"
 	"github.com/cobratbq/goutils/std/builtin/set"
 	"github.com/cobratbq/goutils/std/errors"
@@ -69,7 +70,18 @@ func Equal[E comparable](s1, s2 []E) bool {
 	return true
 }
 
-// TODO create EqualT for elements that implement func Equal(a,b) bool.
+// FIXME needs testing
+func EqualT[E builtin.Equaler[E]](s1, s2 []E) bool {
+	if len(s1) != len(s2) {
+		return false
+	}
+	for i := range s1 {
+		if !s1[i].Equal(s2[i]) {
+			return false
+		}
+	}
+	return true
+}
 
 // FIXME needs testing
 func EqualFunc[E any](s1, s2 []E, test func(e1, e2 E) bool) bool {
