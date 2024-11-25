@@ -5,8 +5,7 @@
 // A very basic encoding that allows for encoding values in a limited structure. The protocol essentially
 // offers "byte-carriers", either in singular form or (multiple) in sequence. Values are either plain (a
 // number of bytes) or key-value-pair. Given its streamable nature, one may assume that order of occurrence is
-// meaningful, e.g. earlier occurrence indicating higher priority or later occurrence superseding earlier
-// occurrence, as needed.
+// meaningful.
 //
 // Note: although at first glance a key-value-pair wouldn't make much sense, it does allow encoding predefined
 // keys, such that multiple versions of a protocol can identify which specific "labeled" value they receive as
@@ -15,10 +14,13 @@
 //
 // 4 Flags are provided to indicate:
 //
-// - termination: whether the value terminates now, or a follow-up record is expected carrying the remainder,
-// - value-type: a plain value or key-value-pair ("labeled" value),
-// - multiplicity: a single value or multiple (collection of) values,
-// - header-size: a 1-byte header, indicating sizes `[0, 15]`, or 2-byte header, indicating sizes `[1, 4096]`,
+//   - termination: whether the value terminates now, or a follow-up record is expected carrying the
+//     remainder,
+//   - value-type: a plain value or key-value-pair ("labeled" value),
+//   - multiplicity: a single value or multiple (collection of) values,
+//   - header-size: a 1-byte header, indicating sizes `[0, 15]`, or 2-byte header, indicating sizes
+//     `[1, 4096]`, with sizes encoded as big-endian unsigned integer, with first 4 bits (of first byte)
+//     (implicitly, due to restricted ranges for size) reserved for flags.
 //
 // The `termination`-bit is used to indicate whether this value is completed, meaning that if the bit is set,
 // this entry concludes a value (possibly in a single entry), while an unset bit indicates that the following
@@ -37,7 +39,7 @@
 //
 // There is inherent order through the position in the data-stream, consequently a sequence (which itself
 // defines the size, i.e. number of elements) has an order, which may be ignored (collection), or could
-// indicate priority (list), or age i.e. history of prior values, ...
+// indicate order (list), or priority (queue), or a stack, or age i.e. history of prior values, ...
 //
 // The termination-bit which is used to indicate the end of a value, could be used to partition data in
 // smaller chunks, either to benefit limited processing capabilities of embedded devices, or to transfer data
@@ -51,11 +53,14 @@
 // "Labeled" values could be used to indicate a format. However, e.g. inter-process communication may not be
 // concerned with these kinds of issues if it is all built from the same basic functions/libraries.
 //
+// There is no literal to represent `null`. In many cases, 0-length entry or not (having to) encode a
+// particular key-value entry perfectly reflects intention. Given that this is an encoding of data, rather
+// than a full-blown data-structure with matching data-types, this seems to suffice. Furthermore, it unburdens
+// developers from having to include logic/restrictions for properly processing data in both the code-base
+// and encoded format. (In virtually all cases, data-types, structures and classes already require such logic
+// in order to preserve their invariants during use.)
+//
 // TODO when stream-data is manipulated, all bets are off. E.g. if size-bits are tweaked, subsequent data is wrongly interpreted, so you might take on too much data and you might subsequently misinterpret data as header. (Do we care at this abstraction?)
-// TODO document, make explicit that size-bits are encoded in big-endian, such that MSB from first byte are available to use as flags.
-// TODO consider making shortest possible header mandatory, i.e. any size/count of <= 15, must use 1-byte header, that way the initial overlap of 2-byte header could be used to signal other characteristics in the future(?)
-// TODO if shortest-possible header is mandatory, the first few values for 2-byte header could be used to signal a (custom) extension of the encoding and/or format that unsupporting readers would process as invalid. (Alternatively, it would be more flexible to process any valid value.)
-// TODO decide on explicit null-value (would need to be indicated in the redundant space of a 2-byte header) or to leave implicit, i.e. 0-size bytes, absence of key-entry in map, etc.
 package prefixed
 
 import "io"
@@ -70,7 +75,6 @@ import "io"
 // from parts of varying lengths, possibly benefiting small devices or variable/unpredictable input-streams.
 // TODO there was originally an idea to make a zero-size without termination-bit a special case for a list/map of unspecified length. However, this requires some form of termination to indicate the end, and that is currently not yet decided on.
 // TODO document: if not set, must be followed by entry of same type-flags optionally FLAG_TERMINATION set, of any (allowed) size.
-// FIXME use "termination"-flag or the reverse?
 const FLAG_TERMINATION uint8 = 1 << 7
 
 // FLAG_KEYVALUE indicates whether this concerns just a value or a key-value-pair. In case of the key-value-
@@ -78,33 +82,38 @@ const FLAG_TERMINATION uint8 = 1 << 7
 // unset: plain value, set: key-value-pair, i.e. a "labeled" value.
 // Note that we don't actually support type-information for values. We merely specify "containers"
 // ("byte-carriers") of a certain size.
-// The key-value pair is redundant in the sense that it could be expressed as 2 plain values in sequence,
-// however that is based on convention. By allowing singular key-value-pair as type, we can express
+//
+// Note: the key-value pair is redundant in the sense that it could be expressed as 2 plain values in
+// sequence, however that is based in convention. By allowing singular key-value-pair as type, we can express
 // syntactically a key with its corresponding value. This, in turn, can function as version-independent
 // indicator for whatever encoded format is represented. Thus giving any expressed format _some_ syntactically
-// enforced handles for recognizing/interpreting an encoded payload.
-// TODO document: FLAG_KEYVALUE indicates the key, must be followed by a value of any type, i.e. the key cannot be the last entry.
+// enforced handles.
 const FLAG_KEYVALUE uint8 = 1 << 6
 
 // FLAG_MULTIPLICITY indicates whether this concerns a single value or multiple/series/collection of values.
 // unset: single entry, set: multiple entries.
 // In case of multiple entries, the size-bits indicate the number of entries.
-// TODO document: i.e. size-bits indicate count, instead of single length for value/key
 const FLAG_MULTIPLICITY uint8 = 1 << 5
 
 // FLAG_HEADERSIZE indicates the size of the header.
 // unset: 1-byte header, set: 2-byte header.
-// Consequently, 4 bits to represent size [0, 15], or 12-bits to represent size [1, 4096].
+//
+// Consequently, 4 bits to represent size [0, 15], or 12-bits to represent size [1, 4096]. If the flag is set,
+// upon interpreting the 12-bit size, SIZE_2BYTE_OFFSET should be added to correct for difference in range
+// start.
+//
+// The 2-byte header, i.e. this flag, should only be used for values outside of the 1-byte range. It is under
+// consideration to use the lowest redundant value(s) to signal for a future version. Current implementations
+// would do good to reject these values `[1,15]` in 2-byte header size-range as illegal, as such rejecting a
+// possible unknown and unsupported encoding.
 const FLAG_HEADERSIZE uint8 = 1 << 4
 
 // MASK_SIZEBITS is the mask that drops all the special flag-bits from the first byte of the big-endian
-// uint16-value.
-// TODO for what types (value-type, multiplicity) should size be increment by 1 because size of 0 makes no sense?
+// uint16-value. (The second byte fully represents its part of the size.)
 const MASK_SIZEBITS uint8 = 0b00001111
 
 // SIZE_1BYTE_MAX is the (inclusive) maximum for 1-byte headers.
 // 4 bits available to indicate size, to indicate 0-15 bytes/count.
-// TODO note that implementations should prefer 1-byte header for values < 16.
 const SIZE_1BYTE_MAX uint = 15
 
 // SIZE_2BYTE_MAX is the (inclusive) maximum for 2-byte headers.
@@ -115,7 +124,6 @@ const SIZE_1BYTE_MAX uint = 15
 const SIZE_2BYTE_MAX uint = 4096
 
 // SIZE_2BYTE_OFFSET represents the correction performed while the 2-byte size-value is stored.
-// TODO consider if we want to shift values by +16, such that first 2-byte-header value is 16, and last is 4095+16 (Does not seem to touch on any significant benefits, unless we consider a few increments past 4096 to be an advantage)
 const SIZE_2BYTE_OFFSET uint16 = 1
 
 // Value is the collective type for bytes, key-value-pairs, sequences and maps.
