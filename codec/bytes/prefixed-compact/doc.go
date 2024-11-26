@@ -31,6 +31,16 @@
 // Consequently, corruption of the header-bytes will result in misinterpretation of subsequent data. (This
 // must be solved outside of the encoding, if there is risk of corruption.)
 //
+// Formal notation:
+//
+// header = termination , valuetype , multiplicity , headersize , 4-bit-size [,8-bit-size]
+// bytes = header , [byte-array]
+// value = bytes | (key , value) | sequence | map
+// key = header , [byte-array]
+// sequence = header , {value}
+// map = header , {key , value}
+// byte-array =
+//
 // ## Interpretation of values (bytes) is left to be determined by the reader (application).
 //
 // This includes the exact meaning of the data-types. For example, duplicate keys in a map may indicate an
