@@ -5,6 +5,10 @@ package prefixed
 
 import (
 	"bytes"
+	"io"
+
+	"github.com/cobratbq/goutils/std/errors"
+	io_ "github.com/cobratbq/goutils/std/io"
 )
 
 type CompositeType uint8
@@ -26,31 +30,49 @@ type Header struct {
 	Terminated bool
 }
 
+func ReadHeader(in io.Reader) (Header, error) {
+	var err error
+	var b byte
+	if b, err = io_.ReadByte(in); err != nil {
+		return Header{}, err
+	}
+	var vtype CompositeType
+	if b&FLAG_KEYVALUE == FLAG_KEYVALUE {
+		vtype |= 1
+	}
+	if b&FLAG_MULTIPLICITY == FLAG_MULTIPLICITY {
+		vtype |= 2
+	}
+	var term = b&FLAG_TERMINATION == FLAG_TERMINATION
+	var size = uint16(b & MASK_SIZEBITS)
+	if b&FLAG_HEADERSIZE == 0 {
+		return Header{vtype, size, term}, nil
+	}
+	if b, err = io_.ReadByte(in); err != nil {
+		return Header{}, err
+	}
+	size <<= 8
+	size |= uint16(b)
+	size += SIZE_2BYTE_OFFSET
+	return Header{vtype, size, term}, nil
+}
+
+func readOrCopyHeader(in io.Reader, _hdr *Header) (Header, error) {
+	if _hdr != nil {
+		return *_hdr, nil
+	}
+	return ReadHeader(in)
+}
+
 // ParseHeader reads the 1-byte or 2-byte header from input-data
 // - data: input-data
 func ParseHeader(data []byte) (uint, Header) {
-	if len(data) < 1 {
+	var in = bytes.NewReader(data)
+	hdr, err := ReadHeader(in)
+	if err != nil {
 		return 0, Header{}
 	}
-	var vtype CompositeType
-	if data[0]&FLAG_KEYVALUE == FLAG_KEYVALUE {
-		vtype |= 1
-	}
-	if data[0]&FLAG_MULTIPLICITY == FLAG_MULTIPLICITY {
-		vtype |= 2
-	}
-	var term = data[0]&FLAG_TERMINATION == FLAG_TERMINATION
-	var size = uint16(data[0] & MASK_SIZEBITS)
-	if data[0]&FLAG_HEADERSIZE == 0 {
-		return 1, Header{vtype, size, term}
-	}
-	if len(data) < 2 {
-		return 0, Header{}
-	}
-	size <<= 8
-	size |= uint16(data[1])
-	size += SIZE_2BYTE_OFFSET
-	return 2, Header{vtype, size, term}
+	return uint(in.Size() - int64(in.Len())), hdr
 }
 
 func parseOrCopyHeader(data []byte, _hdr *Header) (uint, Header) {
@@ -60,124 +82,173 @@ func parseOrCopyHeader(data []byte, _hdr *Header) (uint, Header) {
 	return ParseHeader(data)
 }
 
+func ReadBytes(in io.Reader, _hdr *Header) (Bytes, error) {
+	var h Header
+	var err error
+	if h, err = readOrCopyHeader(in, _hdr); err != nil {
+		return nil, err
+	} else if h.Vtype != TYPE_BYTES {
+		return nil, errors.ErrIllegal
+	}
+	var b bytes.Buffer
+	for {
+		if _, err = io.CopyN(&b, in, int64(h.Size)); err != nil {
+			return nil, err
+		}
+		if h.Terminated {
+			return Bytes(bytes.Clone(b.Bytes())), nil
+		}
+		if h, err = ReadHeader(in); err != nil {
+			return nil, err
+		} else if h.Vtype != TYPE_BYTES {
+			return nil, errors.ErrIllegal
+		}
+	}
+}
+
 // ParseBytes reads plain bytes.
 // - data: input-data
 // - _hdr: the header is first read if it is not already provided.
 func ParseBytes(data []byte, _hdr *Header) (uint, Bytes) {
-	if len(data) < 1 {
+	var in = bytes.NewReader(data)
+	v, err := ReadBytes(in, _hdr)
+	if err != nil {
 		return 0, nil
 	}
-	var n uint
+	return uint(in.Size() - int64(in.Len())), v
+}
+
+// FIXME support non-terminated key-entry
+func ReadKeyValue(in io.Reader, _hdr *Header) (*KeyValue, error) {
 	var h Header
-	if n, h = parseOrCopyHeader(data, _hdr); (_hdr == nil && n == 0) || h.Vtype != TYPE_BYTES {
-		return 0, nil
+	var err error
+	if h, err = readOrCopyHeader(in, _hdr); err != nil {
+		return nil, err
+	} else if h.Vtype != TYPE_KEYVALUE {
+		return nil, errors.ErrIllegal
 	}
-	var pos = n
-	var b bytes.Buffer
-	for {
-		if len(data[pos:]) < int(h.Size) {
-			return 0, nil
-		}
-		b.Write(data[pos : pos+uint(h.Size)])
-		pos += uint(h.Size)
-		if h.Terminated {
-			return pos, Bytes(bytes.Clone(b.Bytes()))
-		}
-		if n, h = ParseHeader(data[pos:]); n == 0 || h.Vtype != TYPE_BYTES {
-			return 0, nil
-		}
-		pos += n
+	var key []byte
+	if key, err = io_.ReadN(in, uint(h.Size)); err != nil {
+		return nil, err
 	}
+	var val Value
+	if val, err = ReadValue(in); err != nil {
+		return nil, err
+	}
+	return &KeyValue{K: string(key), V: val}, nil
 }
 
 // ParseKeyValue reads the key-value from input-data.
 // - data: input-data
 // - _hdr: the header is first read if it is not already provided.
-// FIXME check/redo size-checks, especially inside the loops
-// FIXME support non-terminated key-entry
 func ParseKeyValue(data []byte, _hdr *Header) (uint, *KeyValue) {
-	if len(data) < 1 {
+	var in = bytes.NewReader(data)
+	v, err := ReadKeyValue(in, _hdr)
+	if err != nil {
 		return 0, nil
 	}
-	var pos, n uint
+	return uint(in.Size() - int64(in.Len())), v
+}
+
+func ReadSequence(in io.Reader, _hdr *Header) (SequenceValue, error) {
 	var h Header
-	if n, h = parseOrCopyHeader(data, _hdr); (_hdr == nil && n == 0) || h.Vtype != TYPE_KEYVALUE {
-		return 0, nil
+	var err error
+	if h, err = readOrCopyHeader(in, _hdr); err != nil {
+		return nil, err
+	} else if h.Vtype != TYPE_SEQUENCE {
+		return nil, errors.ErrIllegal
 	}
-	pos += n
-	if len(data[pos:]) < int(h.Size)+1 {
-		return 0, nil
+	var entries = make([]Value, 0, h.Size)
+	for {
+		for i := uint16(0); i < h.Size; i++ {
+			entry, err := ReadValue(in)
+			if err != nil {
+				return nil, err
+			}
+			entries = append(entries, entry)
+		}
+		if h.Terminated {
+			return entries, nil
+		}
+		if h, err = ReadHeader(in); err != nil {
+			return nil, err
+		} else if h.Vtype != TYPE_SEQUENCE {
+			return nil, errors.ErrIllegal
+		}
 	}
-	key := string(data[pos : pos+uint(h.Size)])
-	pos += uint(h.Size)
-	var val Value
-	if n, val = ParseValue(data[pos:]); n == 0 {
-		return 0, nil
-	}
-	return pos + n, &KeyValue{K: key, V: val}
 }
 
 // ParseSequence reads a sequence-value from input-data.
 // - data: input-data
 // - _hdr: the header is first read if it is not already provided.
 func ParseSequence(data []byte, _hdr *Header) (uint, SequenceValue) {
-	if len(data) < 1 {
+	var in = bytes.NewReader(data)
+	v, err := ReadSequence(in, _hdr)
+	if err != nil {
 		return 0, nil
 	}
-	var pos, n uint
+	return uint(in.Size() - int64(in.Len())), v
+}
+
+// TODO map assumes distinct keys, hence count is exact number of map entries.
+func ReadMap(in io.Reader, _hdr *Header) (MapValue, error) {
 	var h Header
-	if n, h = parseOrCopyHeader(data, _hdr); (_hdr == nil && n == 0) || h.Vtype != TYPE_SEQUENCE {
-		return 0, nil
+	var err error
+	if h, err = readOrCopyHeader(in, _hdr); err != nil {
+		return nil, err
+	} else if h.Vtype != TYPE_MAP {
+		return nil, errors.ErrIllegal
 	}
-	pos += n
-	var entries = make([]Value, 0, h.Size)
+	entries := make(map[string]Value, h.Size)
+	var v *KeyValue
 	for {
 		for i := uint16(0); i < h.Size; i++ {
-			n, entry := ParseValue(data[pos:])
-			if n == 0 {
-				return 0, nil
+			if v, err = ReadKeyValue(in, nil); err != nil {
+				return nil, err
 			}
-			entries = append(entries, entry)
-			pos += n
+			entries[v.K] = v.V
 		}
 		if h.Terminated {
-			return pos, entries
+			return entries, nil
 		}
-		if n, h = ParseHeader(data[pos:]); n == 0 || h.Vtype != TYPE_SEQUENCE {
-			return 0, nil
+		if h, err = ReadHeader(in); err != nil {
+			return nil, err
+		} else if h.Vtype != TYPE_MAP {
+			return nil, errors.ErrIllegal
 		}
-		pos += n
 	}
 }
 
 // ParseMap reads a map-value from input-data.
 // - data: input-data
 // - _hdr: the header is first read if it is not already provided.
-// TODO map assumes distinct keys, hence count is exact number of map entries.
 func ParseMap(data []byte, _hdr *Header) (uint, MapValue) {
-	var pos, n uint
-	var h Header
-	if n, h = parseOrCopyHeader(data, _hdr); (_hdr == nil && n == 0) || h.Vtype != TYPE_MAP {
+	var in = bytes.NewReader(data)
+	v, err := ReadMap(in, _hdr)
+	if err != nil {
 		return 0, nil
 	}
-	pos += n
-	entries := make(map[string]Value, h.Size)
-	var v *KeyValue
-	for {
-		for i := uint16(0); i < h.Size; i++ {
-			if n, v = ParseKeyValue(data[pos:], nil); n == 0 {
-				return 0, nil
-			}
-			entries[v.K] = v.V
-			pos += n
-		}
-		if h.Terminated {
-			return pos, entries
-		}
-		if n, h = ParseHeader(data[pos:]); n == 0 || h.Vtype != TYPE_MAP {
-			return 0, nil
-		}
-		pos += n
+	return uint(in.Size() - int64(in.Len())), v
+}
+
+func ReadValue(in io.Reader) (Value, error) {
+	var err error
+	var h Header
+	h, err = ReadHeader(in)
+	if err != nil {
+		return nil, err
+	}
+	switch h.Vtype {
+	case TYPE_BYTES:
+		return ReadBytes(in, &h)
+	case TYPE_KEYVALUE:
+		return ReadKeyValue(in, &h)
+	case TYPE_SEQUENCE:
+		return ReadSequence(in, &h)
+	case TYPE_MAP:
+		return ReadMap(in, &h)
+	default:
+		panic("BUG: should not be reached")
 	}
 }
 
@@ -186,24 +257,10 @@ func ParseMap(data []byte, _hdr *Header) (uint, MapValue) {
 // TODO currently borrows data from input-array when constructing types, i.e. no cloning.
 // TODO future: add support for custom mapping of type-to-readFunction mapping for custom types
 func ParseValue(data []byte) (uint, Value) {
-	var n_h uint
-	var h Header
-	if n_h, h = ParseHeader(data); n_h == 0 {
+	var in = bytes.NewReader(data)
+	v, err := ReadValue(in)
+	if err != nil {
 		return 0, nil
 	}
-	var n_v uint
-	var v Value
-	switch h.Vtype {
-	case TYPE_BYTES:
-		n_v, v = ParseBytes(data[n_h:], &h)
-	case TYPE_KEYVALUE:
-		n_v, v = ParseKeyValue(data[n_h:], &h)
-	case TYPE_SEQUENCE:
-		n_v, v = ParseSequence(data[n_h:], &h)
-	case TYPE_MAP:
-		n_v, v = ParseMap(data[n_h:], &h)
-	default:
-		panic("BUG: should not be reached")
-	}
-	return n_h + n_v, v
+	return uint(in.Size() - int64(in.Len())), v
 }
