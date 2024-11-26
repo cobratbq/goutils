@@ -75,13 +75,6 @@ func ParseHeader(data []byte) (uint, Header) {
 	return uint(in.Size() - int64(in.Len())), hdr
 }
 
-func parseOrCopyHeader(data []byte, _hdr *Header) (uint, Header) {
-	if _hdr != nil {
-		return 0, *_hdr
-	}
-	return ParseHeader(data)
-}
-
 func ReadBytes(in io.Reader, _hdr *Header) (Bytes, error) {
 	var h Header
 	var err error
