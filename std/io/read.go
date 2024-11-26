@@ -13,10 +13,8 @@ var ErrIncompleteRead = errors.NewStringError("incomplete read")
 
 func ReadByte(in io.Reader) (byte, error) {
 	var b [1]byte
-	if err := ReadFull(in, b[:]); err != nil {
-		return 0, err
-	}
-	return b[0], nil
+	_, err := io.ReadFull(in, b[:])
+	return b[0], err
 }
 
 func MustReadByte(in io.Reader) byte {
@@ -25,21 +23,23 @@ func MustReadByte(in io.Reader) byte {
 	return b[0]
 }
 
-func ReadFull(in io.Reader, dst []byte) error {
-	n, err := in.Read(dst)
-	if err != nil {
-		return err
-	}
-	if n < len(dst) {
-		return ErrIncompleteRead
-	}
-	return nil
+// ReadN creates then fills the buffer to `n` by reading from `in`.
+func ReadN(in io.Reader, n uint) ([]byte, error) {
+	var b = make([]byte, n)
+	_, err := io.ReadFull(in, b)
+	return b, err
+}
+
+// MustReadN creates then fills the buffer to `n` by reading from `in` and panics on error.
+func MustReadN(in io.Reader, n uint) []byte {
+	b, err := ReadN(in, n)
+	assert.Success(err, "Failed to read expected number of bytes.")
+	return b
 }
 
 func MustReadFull(in io.Reader, dst []byte) {
-	n, err := in.Read(dst)
+	_, err := io.ReadFull(in, dst)
 	assert.Success(err, "Failed to read sufficient bytes to fill destination")
-	assert.Equal(n, len(dst))
 }
 
 func ReadAll(in io.Reader) ([]byte, error) {
@@ -55,9 +55,8 @@ func MustReadAll(in io.Reader) []byte {
 
 // MustReadBytes reads bytes into dst and fails if anything out of the ordinary happens.
 func MustReadBytes(in io.Reader, dst []byte) {
-	n, err := in.Read(dst)
+	_, err := io.ReadFull(in, dst)
 	assert.Success(err, "failed to read random bytes")
-	assert.Equal(n, len(dst))
 }
 
 // ReadExpect reads and checks if the read byte is the expected `next` byte.

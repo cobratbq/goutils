@@ -18,7 +18,7 @@ func MustReadUint8(in io.Reader) uint8 {
 
 func ReadUint16(in io.Reader) (uint16, error) {
 	var b [2]byte
-	if err := io_.ReadFull(in, b[:]); err != nil {
+	if _, err := io.ReadFull(in, b[:]); err != nil {
 		return 0, err
 	}
 	return Uint16(b[0], b[1]), nil
@@ -36,7 +36,7 @@ func Uint16(b0, b1 byte) uint16 {
 
 func ReadUint32(in io.Reader) (uint32, error) {
 	var b [4]byte
-	if err := io_.ReadFull(in, b[:]); err != nil {
+	if _, err := io.ReadFull(in, b[:]); err != nil {
 		return 0, err
 	}
 	return Uint32(b[0], b[1], b[2], b[3]), nil
@@ -54,7 +54,7 @@ func Uint32(b0, b1, b2, b3 byte) uint32 {
 
 func ReadUint64(in io.Reader) (uint64, error) {
 	var b [8]byte
-	if err := io_.ReadFull(in, b[:]); err != nil {
+	if _, err := io.ReadFull(in, b[:]); err != nil {
 		return 0, err
 	}
 	return Uint64(b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]), nil
