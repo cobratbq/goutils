@@ -33,13 +33,13 @@
 //
 // Formal notation:
 //
-// header = termination , valuetype , multiplicity , headersize , 4-bit-size [,8-bit-size]
-// bytes = header , [byte-array]
-// value = bytes | (key , value) | sequence | map
-// key = header , [byte-array]
-// sequence = header , {value}
-// map = header , {key , value}
-// byte-array =
+//	header = termination , valuetype , multiplicity , headersize , 4-bit-size , [8-bit-size]
+//	bytes = header , [byte-array]
+//	value = bytes | (key , value) | sequence | map
+//	key = header , [byte-array]
+//	sequence = header , {value}
+//	map = header , {key , value}
+//	byte-array =
 //
 // ## Interpretation of values (bytes) is left to be determined by the reader (application).
 //
@@ -69,8 +69,6 @@
 // developers from having to include logic/restrictions for properly processing data in both the code-base
 // and encoded format. (In virtually all cases, data-types, structures and classes already require such logic
 // in order to preserve their invariants during use.)
-//
-// TODO when stream-data is manipulated, all bets are off. E.g. if size-bits are tweaked, subsequent data is wrongly interpreted, so you might take on too much data and you might subsequently misinterpret data as header. (Do we care at this abstraction?)
 package prefixed
 
 import "io"
