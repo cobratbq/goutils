@@ -10,43 +10,6 @@ import (
 	assert "github.com/cobratbq/goutils/std/testing"
 )
 
-func TestParseBytes(t *testing.T) {
-	//var testdata = []struct {
-	//	encoded []byte
-	//	data    []byte
-	//	flags   uint8
-	//	error   error
-	//}{
-	//	{encoded: []byte{FLAG_TERMINATION}, data: []byte{}, flags: 0, error: io.ErrIncompleteRead},
-	//}
-	//var buffer bytes.Buffer
-	//var pos, n uint
-	//var h Header
-	//var err error
-	//for i, d := range testdata {
-	//	var restored []byte
-	//	buffer.Reset()
-	//	t.Log("Iteration:", i)
-	//	n, h = ReadHeader(d.encoded)
-	//	assert.IsError(t, d.error, err)
-	//	assert.Equal(t, len(d.encoded), int(n))
-	//	assert.SlicesEqual(t, d.encoded, buffer.Bytes())
-	//	if d.error != nil {
-	//		continue
-	//	}
-	//	buffer.Write(d.encoded[n : n+uint(h.Size)])
-	//	pos += n + uint(h.Size)
-	//	n, h = ReadHeader(d.encoded[pos:])
-	//	assert.IsError(t, d.error, err)
-	//	assert.Equal(t, len(d.encoded), int(n))
-	//	assert.SlicesEqual(t, d.encoded, buffer.Bytes())
-	//	if d.error != nil {
-	//		continue
-	//	}
-	//	buffer.Write(d.encoded[n : n+uint(h.Size)])
-	//}
-}
-
 func TestParseWrittenBytes(t *testing.T) {
 	var b [6000]byte
 	rand.MustReadBytes(b[:])
@@ -74,6 +37,25 @@ func TestParseWrittenBytes(t *testing.T) {
 	assert.SlicesEqual(t, b[4096:], raw[4100:])
 }
 
+func TestParseBytes(t *testing.T) {
+	var testdata = []struct {
+		value   Bytes
+		encoded []byte
+	}{
+		{value: Bytes([]byte{}), encoded: []byte{0 | FLAG_TERMINATION}},
+		{value: Bytes([]byte{}), encoded: []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 | FLAG_TERMINATION}},
+		{value: Bytes([]byte("Hello to all earthlings.")), encoded: []byte{0 | FLAG_TERMINATION | FLAG_HEADERSIZE, 23, 'H', 'e', 'l', 'l', 'o', ' ', 't', 'o', ' ', 'a', 'l', 'l', ' ', 'e', 'a', 'r', 't', 'h', 'l', 'i', 'n', 'g', 's', '.'}},
+		{value: Bytes([]byte("ghost")), encoded: []byte{0, 0, 0, 0, 1, 'g', 1, 'h', 1, 'o', 1, 's', 1, 't', 0, 0, 0, 0, 0, 0, 0, 0, 0 | FLAG_TERMINATION}},
+	}
+	for i, d := range testdata {
+		t.Log("Iteration:", i)
+		n, v := ParseBytes(d.encoded, nil)
+		assert.Equal(t, len(d.encoded), int(n))
+		assert.EqualT[Value](t, &d.value, v)
+	}
+
+}
+
 func TestParseKeyValue(t *testing.T) {
 	var testdata = []struct {
 		value   KeyValue
@@ -82,6 +64,7 @@ func TestParseKeyValue(t *testing.T) {
 		{value: KeyValue{K: "", V: Bytes([]byte{})}, encoded: []byte{0 | FLAG_TERMINATION | FLAG_KEYVALUE, 0 | FLAG_TERMINATION}},
 		{value: KeyValue{K: string([]byte{0}), V: Bytes([]byte{})}, encoded: []byte{1 | FLAG_TERMINATION | FLAG_KEYVALUE, 0, 0 | FLAG_TERMINATION}},
 		{value: KeyValue{K: "Hello to all earthlings.", V: Bytes([]byte{})}, encoded: []byte{0 | FLAG_TERMINATION | FLAG_KEYVALUE | FLAG_HEADERSIZE, 23, 'H', 'e', 'l', 'l', 'o', ' ', 't', 'o', ' ', 'a', 'l', 'l', ' ', 'e', 'a', 'r', 't', 'h', 'l', 'i', 'n', 'g', 's', '.', 0 | FLAG_TERMINATION}},
+		{value: KeyValue{K: "Hello to all earthlings.", V: Bytes([]byte{})}, encoded: []byte{5 | FLAG_KEYVALUE, 'H', 'e', 'l', 'l', 'o', 1 | FLAG_KEYVALUE, ' ', 2 | FLAG_KEYVALUE, 't', 'o', 1 | FLAG_KEYVALUE, ' ', 3 | FLAG_KEYVALUE, 'a', 'l', 'l', 1 | FLAG_KEYVALUE, ' ', 11 | FLAG_TERMINATION | FLAG_KEYVALUE, 'e', 'a', 'r', 't', 'h', 'l', 'i', 'n', 'g', 's', '.', 0 | FLAG_TERMINATION}},
 	}
 	for i, d := range testdata {
 		t.Log("Iteration:", i)

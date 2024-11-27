@@ -75,6 +75,8 @@ func ParseHeader(data []byte) (uint, Header) {
 	return uint(in.Size() - int64(in.Len())), hdr
 }
 
+// ReadBytes reads a plain byte-array. A header `_hdr` may be provided if it was already read, or if `nil` is
+// provided, then the header is first read from `in`.
 func ReadBytes(in io.Reader, _hdr *Header) (Bytes, error) {
 	var h Header
 	var err error
@@ -111,7 +113,6 @@ func ParseBytes(data []byte, _hdr *Header) (uint, Bytes) {
 	return uint(in.Size() - int64(in.Len())), v
 }
 
-// FIXME support non-terminated key-entry
 func ReadKeyValue(in io.Reader, _hdr *Header) (*KeyValue, error) {
 	var h Header
 	var err error
@@ -120,15 +121,27 @@ func ReadKeyValue(in io.Reader, _hdr *Header) (*KeyValue, error) {
 	} else if h.Vtype != TYPE_KEYVALUE {
 		return nil, errors.ErrIllegal
 	}
-	var key []byte
-	if key, err = io_.ReadN(in, uint(h.Size)); err != nil {
-		return nil, err
+	var keybuffer bytes.Buffer
+	for {
+		var chunk []byte
+		if chunk, err = io_.ReadN(in, uint(h.Size)); err != nil {
+			return nil, err
+		}
+		keybuffer.Write(chunk)
+		if h.Terminated {
+			break
+		}
+		if h, err = ReadHeader(in); err != nil {
+			return nil, err
+		} else if h.Vtype != TYPE_KEYVALUE {
+			return nil, errors.ErrIllegal
+		}
 	}
 	var val Value
 	if val, err = ReadValue(in); err != nil {
 		return nil, err
 	}
-	return &KeyValue{K: string(key), V: val}, nil
+	return &KeyValue{K: string(bytes.Clone(keybuffer.Bytes())), V: val}, nil
 }
 
 // ParseKeyValue reads the key-value from input-data.
