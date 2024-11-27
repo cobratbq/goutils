@@ -57,6 +57,8 @@ func ContainsFunc[E any](slice []E, test func(E) bool) bool {
 	return false
 }
 
+// Equal tests the contents of two slices by pair-wise testing for equality for cases where values are
+// comparable.
 // FIXME needs testing
 func Equal[E comparable](s1, s2 []E) bool {
 	if len(s1) != len(s2) {
@@ -84,6 +86,7 @@ func EqualT[E builtin.Equaler[E]](s1, s2 []E) bool {
 	return true
 }
 
+// EqualFunc tests equality of slices by pair-wise testing equality of elements based on `test` function.
 // FIXME needs testing
 func EqualFunc[E any](s1, s2 []E, test func(e1, e2 E) bool) bool {
 	if len(s1) != len(s2) {

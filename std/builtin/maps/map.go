@@ -44,6 +44,9 @@ func Contains[K comparable, V any](map_ map[K]V, key K) bool {
 	return ok
 }
 
+// Equal checks equality of maps, with values required to be comparable. Every key is expected to be present
+// in both maps and their corresponding values retrieved. Maps are considered not equal if one key is absent
+// in the other map.
 // FIXME needs testing
 func Equal[K comparable, V comparable](m1, m2 map[K]V) bool {
 	if len(m1) != len(m2) {
@@ -57,6 +60,9 @@ func Equal[K comparable, V comparable](m1, m2 map[K]V) bool {
 	return true
 }
 
+// EqualT checks equality of maps, with each value in the map expected to implement builtin.Equaler.
+// Every key is expected to be present in both maps and their corresponding values retrieved. Maps are
+// considered not equal if one key is absent in the other map.
 // FIXME needs testing
 func EqualT[K comparable, V builtin.Equaler[V]](m1, m2 map[K]V) bool {
 	if len(m1) != len(m2) {
@@ -70,6 +76,10 @@ func EqualT[K comparable, V builtin.Equaler[V]](m1, m2 map[K]V) bool {
 	return true
 }
 
+// EqualFunc checks equality of maps, with each value in the map being tested using the provided `test`
+// function/closure. `test` returns true iff values are considered equal, false otherwise. Every key is
+// expected to be present in both maps and their corresponding values retrieved. Maps are considered not equal
+// if one key is not present in the other map.
 // FIXME needs testing
 func EqualFunc[K comparable, V any](m1, m2 map[K]V, test func(v1, v2 V) bool) bool {
 	if len(m1) != len(m2) {
