@@ -68,6 +68,10 @@ func (v Bytes) WriteTo(out io.Writer) (int64, error) {
 	return WriteRaw(out, v, 0)
 }
 
+func WriteBytes(out io.Writer, data []byte) (int64, error) {
+	return Bytes(data).WriteTo(out)
+}
+
 // Type 0, 1 (singular, key-value-pair).
 //
 // Write a key and corresponding value. Syntactically enforced key with value, requiring no assumptions on
@@ -99,6 +103,10 @@ func (v *KeyValue) WriteTo(_out io.Writer) (int64, error) {
 	}
 	_, err = v.V.WriteTo(&out)
 	return out.Cum, err
+}
+
+func WriteKeyValue(out io.Writer, key string, value Value) (int64, error) {
+	return (&KeyValue{key, value}).WriteTo(out)
 }
 
 // Type 1, 0 (multiple, plain value) for any length.
@@ -151,6 +159,10 @@ func (v SequenceValue) WriteTo(_out io.Writer) (int64, error) {
 		}
 	}
 	return out.Cum, nil
+}
+
+func WriteSequence(out io.Writer, seq []Value) (int64, error) {
+	return SequenceValue(seq).WriteTo(out)
 }
 
 // Type 1, 1 (multiple, key-value-pairs) for any length.
@@ -230,4 +242,8 @@ func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
 		assert.Equal(total, processed)
 	}
 	return out.Cum, nil
+}
+
+func WriteMap(out io.Writer, mapv map[string]Value) (int64, error) {
+	return MapValue(mapv).WriteTo(out)
 }
