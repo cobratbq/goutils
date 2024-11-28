@@ -31,7 +31,7 @@ func ClosePanicked(c io.Closer, message string) {
 // TODO consider logging without formatter
 func CloseLogged(c io.Closer, message string) {
 	if err := c.Close(); err != nil && !errors.Is(err, io.ErrClosedPipe) {
-		log.Warnf(message, err)
+		log.Warnf(message, err.Error())
 	}
 }
 
