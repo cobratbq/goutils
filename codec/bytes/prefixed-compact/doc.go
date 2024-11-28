@@ -33,13 +33,22 @@
 //
 // Formal notation:
 //
-//	header = termination , valuetype , multiplicity , headersize , 4-bit-size , [8-bit-size]
-//	bytes = header , [byte-array]
-//	value = bytes | (key , value) | sequence | map
-//	key = header , [byte-array]
+//	value = data | (key , value) | sequence | map
+//	data = header , {byte}
+//	key = header , {byte}
 //	sequence = header , {value}
 //	map = header , {key , value}
-//	byte-array =
+//	header = termination-bit , valuetype-bit , multiplicity-bit , headersize-bit , 4-bit-size , [8-bit-size]
+//
+//	Additionally:
+//	1.) header will include the second byte, as part of big-endian unsigned size (12 bits in total) if-and-
+//	only-if the `headersize`-bit is set. The 4-bit size ranges `[0,15]`. The 12-bit size ranges `[1,4096]`,
+//	thus requiring an offset correction.
+//	2.) the minimum necessary header-size should be used, i.e. sizes/counts ranging `[0,15]` expressed with
+//	single-byte header.
+//	3.) if termination-bit is unset, next value must be of same `valuetype | multiplicity`.
+//	4.) length of raw data (`{byte}`) in `bytes` and `key` must correspond to length indicated in header;
+//	actual number of entries in `sequence` and `map` must correspond to count indicated in header.
 //
 // ## Interpretation of values (bytes) is left to be determined by the reader (application).
 //
