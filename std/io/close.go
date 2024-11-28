@@ -4,6 +4,7 @@ package io
 
 import (
 	"io"
+	"net"
 
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/std/errors"
@@ -13,25 +14,27 @@ import (
 // CloseIgnored closes the closer and discards any possible error.
 func CloseIgnored(c io.Closer) {
 	err := c.Close()
-	log.TracelnDepth(1, "`CloseIgnored` ignores error:", err)
+	log.TracefDepth(1, "CloseIgnored closed '%v', with error '%#v'", c, err)
 }
 
 // ClosePanicked closes the closer and panics with specified message in case of any error, except
 // for io.ErrClosedPipe.
 func ClosePanicked(c io.Closer, message string) {
 	err := c.Close()
-	if errors.Is(err, io.ErrClosedPipe) {
+	log.TracefDepth(1, "ClosePanicked closed '%v', with error '%#v'", c, err)
+	if errors.Is(err, io.ErrClosedPipe) || errors.Is(err, net.ErrClosed) {
 		return
 	}
 	assert.Success(err, message)
 }
 
 // CloseLogged closes the closer and logs specified message in case of error. Any error except for
-// io.ErrClosedPipe is logged. The error message is logged as a warning.
-// TODO consider logging without formatter
+// io.ErrClosedPipe and net.ErrClosed is logged. The error message is logged as a warning.
 func CloseLogged(c io.Closer, message string) {
-	if err := c.Close(); err != nil && !errors.Is(err, io.ErrClosedPipe) {
-		log.Warnf(message, err.Error())
+	err := c.Close()
+	log.TracefDepth(1, "CloseLogged closed '%v', with error '%#v'", c, err)
+	if err != nil && !errors.Is(err, io.ErrClosedPipe) && !errors.Is(err, net.ErrClosed) {
+		log.Warnln(message, err.Error())
 	}
 }
 
