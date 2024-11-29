@@ -4,7 +4,6 @@ package io
 
 import (
 	"io"
-	"net"
 
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/std/errors"
@@ -17,23 +16,40 @@ func CloseIgnored(c io.Closer) {
 	log.TracefDepth(1, "CloseIgnored closed '%v', with error '%#v'", c, err)
 }
 
-// ClosePanicked closes the closer and panics with specified message in case of any error, except
-// for io.ErrClosedPipe.
+// ClosePanicked closes the closer and panics with specified message in case of any error.
 func ClosePanicked(c io.Closer, message string) {
 	err := c.Close()
 	log.TracefDepth(1, "ClosePanicked closed '%v', with error '%#v'", c, err)
-	if errors.Is(err, io.ErrClosedPipe) || errors.Is(err, net.ErrClosed) {
+	assert.Success(err, message)
+}
+
+// ClosePanickedWithIgnores closes the closer and panics with specified message in case of any error, except
+// for those in `ignore`.
+func ClosePanickedWithIgnores(c io.Closer, message string, ignore ...error) {
+	err := c.Close()
+	log.TracefDepth(1, "ClosePanickedWithIgnores closed '%v', with error '%#v'", c, err)
+	if errors.IsAny(err, ignore) {
 		return
 	}
 	assert.Success(err, message)
 }
 
-// CloseLogged closes the closer and logs specified message in case of error. Any error except for
-// io.ErrClosedPipe and net.ErrClosed is logged. The error message is logged as a warning.
+// CloseLogged closes the closer and logs specified message in case of error. Any error except is logged. The
+// error message is logged as a warning.
 func CloseLogged(c io.Closer, message string) {
 	err := c.Close()
 	log.TracefDepth(1, "CloseLogged closed '%v', with error '%#v'", c, err)
-	if err != nil && !errors.Is(err, io.ErrClosedPipe) && !errors.Is(err, net.ErrClosed) {
+	if err != nil {
+		log.Warnln(message, err.Error())
+	}
+}
+
+// CloseLoggedWithIgnores closes the closer and logs specified message in case of error. Any error except for
+// ignored are logged. The error message is logged as a warning.
+func CloseLoggedWithIgnores(c io.Closer, message string, ignore ...error) {
+	err := c.Close()
+	log.TracefDepth(1, "CloseLoggedWithIgnores closed '%v', with error '%#v'", c, err)
+	if err != nil && !errors.IsAny(err, ignore) {
 		log.Warnln(message, err.Error())
 	}
 }
@@ -102,6 +118,7 @@ func (c *closeSequence) Close() error {
 	if errs == nil {
 		return nil
 	}
+	// TODO may need to provide context for which closers caused errors
 	return errors.Aggregate(ErrSequenceFailure, "one or more failures occurred", errs...)
 }
 
