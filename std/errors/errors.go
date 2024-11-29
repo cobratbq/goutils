@@ -48,6 +48,15 @@ func Is(err error, target error) bool {
 	return errors.Is(err, target)
 }
 
+func IsAny(err error, targets []error) bool {
+	for e := range targets {
+		if errors.Is(err, targets[e]) {
+			return true
+		}
+	}
+	return false
+}
+
 // Stack extracts the first stacktrace encountered in a wrapped error, or nil if no stack is
 // present/found. It is assumed that, generally, at most one stacktrace is present.
 func Stack(err error) []byte {
