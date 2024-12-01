@@ -25,6 +25,7 @@ func ClosePanicked(c io.Closer, message string) {
 
 // ClosePanickedWithIgnores closes the closer and panics with specified message in case of any error, except
 // for those in `ignore`.
+// Typical ignored errors: net.ErrClosed (when closed elsewhere), io.ErrClosedPipe (when closed elsewhere)
 func ClosePanickedWithIgnores(c io.Closer, message string, ignore ...error) {
 	err := c.Close()
 	log.TracefDepth(1, "ClosePanickedWithIgnores closed '%v', with error '%#v'", c, err)
@@ -46,6 +47,7 @@ func CloseLogged(c io.Closer, message string) {
 
 // CloseLoggedWithIgnores closes the closer and logs specified message in case of error. Any error except for
 // ignored are logged. The error message is logged as a warning.
+// Typical ignored errors: net.ErrClosed (when closed elsewhere), io.ErrClosedPipe (when closed elsewhere)
 func CloseLoggedWithIgnores(c io.Closer, message string, ignore ...error) {
 	err := c.Close()
 	log.TracefDepth(1, "CloseLoggedWithIgnores closed '%v', with error '%#v'", c, err)
