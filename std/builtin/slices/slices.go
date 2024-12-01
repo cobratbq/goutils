@@ -206,16 +206,21 @@ func ConvertToMap[E any, K comparable, V any](input []E, transform func(int, E) 
 // TransformSliceToMapKeys assumes non-overlapping map keys, meaning that there will be the same
 // number of keys in the output as there are entries in the input slice. This assumption exists to
 // be able to detect loss of information, due to faulty logic.
+//
+// Note: duplicates are not resolved. Duplicates will naturally only be represented once as keys in the map.
+// The second return value indicates number of duplicates. This function does not provide
+// "conflict-resolution" for duplicates.
+//
+// Returns resulting map, count of duplicate values (present only once as map keys)
+//
 // TODO consider changing this to a "MergeSliceIntoMapKeys" that does not create the map itself and provides mutating logic.
 // TODO consider renaming to ConvertSliceToMapKeys
-func ConvertToMapKeys[K comparable, V any](input []K, transform func(int, K) V) map[K]V {
+func ConvertToMapKeys[K comparable, V any](input []K, transform func(int, K) V) (map[K]V, uint) {
 	output := make(map[K]V, len(input))
 	for idx, k := range input {
-		// FIXME not considering duplicate elements in input
 		output[k] = transform(idx, k)
 	}
-	assert.Equal(len(input), len(output))
-	return output
+	return output, uint(len(input) - len(output))
 }
 
 // DistinctElementCount summarizes the contents of the slice as a multiset/bag containing
