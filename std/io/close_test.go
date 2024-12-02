@@ -42,7 +42,13 @@ func TestCloseLoggedFailure(t *testing.T) {
 }
 
 func TestCloseLoggedErrClosedPipe(t *testing.T) {
+	// FIXME cannot properly test that this does indeed log an error.
 	CloseLogged(&closeclosedpipe{}, "correctly failed to close: %+v")
+}
+
+func TestCloseLoggedWithIgnoresErrClosedPipe(t *testing.T) {
+	// FIXME cannot properly test that this does not log an error.
+	CloseLoggedWithIgnores(&closeclosedpipe{}, "correctly failed to close: %+v", io.ErrClosedPipe)
 }
 
 func TestClosePanickedNil(t *testing.T) {
@@ -62,7 +68,13 @@ func TestClosePanickedFailure(t *testing.T) {
 }
 
 func TestClosePanickedErrClosedPipe(t *testing.T) {
+	defer assert.RequirePanic(t)
 	ClosePanicked(&closeclosedpipe{}, "failed to close: %+v")
+	t.FailNow()
+}
+
+func TestClosePanickedWithIgnoresErrClosedPipe(t *testing.T) {
+	ClosePanickedWithIgnores(&closeclosedpipe{}, "failed to close: %+v", io.ErrClosedPipe)
 }
 
 type closefailer struct{}
