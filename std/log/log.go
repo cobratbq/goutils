@@ -10,7 +10,9 @@ import (
 	"os"
 )
 
-var debuglog = log.New(os.Stderr, "[debug] ", log.Ltime|log.LUTC|log.Lmicroseconds)
+const defaultFlags = log.Ltime | log.LUTC | log.Lmicroseconds
+
+var debuglog = log.New(os.Stderr, "[debug] ", defaultFlags)
 
 const calldepth = 2
 
@@ -59,7 +61,7 @@ func DebugReport(assert bool, format string, args ...any) {
 	}
 }
 
-var infolog = log.New(os.Stderr, " [info] ", log.Ltime|log.LUTC|log.Lmicroseconds)
+var infolog = log.New(os.Stderr, " [info] ", defaultFlags)
 
 // Info writes a line to os.Stderr with prefix 'info'.
 func Info(line string) {
@@ -76,7 +78,7 @@ func Infof(format string, args ...any) {
 	infolog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
 
-var warnlog = log.New(os.Stderr, " [warn] ", log.Ltime|log.LUTC|log.Lmicroseconds)
+var warnlog = log.New(os.Stderr, " [warn] ", defaultFlags)
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warn(line string) {
@@ -93,7 +95,7 @@ func Warnf(format string, args ...any) {
 	warnlog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
 
-var errorlog = log.New(os.Stderr, "[ERROR] ", log.Ltime|log.LUTC|log.Lmicroseconds)
+var errorlog = log.New(os.Stderr, "[ERROR] ", defaultFlags)
 
 // Error writes a line to os.Stderr with prefix 'ERROR'.
 func Error(line string) {
