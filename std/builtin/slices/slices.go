@@ -192,13 +192,21 @@ func Transform[I, O any](input []I, transform func(I) O) []O {
 }
 
 // ConvertToMap transforms a slice with data into a map. It assumes that there
-// FIXME consider how to deal with duplicate keys. The transform function should be able to assume no overlapping values. Otherwise input should be sanitized first.
-func ConvertToMap[E any, K comparable, V any](input []E, transform func(int, E) (K, V)) map[K]V {
+//
+//   - `transform` (mandatory), executes on each slice entry to determine key and value, used for conversion to a map.
+//   - `resolve` (optional), resolves conflicts when multiple entries arrive at the same key in the output map.
+//     If `resolve` is nil, and a duplicate key is detected, conversion will panic.
+func ConvertToMap[E any, K comparable, V any](input []E, transform func(int, E) (K, V), resolve func(K, V, V) V) map[K]V {
 	output := make(map[K]V)
 	for idx, e := range input {
 		k, v := transform(idx, e)
-		// FIXME not considering duplicate elements in input
-		output[k] = v
+		if curr, dup := output[k]; !dup {
+			output[k] = v
+		} else if dup && resolve != nil {
+			output[k] = resolve(k, curr, v)
+		} else {
+			panic("Duplicate key found and no conflict resolution provided through `resolve` func.")
+		}
 	}
 	return output
 }
@@ -209,12 +217,9 @@ func ConvertToMap[E any, K comparable, V any](input []E, transform func(int, E) 
 //
 // Note: duplicates are not resolved. Duplicates will naturally only be represented once as keys in the map.
 // The second return value indicates number of duplicates. This function does not provide
-// "conflict-resolution" for duplicates.
+// "conflict-resolution" for duplicates. (`ConvertToMap` provides more control over the conversion process.)
 //
 // Returns resulting map, count of duplicate values (present only once as map keys)
-//
-// TODO consider changing this to a "MergeSliceIntoMapKeys" that does not create the map itself and provides mutating logic.
-// TODO consider renaming to ConvertSliceToMapKeys
 func ConvertToMapKeys[K comparable, V any](input []K, transform func(int, K) V) (map[K]V, uint) {
 	output := make(map[K]V, len(input))
 	for idx, k := range input {
