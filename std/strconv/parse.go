@@ -37,6 +37,12 @@ func MustParseInt[T types.SignedInteger](s string, base int) T {
 	return builtin.Expect(ParseInt[T](s, base))
 }
 
+// MustParseIntDecimal parses a string for an integer value of at most specified bitsize assumed to be in
+// base-10 notation.
+func MustParseIntDecimal[T types.SignedInteger](s string) T {
+	return MustParseInt[T](s, DecimalBase)
+}
+
 // MustParseBytesInt parses a byte-array for a signed integer value of at most specified bitsize. Success is
 // assumed and the function will panic on error.
 func MustParseBytesInt[T types.SignedInteger](data []byte, base int) T {
