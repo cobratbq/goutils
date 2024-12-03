@@ -226,13 +226,13 @@ func MergeInto[K comparable, V any](dst, src map[K]V) {
 	}
 }
 
-// MergeIntoFunc merges two maps, and calls `conflict` in case a key exists in both maps.
-// `conflict` takes only values (see `MergeFunc` for conflict func that includes parameter for `K`)
-// and uses the value returned by `conflict`.
-func MergeIntoFunc[K comparable, V any](dst, src map[K]V, conflict func(V, V) V) {
+// MergeIntoFunc merges two maps, and calls `resolve` in case a key exists in both maps.
+// `resolve` takes only values (see `MergeFunc` for conflict func that includes parameter for `K`)
+// and uses the value returned by `resolve`.
+func MergeIntoFunc[K comparable, V any](dst, src map[K]V, resolve func(V, V) V) {
 	for k, v2 := range src {
 		if v1, present := dst[k]; present {
-			dst[k] = conflict(v1, v2)
+			dst[k] = resolve(v1, v2)
 		} else {
 			dst[k] = v2
 		}
@@ -240,13 +240,13 @@ func MergeIntoFunc[K comparable, V any](dst, src map[K]V, conflict func(V, V) V)
 }
 
 // MergeIntoKeyedFunc merges two distinct maps into one destination map, freshly created. In case a key
-// exists in both maps, func `conflict` is called for conflict resolution. It will return the
+// exists in both maps, func `resolve` is called for conflict resolution. It will return the
 // desired value, which can be determined based on provided key and the original values from both
 // maps.
-func MergeIntoKeyedFunc[K comparable, V any](dst, src map[K]V, conflict func(K, V, V) V) {
+func MergeIntoKeyedFunc[K comparable, V any](dst, src map[K]V, resolve func(K, V, V) V) {
 	for k, v2 := range src {
 		if v1, present := dst[k]; present {
-			dst[k] = conflict(k, v1, v2)
+			dst[k] = resolve(k, v1, v2)
 		} else {
 			dst[k] = v2
 		}
