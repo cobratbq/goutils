@@ -45,7 +45,7 @@ func DebuglnSliceAsString(prefix string, data [][]byte) {
 // with `prefix`.
 func DebuglnMap[K comparable, V any](prefix string, data map[K]V) {
 	for k, v := range data {
-		debuglog.Output(calldepth, fmt.Sprintln(prefix, k, "->", v))
+		debuglog.Output(calldepth, fmt.Sprintf("%v: %+v -> %+v", prefix, k, v))
 	}
 }
 

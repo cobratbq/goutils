@@ -55,7 +55,7 @@ func TracelnSliceAsString(prefix string, data [][]byte) {
 // with `prefix`.
 func TracelnMap[K comparable, V any](prefix string, data map[K]V) {
 	for k, v := range data {
-		tracelog.Output(calldepth, fmt.Sprintln(prefix, k, "->", v))
+		tracelog.Output(calldepth, fmt.Sprintf("%v: %+v -> %+v", prefix, k, v))
 	}
 }
 
