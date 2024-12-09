@@ -18,6 +18,8 @@ func Tracef(format string, args ...any) {}
 
 func TracefDepth(depth uint, format string, args ...any) {}
 
+func TracelnSlice[T any](prefix string, data []T) {}
+
 func TracelnSliceAsString(prefix string, data [][]byte) {}
 
 func TracelnMap[K comparable, V any](prefix string, data map[K]V) {}

@@ -43,6 +43,13 @@ func TracefDepth(depth uint, format string, args ...any) {
 	tracelog.Output(calldepth+int(depth), fmt.Sprintf(format, args...))
 }
 
+// TracelnSlice prints each entry in `data` on a new line. Every trace-line is prefixed with `prefix`.
+func TracelnSlice[T any](prefix string, data []T) {
+	for i, e := range data {
+		tracelog.Output(calldepth, fmt.Sprintln(prefix, i, "->", e))
+	}
+}
+
 // TracelnSliceAsString prints each entry in `data` on a new line. Every trace-line is prefixed with `prefix`.
 // Each line of data (bytes), are printed as ANSI characters, thus converted to a string.
 func TracelnSliceAsString(prefix string, data [][]byte) {
