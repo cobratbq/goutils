@@ -12,22 +12,24 @@ import (
 	"github.com/cobratbq/goutils/types"
 )
 
-func False(expected bool) {
-	if expected {
+func False(v bool) {
+	if v {
+		log.TracelnDepth(1, "assert.False:", v)
 		panic("assertion failed: False")
 	}
 }
 
-func True(expected bool) {
-	if !expected {
+func True(v bool) {
+	if !v {
+		log.TracelnDepth(1, "assert.True:", v)
 		panic("assertion failed: True")
 	}
 }
 
-func Any[T comparable](actual T, values ...T) {
+func Any[T comparable](actual T, values ...T) T {
 	for _, v := range values {
 		if actual == v {
-			return
+			return actual
 		}
 	}
 	log.TracelnDepth(1, "assert.Any:", actual)
@@ -62,48 +64,45 @@ func Unequal[T comparable](v1, v2 T) {
 	}
 }
 
-func Zero[T types.Integer](v T) {
+func Zero[T types.Integer](v T) T {
 	if v == 0 {
-		return
+		return v
 	}
 	log.TracelnDepth(1, "assert.Zero:", v)
 	panic("assertion failed: zero value")
 }
 
-func Positive[T types.Integer](v T) {
+func Positive[T types.Integer](v T) T {
 	if v > 0 {
-		return
+		return v
 	}
 	log.TracelnDepth(1, "assert.Positive:", v)
 	panic("assertion failed: positive value")
 }
 
-func NonNegative[T types.SignedInteger](v T) {
+func NonNegative[T types.SignedInteger](v T) T {
 	if v >= 0 {
-		return
+		return v
 	}
 	log.TracelnDepth(1, "assert.NonNegative:", v)
 	panic("assertion failed: non-negative value")
 }
 
-func Negative[T types.SignedInteger](v T) {
+func Negative[T types.SignedInteger](v T) T {
 	if v < 0 {
-		return
+		return v
 	}
 	log.TracelnDepth(1, "assert.Negative:", v)
 	panic("assertion failed: negative value")
 }
 
-func NonPositive[T types.Integer](v T) {
+func NonPositive[T types.Integer](v T) T {
 	if v <= 0 {
-		return
+		return v
 	}
 	log.TracelnDepth(1, "assert.NonPositive:", v)
 	panic("assertion failed: non-positive value")
 }
-
-// TODO is it possible to define a function `Empty` that accepts string, slice, map, etc. all at once, then perform a `len(c) == 0` check?
-// FIXME the panic and tracelog messages must be better, now ambiguous in nature
 
 func EmptyString(s string) {
 	if len(s) == 0 {
@@ -129,17 +128,17 @@ func EmptyMap[K comparable, V any](collection map[K]V) {
 	panic("assertion failed: map is not empty")
 }
 
-func AtLeast[C types.Ordered](least C, value C) {
+func AtLeast[C types.Ordered](least C, value C) C {
 	if value >= least {
-		return
+		return value
 	}
 	log.TracelnDepth(1, "assert.AtLeast:", value)
 	panic("assertion failed: value below (inclusive) lower bound")
 }
 
-func AtMost[C types.Ordered](most C, value C) {
+func AtMost[C types.Ordered](most C, value C) C {
 	if value <= most {
-		return
+		return value
 	}
 	log.TracelnDepth(1, "assert.AtMost:", value)
 	panic("assertion failed: value above (inclusive) upper bound")
