@@ -157,6 +157,41 @@ func LastIndexFunc[E any](data []E, test func(E) bool) int {
 	return -1
 }
 
+// Subslice finds a (sub)slice inside a larger slice. Returns index of start of subslice if found, or `-1` if
+// subslice is not found.
+func Subslice[E comparable](data []E, sub []E) int {
+next:
+	for i := range data {
+		if len(data[i:]) < len(sub) {
+			return -1
+		}
+		if data[i] != sub[0] {
+			continue
+		}
+		for m := range sub {
+			if data[i+m] != sub[m] {
+				continue next
+			}
+		}
+		return i
+	}
+	return -1
+}
+
+// Continuous finds a continuous sequence of values equal to value at `idx`.
+// Returns start-index (inclusive) and end-index (inclusive).
+func Continuous[E comparable](data []E, idx int) (int, int) {
+	var start int
+	for start = idx; start >= 0 && data[start] == data[idx]; start-- {
+	}
+	start++
+	var end int
+	for end = idx; end < len(data) && data[end] == data[idx]; end++ {
+	}
+	end--
+	return start, end
+}
+
 // Duplicate copies the provided source slice to new slice of same size. Copying is a shallow copy
 // operation.
 func Duplicate[T any](src []T) []T {
@@ -431,6 +466,15 @@ func MiddleIndex[E any](slice []E) (int, error) {
 		return 0, errors.Context(os.ErrInvalid, "no middle element in even-sized slice")
 	}
 	return len(slice) / 2, nil
+}
+
+// Repeat produces a slices that contains provided value repeated `n` times. (Sized `n`)
+func Repeat[E any](n uint, val E) []E {
+	s := make([]E, n)
+	for i := range s {
+		s[i] = val
+	}
+	return s
 }
 
 // Reverse a slice in-place. (Calls into Go std slices.Reverse)
