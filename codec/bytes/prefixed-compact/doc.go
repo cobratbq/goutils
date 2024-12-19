@@ -78,6 +78,7 @@
 // developers from having to include logic/restrictions for properly processing data in both the code-base
 // and encoded format. (In virtually all cases, data-types, structures and classes already require such logic
 // in order to preserve their invariants during use.)
+// TODO consider adding PrefixedEncode and PrefixedDecode interfaces for encoding arbitrary types depending on user implementations. (Possibly with some verification during encoding.)
 package prefixed
 
 import "io"
