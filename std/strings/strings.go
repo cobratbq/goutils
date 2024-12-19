@@ -30,10 +30,20 @@ func FindOverlapping(text string, substr string) []int {
 	return finds
 }
 
-// AnyPrefix tests for any of series of prefixes.
-func AnyPrefix(s string, prefixes ...string) bool {
-	for _, p := range prefixes {
-		if strings.HasPrefix(s, p) {
+// AnyPrefix tests for any of provided prefixes.
+func AnyPrefix(text string, prefixes ...string) bool {
+	for p := range prefixes {
+		if strings.HasPrefix(text, prefixes[p]) {
+			return true
+		}
+	}
+	return false
+}
+
+// AnySuffix tests for any of provided suffixes.
+func AnySuffix(text string, suffixes ...string) bool {
+	for s := range suffixes {
+		if strings.HasSuffix(text, suffixes[s]) {
 			return true
 		}
 	}
