@@ -95,6 +95,13 @@ func Warnf(format string, args ...any) {
 	warnlog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
 }
 
+// WarnOnError checks for non-nil error, then prints warning message followed by error-message.
+func WarnOnError(err error, line string) {
+	if err != nil {
+		Warnln(line, err.Error())
+	}
+}
+
 var errorlog = log.New(os.Stderr, "[ERROR] ", defaultFlags)
 
 // Error writes a line to os.Stderr with prefix 'ERROR'.
