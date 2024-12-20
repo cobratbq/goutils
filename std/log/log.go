@@ -18,7 +18,7 @@ const calldepth = 2
 
 // Debug writes output to os.Stderr with prefix 'debug'.
 func Debug(line string) {
-	debuglog.Output(calldepth, fmt.Sprintln(line))
+	debuglog.Output(calldepth, line)
 }
 
 // Debugln writes a line to os.Stderr with prefix `debug`, then ends with newline.
@@ -51,13 +51,13 @@ func DebuglnMap[K comparable, V any](prefix string, data map[K]V) {
 
 // Debugf writes a line to os.Stderr with prefix 'debug', using fmt formatting options.
 func Debugf(format string, args ...any) {
-	debuglog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
+	debuglog.Output(calldepth, fmt.Sprintf(format, args...))
 }
 
 // DebugReport logs a debug-level message in case the assertion does not hold.
 func DebugReport(assert bool, format string, args ...any) {
 	if !assert {
-		debuglog.Output(calldepth, fmt.Sprintf("Failed assertion: "+format+"\n", args...))
+		debuglog.Output(calldepth, fmt.Sprintf("Failed assertion: "+format, args...))
 	}
 }
 
@@ -65,7 +65,7 @@ var infolog = log.New(os.Stderr, " [info] ", defaultFlags)
 
 // Info writes a line to os.Stderr with prefix 'info'.
 func Info(line string) {
-	infolog.Output(calldepth, fmt.Sprintln(line))
+	infolog.Output(calldepth, line)
 }
 
 // Infoln writes a line to os.Stderr with prefix 'info', closing with newline.
@@ -75,14 +75,14 @@ func Infoln(args ...any) {
 
 // Info writes a line to os.Stderr with prefix 'info'.
 func Infof(format string, args ...any) {
-	infolog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
+	infolog.Output(calldepth, fmt.Sprintf(format, args...))
 }
 
 var warnlog = log.New(os.Stderr, " [warn] ", defaultFlags)
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warn(line string) {
-	warnlog.Output(calldepth, fmt.Sprintln(line))
+	warnlog.Output(calldepth, line)
 }
 
 // Warnln writes a line to os.Stderr with prefix 'warn', closing with newline.
@@ -92,13 +92,13 @@ func Warnln(args ...any) {
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warnf(format string, args ...any) {
-	warnlog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
+	warnlog.Output(calldepth, fmt.Sprintf(format, args...))
 }
 
 // WarnOnError checks for non-nil error, then prints warning message followed by error-message.
 func WarnOnError(err error, line string) {
 	if err != nil {
-		Warnln(line, err.Error())
+		warnlog.Output(calldepth, line+" "+err.Error())
 	}
 }
 
@@ -106,7 +106,7 @@ var errorlog = log.New(os.Stderr, "[ERROR] ", defaultFlags)
 
 // Error writes a line to os.Stderr with prefix 'ERROR'.
 func Error(line string) {
-	errorlog.Output(calldepth, fmt.Sprintln(line))
+	errorlog.Output(calldepth, line)
 }
 
 // Errorln writes a line to os.Stderr with prefix 'ERROR', closing with newline.
@@ -116,7 +116,7 @@ func Errorln(args ...any) {
 
 // Errorf writes a line to os.Stderr with prefix 'ERROR', using fmt formatting options.
 func Errorf(format string, args ...any) {
-	errorlog.Output(calldepth, fmt.Sprintf(format+"\n", args...))
+	errorlog.Output(calldepth, fmt.Sprintf(format, args...))
 }
 
 func Flags() int {
