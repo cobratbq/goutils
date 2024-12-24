@@ -57,6 +57,12 @@ func WriteRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
 // Type 0, 0 (singular, plain value) for any length.
 type Bytes []byte
 
+// Len returns the number of bytes in the value.
+func (v Bytes) Len() int {
+	return len(v)
+}
+
+// Equal tests equality between this Bytes-value and other value.
 func (v Bytes) Equal(other Value) bool {
 	if o, ok := other.(Bytes); ok {
 		return bytes.Equal(v, o)
@@ -68,6 +74,7 @@ func (v Bytes) WriteTo(out io.Writer) (int64, error) {
 	return WriteRaw(out, v, 0)
 }
 
+// WriteBytes is a one-shot function call for writing a raw bytes as an encoded Bytes-value.
 func WriteBytes(out io.Writer, data []byte) (int64, error) {
 	return Bytes(data).WriteTo(out)
 }
@@ -88,11 +95,17 @@ type KeyValue struct {
 	V Value
 }
 
+// Equal tests if this key-value pair is equal to other.
 func (v *KeyValue) Equal(other Value) bool {
 	if o, ok := other.(*KeyValue); ok {
 		return v.K == o.K && v.V.Equal(o.V)
 	}
 	return false
+}
+
+// Len returns the size of the key in the key-value pair.
+func (v *KeyValue) Len() int {
+	return len(v.K)
 }
 
 func (v *KeyValue) WriteTo(_out io.Writer) (int64, error) {
@@ -105,6 +118,7 @@ func (v *KeyValue) WriteTo(_out io.Writer) (int64, error) {
 	return out.Cum, err
 }
 
+// WriteKeyValue is a one-shot function for writing encoded key-value pair.
 func WriteKeyValue(out io.Writer, key string, value Value) (int64, error) {
 	return (&KeyValue{key, value}).WriteTo(out)
 }
@@ -112,11 +126,17 @@ func WriteKeyValue(out io.Writer, key string, value Value) (int64, error) {
 // Type 1, 0 (multiple, plain value) for any length.
 type SequenceValue []Value
 
+// Equal tests equality of this value with some other value.
 func (v SequenceValue) Equal(other Value) bool {
 	if o, ok := other.(SequenceValue); ok {
 		return slices.EqualT(v, o)
 	}
 	return false
+}
+
+// Len returns the number of elements in a sequence-value.
+func (v SequenceValue) Len() int {
+	return len(v)
 }
 
 func (v SequenceValue) WriteTo(_out io.Writer) (int64, error) {
@@ -161,6 +181,7 @@ func (v SequenceValue) WriteTo(_out io.Writer) (int64, error) {
 	return out.Cum, nil
 }
 
+// WriteSequence is a one-shot function for writing an encoded sequence-value.
 func WriteSequence(out io.Writer, seq []Value) (int64, error) {
 	return SequenceValue(seq).WriteTo(out)
 }
@@ -168,11 +189,17 @@ func WriteSequence(out io.Writer, seq []Value) (int64, error) {
 // Type 1, 1 (multiple, key-value-pairs) for any length.
 type MapValue map[string]Value
 
+// Equal tests equality between this and another value.
 func (v MapValue) Equal(other Value) bool {
 	if o, ok := other.(MapValue); ok {
 		return maps.EqualT(v, o)
 	}
 	return false
+}
+
+// Len returns the number of key-value pairs in a map-value.
+func (v MapValue) Len() int {
+	return len(v)
 }
 
 func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
@@ -244,6 +271,7 @@ func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
 	return out.Cum, nil
 }
 
+// WriteMap write a map as encoded map-value.
 func WriteMap(out io.Writer, mapv map[string]Value) (int64, error) {
 	return MapValue(mapv).WriteTo(out)
 }
