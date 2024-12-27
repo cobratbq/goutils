@@ -26,12 +26,19 @@ func CopyWithWarning(out io.Writer, in io.Reader) int64 {
 	return n
 }
 
-// Discard reads remaining data from reader and discards it. Any possible errors in the process are
-// ignored. Returns nr of bytes written, thus discarded.
-func Discard(r io.Reader) int64 {
-	n, err := io.Copy(io.Discard, r)
-	log.TracelnDepth(1, "`CopyNoWarning` ignores error", err)
-	return n
+// Discard reads remaining data from reader and discards it.
+//
+// Returns nr of bytes read, thus discarded. An error is returned if encountered while reading from input.
+func Discard(in io.Reader) (int64, error) {
+	return io.Copy(io.Discard, in)
+}
+
+// DiscardN reads `n` bytes from `in` and discards them.
+//
+// The number of discarded bytes is returned, and an error is returned only if it is not successful in reading
+// and discarding `n` bytes.
+func DiscardN(in io.Reader, n int64) (int64, error) {
+	return io.CopyN(io.Discard, in, n)
 }
 
 // Transfer may be called in a goroutine. It copies all content from one connection to the next.

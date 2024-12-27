@@ -41,7 +41,7 @@ func TestDiscardNil(t *testing.T) {
 
 func TestDiscard(t *testing.T) {
 	r := bytes.NewReader([]byte("hello world"))
-	if Discard(r) != 11 {
+	if n, _ := Discard(r); n != 11 {
 		t.FailNow()
 	}
 }
