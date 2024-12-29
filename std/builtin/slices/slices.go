@@ -387,7 +387,8 @@ func MoveElementN[E any](input []E, idx int, n int) {
 }
 
 // AllEqual checks if all values in a slice are equal to the specified value.
-func AllEqual[S ~[]E, E comparable](value E, input S) bool {
+// FIXME do we need `S ~[]E` parametric-type?
+func AllEqual[E comparable](value E, input []E) bool {
 	for i := range input {
 		if input[i] != value {
 			return false
