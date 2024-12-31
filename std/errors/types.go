@@ -8,6 +8,19 @@ import (
 	strconv_ "github.com/cobratbq/goutils/std/strconv"
 )
 
+/* Design notes:
+ *
+ * - Struct-with-private-field provides immutability of the error instances.
+ * - Use of structs, or more specifically struct-pointers, provide unique identities for sentinel values.
+ * - No additional fields for context or "user messages", such that sentinel errors can be constructed, i.e.
+ *   the instance itself identifies a particular error. Only one instance exists, pre-constructed.
+ * - Context must be provided by wrapping the appropriate sentinel error. (See `Context(err, message)`.)
+ * - Sentinel errors are used to signal one specific error(-case). To abstract away from specific errors, e.g.
+ *   that cross an architectural boundary, or to aggregate multiple errors together, use
+ *   `Aggregate(cause, message, errors...)`, s.t. one matches on `cause` but the message shows how many and
+ *   which particular errors were aggregated e.g. as indication of failed multi-stage processing.
+ */
+
 // StringError as a base type for const errors.
 //
 // This type is intended to be used as replacement for errors.New(..) from std, such that you can

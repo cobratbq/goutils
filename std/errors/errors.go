@@ -77,11 +77,11 @@ func Unwrap(err error) error {
 // JoinMessages joins the error messages of each error, using the provided separator.
 func JoinMessages(errs []error, sep string) string {
 	var buf strings.Builder
-	for i, err := range errs {
+	for i := range errs {
 		if i > 0 {
 			buf.WriteString(sep)
 		}
-		buf.WriteString(err.Error())
+		buf.WriteString(errs[i].Error())
 	}
 	return buf.String()
 }
