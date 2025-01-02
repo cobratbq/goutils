@@ -14,6 +14,10 @@ type Number interface {
 	Integer | Float
 }
 
+type Signed interface {
+	SignedInteger | Float
+}
+
 type Integer interface {
 	UnsignedInteger | SignedInteger
 }
