@@ -4,7 +4,7 @@ package maps
 
 import (
 	"github.com/cobratbq/goutils/assert"
-	"github.com/cobratbq/goutils/std/builtin"
+	"github.com/cobratbq/goutils/types"
 )
 
 // GetOr gets the value for `key` from a map, or returns `defvalue` if key is not present.
@@ -64,7 +64,7 @@ func Equal[K comparable, V comparable](m1, m2 map[K]V) bool {
 // Every key is expected to be present in both maps and their corresponding values retrieved. Maps are
 // considered not equal if one key is absent in the other map.
 // FIXME needs testing
-func EqualT[K comparable, V builtin.Equaler[V]](m1, m2 map[K]V) bool {
+func EqualT[K comparable, V types.Equaler[V]](m1, m2 map[K]V) bool {
 	if len(m1) != len(m2) {
 		return false
 	}

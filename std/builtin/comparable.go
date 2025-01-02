@@ -2,6 +2,8 @@
 
 package builtin
 
+import "github.com/cobratbq/goutils/types"
+
 // EqualsFixedOf creates a closure that tests any provided value against a fixed value.
 func EqualsFixedOf[T comparable](fixed T) func(T) bool {
 	return func(v T) bool {
@@ -27,10 +29,6 @@ func EqualsAnyOf[T comparable](matches ...T) func(v T) bool {
 	}
 }
 
-type Equaler[T any] interface {
-	Equal(o T) bool
-}
-
-func EqualT[T Equaler[T]](a, b T) bool {
+func EqualT[T types.Equaler[T]](a, b T) bool {
 	return a.Equal(b)
 }

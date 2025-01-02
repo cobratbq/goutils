@@ -7,10 +7,10 @@ import (
 	"slices"
 
 	"github.com/cobratbq/goutils/assert"
-	"github.com/cobratbq/goutils/std/builtin"
 	"github.com/cobratbq/goutils/std/builtin/multiset"
 	"github.com/cobratbq/goutils/std/builtin/set"
 	"github.com/cobratbq/goutils/std/errors"
+	"github.com/cobratbq/goutils/types"
 )
 
 // AppendCond appends to a slice if condition holds true.
@@ -74,7 +74,7 @@ func Equal[E comparable](s1, s2 []E) bool {
 
 // EqualT tests equality of slices by pair-wise testing equality of elements based on builtin.Equaler.
 // FIXME needs testing
-func EqualT[E builtin.Equaler[E]](s1, s2 []E) bool {
+func EqualT[E types.Equaler[E]](s1, s2 []E) bool {
 	if len(s1) != len(s2) {
 		return false
 	}

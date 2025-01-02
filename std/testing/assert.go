@@ -9,6 +9,8 @@ import (
 	"errors"
 	"slices"
 	"testing"
+
+	"github.com/cobratbq/goutils/types"
 )
 
 // LogOnFailure logs a message if the test is registered as "failed".
@@ -64,12 +66,7 @@ func Equal[T comparable](t testing.TB, a, b T) {
 	t.Errorf("Strings '%v' and '%v' should be equal", a, b)
 }
 
-// Note: copy of builtin.Equaler to avoid cyclic imports.
-type equaler[T any] interface {
-	Equal(o T) bool
-}
-
-func EqualT[T equaler[T]](t testing.TB, a, b T) {
+func EqualT[T types.Equaler[T]](t testing.TB, a, b T) {
 	t.Helper()
 	if a.Equal(b) {
 		return
@@ -84,7 +81,7 @@ func Unequal[T comparable](t testing.TB, a, b T) {
 	}
 }
 
-func UnequalT[T equaler[T]](t testing.TB, a, b T) {
+func UnequalT[T types.Equaler[T]](t testing.TB, a, b T) {
 	t.Helper()
 	if a.Equal(b) {
 		t.Errorf("Strings '%v' and '%v' should not be equal", a, b)
