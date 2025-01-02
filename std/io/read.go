@@ -81,12 +81,10 @@ func ReadExpect(next byte, in io.Reader) (bool, error) {
 func ReadUntil(in io.Reader, stop byte) ([]byte, error) {
 	var buffer []byte
 	var b [1]byte
+	var err error
 	for {
-		if _, err := io.ReadFull(in, b[:]); err != nil {
+		if _, err = io.ReadFull(in, b[:]); err != nil || b[0] == stop {
 			return buffer, err
-		}
-		if b[0] == stop {
-			return buffer, nil
 		}
 		buffer = append(buffer, b[0])
 	}
