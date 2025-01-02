@@ -4,6 +4,11 @@ package builtin
 
 import "github.com/cobratbq/goutils/types"
 
+// Negate negates the provided value.
+func Negate[T types.Signed](v T) T {
+	return -v
+}
+
 // Zero tests whether provided value `v` is zero.
 func Zero[T types.Number](v T) bool {
 	return v == 0
