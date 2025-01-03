@@ -57,6 +57,12 @@ func IsAny(err error, targets []error) bool {
 	return false
 }
 
+// As offers `errors.As` functionality for when applicable. This function is a direct pass-through for
+// convenience.
+func As(err error, target any) bool {
+	return errors.As(err, target)
+}
+
 // Stack extracts the first stacktrace encountered in a wrapped error, or nil if no stack is
 // present/found. It is assumed that, generally, at most one stacktrace is present.
 func Stack(err error) []byte {
