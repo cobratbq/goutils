@@ -72,6 +72,34 @@ func Zero[T types.Integer](v T) T {
 	panic("assertion failed: zero value")
 }
 
+func ZeroSlice[E types.Integer](s []E) []E {
+	for i := range s {
+		if s[i] != 0 {
+			log.TracelnDepth(1, "assert.ZeroSlice:", s)
+			panic("assertion failed: zero-slice")
+		}
+	}
+	return s
+}
+
+func NonZero[T types.Integer](v T) T {
+	if v != 0 {
+		return v
+	}
+	log.TracelnDepth(1, "assert.NonZero:", v)
+	panic("assertion failed: non-zero value")
+}
+
+func NonZeroSlice[E types.Integer](s []E) []E {
+	for i := range s {
+		if s[i] != 0 {
+			return s
+		}
+	}
+	log.TracelnDepth(1, "assert.NonZeroSlice:", s)
+	panic("assertion failed: non-zero-slice")
+}
+
 func Positive[T types.Integer](v T) T {
 	if v > 0 {
 		return v
