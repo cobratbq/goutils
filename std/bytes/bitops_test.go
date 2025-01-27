@@ -19,6 +19,10 @@ func TestShiftLeft(t *testing.T) {
 		n        int
 		expected []byte
 	}{
+		{[]byte{}, 0, []byte{}},
+		{[]byte{}, 1, []byte{}},
+		{[]byte{}, 8, []byte{}},
+		{[]byte{}, 9, []byte{}},
 		{[]byte{0}, 0, []byte{0}},
 		{[]byte{1}, 0, []byte{1}},
 		{[]byte{1}, 1, []byte{2}},
