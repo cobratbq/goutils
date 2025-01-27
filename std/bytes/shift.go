@@ -6,16 +6,17 @@ import (
 
 func ShiftLeft(slice []byte, n int) {
 	assert.NonNegative(n)
-	for n >= 8 {
+	if skip := n / 8; skip > 0 {
 		for i := range slice {
-			if i == 0 {
+			if i < skip {
 				continue
 			}
-			slice[i-1] = slice[i]
+			slice[i-skip] = slice[i]
 		}
 		slice[len(slice)-1] = 0
-		n -= 8
+		n -= skip * 8
 	}
+	assert.AtMost(7, n)
 	if n == 0 {
 		return
 	}
