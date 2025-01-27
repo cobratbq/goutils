@@ -44,13 +44,13 @@ func ShiftLeft(slice []byte, n int) {
 	}
 }
 
-// FIXME needs testing
+// ShiftRight shifts contents of byte-slice `n` bits right, for n >= 0.
 func ShiftRight(slice []byte, n int) {
 	assert.NonNegative(n)
 	if len(slice) == 0 || n == 0 {
 		return
 	}
-	// skipping/shifting full bytes
+	// Skipping/shifting full bytes
 	if skip := n / 8; skip > 0 {
 		for i := len(slice) - 1; i >= skip; i-- {
 			slice[i] = slice[i-skip]
