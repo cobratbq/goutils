@@ -2,13 +2,64 @@ package bytes
 
 import "github.com/cobratbq/goutils/assert"
 
-// Xor the contents of two byte-slices of same length.
+// XorInto, XOR the contents of two byte-slices of same length, write result into first parameter.
 // `inout` will contain `inout[i] ^ b[i]`, for all `i`.
-func Xor(inout, b []byte) {
+func XorInto(inout, b []byte) {
 	assert.Equal(len(inout), len(b))
 	for i := range inout {
 		inout[i] ^= b[i]
 	}
+}
+
+// Xor, XOR the contents of `a ^ b`.
+// Returns the result, leaving `a` and `b` unmodified.
+func Xor(a, b []byte) []byte {
+	assert.Equal(len(a), len(b))
+	out := make([]byte, len(a))
+	for i := range out {
+		out[i] = a[i] ^ b[i]
+	}
+	return out
+}
+
+// AndInto, AND the contents of two byte-slices of same length, write result into first parameter.
+// `inout` will contain `inout[i] & b[i]`, for all `i`.
+func AndInto(inout, b []byte) {
+	assert.Equal(len(inout), len(b))
+	for i := range inout {
+		inout[i] &= b[i]
+	}
+}
+
+// And, AND the contents: `a & b`.
+// Returns the result, leaving `a` and `b` unmodified.
+func And(a, b []byte) []byte {
+	assert.Equal(len(a), len(b))
+	out := make([]byte, len(a))
+	for i := range out {
+		out[i] = a[i] & b[i]
+	}
+	return out
+}
+
+// OrInto, OR the contents of two byte-slices of same length, write result into first parameter.
+// `inout` will contain `inout[i] | b[i]`, for all `i`.
+func OrInto(inout, b []byte) {
+	assert.Equal(len(inout), len(b))
+	for i := range inout {
+		inout[i] |= b[i]
+	}
+}
+
+// Or, OR the contents: `a | b`.
+// Returns the result, leaving `a` and `b` unmodified.
+func Or(a, b []byte) []byte {
+	assert.Equal(len(a), len(b))
+	out := make([]byte, len(a))
+	for i := range out {
+		out[i] = a[i] | b[i]
+	}
+	return out
 }
 
 // ShiftLeft shifts contents of byte-slice `n` bits left, for n >= 0.
