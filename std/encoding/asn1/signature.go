@@ -7,10 +7,10 @@ import (
 	"github.com/cobratbq/goutils/assert"
 )
 
-// FromP1363 converts a P1363-formatted signature into DER-format (ASN.1-encoded).
+// SignatureFromP1363 converts a P1363-formatted signature into DER-format (ASN.1-encoded).
 // `signature` is expected to consist of two equal-length components `R` and `s`, and exact slice-length is
 // needed.
-func FromP1363(signature []byte) []byte {
+func SignatureFromP1363(signature []byte) []byte {
 	assert.Equal(0, len(signature)%2)
 	var compLength = len(signature) / 2
 	r := new(big.Int).SetBytes(signature[:compLength]).Bytes()
