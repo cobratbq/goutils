@@ -31,7 +31,7 @@ func writeHeader(out io.Writer, count int, flags byte) (int, error) {
 
 // WriteRaw writes raw bytes, usually a byte-array with prefixed header byte(s).
 // Type-flags need to be provided.
-func WriteRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
+func writeRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
 	var err error
 	out := io_.NewCountingWriter(_out)
 	if len(data) <= int(SIZE_2BYTE_MAX) {
@@ -49,7 +49,7 @@ func WriteRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
 		if _, err = out.Write(dataHead); err != nil {
 			return out.Cum, err
 		}
-		if _, err = WriteRaw(&out, data[SIZE_2BYTE_MAX:], typeflags); err != nil {
+		if _, err = writeRaw(&out, data[SIZE_2BYTE_MAX:], typeflags); err != nil {
 			return out.Cum, err
 		}
 	}
@@ -73,7 +73,7 @@ func (v Bytes) Equal(other Value) bool {
 }
 
 func (v Bytes) WriteTo(out io.Writer) (int64, error) {
-	return WriteRaw(out, v, 0)
+	return writeRaw(out, v, 0)
 }
 
 // WriteBytes is a one-shot function call for writing a raw bytes as an encoded Bytes-value.
@@ -113,7 +113,7 @@ func (v *KeyValue) Len() int {
 func (v *KeyValue) WriteTo(_out io.Writer) (int64, error) {
 	var err error
 	out := io_.NewCountingWriter(_out)
-	if _, err = WriteRaw(&out, []byte(v.K), FLAG_KEYVALUE); err != nil {
+	if _, err = writeRaw(&out, []byte(v.K), FLAG_KEYVALUE); err != nil {
 		return out.Cum, err
 	}
 	_, err = v.V.WriteTo(&out)
@@ -199,7 +199,7 @@ func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
 			return out.Cum, err
 		}
 		for key, value := range v {
-			if _, err = WriteRaw(&out, []byte(key), FLAG_KEYVALUE); err != nil {
+			if _, err = writeRaw(&out, []byte(key), FLAG_KEYVALUE); err != nil {
 				return out.Cum, err
 			}
 			if _, err = value.WriteTo(&out); err != nil {
@@ -226,7 +226,7 @@ func (v MapValue) WriteTo(_out io.Writer) (int64, error) {
 					panic("BUG: we should have selected at most SIZE_2BYTE_MAX for part")
 				}
 			}
-			if _, err = WriteRaw(&out, []byte(key), FLAG_KEYVALUE); err != nil {
+			if _, err = writeRaw(&out, []byte(key), FLAG_KEYVALUE); err != nil {
 				return out.Cum, err
 			}
 			if _, err = value.WriteTo(&out); err != nil {
