@@ -51,6 +51,25 @@ func OpenFileProcessBytesLinesFunc[V any](filename string, delim byte, process f
 	return readProcessTypedLinesFunc(ReadBytesNoDelim, reader, delim, process)
 }
 
+// ReadProcessBytesBatchFunc reads and processes bytes in batch of size of provided buffer. Bytes are
+// processed according to `process` and after reading the full contents, the function returns.
+// In case of error, the function returns early with an error wrapped in context-information.
+func ReadProcessBytesBatchFunc(reader *bufio.Reader, buf []byte, process func([]byte) error) error {
+	var n int
+	var err error
+	for {
+		if n, err = io.ReadFull(reader, buf); err == nil || errors.Is(err, io.ErrUnexpectedEOF) {
+			if err = process(buf[:n]); err != nil {
+				return errors.Context(err, "processing failure")
+			}
+		} else if errors.Is(err, io.EOF) {
+			return nil
+		} else {
+			return errors.Context(err, "read failure")
+		}
+	}
+}
+
 // - ErrProcessingIgnore to skip irrelevant value, ErrProcessingCompleted to signal to stop reading, ...
 // FIXME document function (and reference other options for other use cases)
 func ReadProcessStringLinesFunc[V any](reader *bufio.Reader, delim byte, process func(string) (V, error)) ([]V, error) {
