@@ -12,7 +12,8 @@ func Exists(filepath string) bool {
 	return builtin.Error(os.Stat(filepath)) == nil
 }
 
-// ExistsFile checks whether a file-system object exists and it is a regular file.
+// ExistsFile checks whether a file-system object exists and it is a regular file. If the path references a
+// symlink, it is followed to its target.
 func ExistsFile(filepath string) bool {
 	if fi, err := os.Stat(filepath); err == nil {
 		return fi.Mode()&os.ModeType == 0
@@ -21,9 +22,11 @@ func ExistsFile(filepath string) bool {
 	}
 }
 
-// ExistsSymlink checks whether a file-system object exists and it is a symbolic link.
-func ExistsSymlink(filepath string) bool {
-	if fi, err := os.Stat(filepath); err == nil {
+// ExistsIsSymlink checks whether a file-system object exists and it is itself a symbolic link. A symlink is
+// not followed to its target.
+func ExistsIsSymlink(filepath string) bool {
+	// FIXME need to use Lstat here? (otherwise symlink is followed)
+	if fi, err := os.Lstat(filepath); err == nil {
 		return fi.Mode()&os.ModeSymlink != 0
 	} else {
 		return false
