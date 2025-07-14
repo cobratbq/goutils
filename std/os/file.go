@@ -6,7 +6,7 @@ import (
 	"github.com/cobratbq/goutils/std/builtin"
 )
 
-// Exists checks whether a file-system object exists.
+// Exists checks whether a file-system object exists. (Symlinks will be followed to their target.)
 func Exists(filepath string) bool {
 	// TODO checking only for the error might be too superficial, possibly producing false positives or false negatives
 	return builtin.Error(os.Stat(filepath)) == nil
