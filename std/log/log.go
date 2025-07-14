@@ -61,7 +61,7 @@ func DebugReport(assert bool, format string, args ...any) {
 	}
 }
 
-var infolog = log.New(os.Stderr, " [info] ", defaultFlags)
+var infolog = log.New(os.Stderr, " \033[1;37m[info]\033[0m ", defaultFlags)
 
 // Info writes a line to os.Stderr with prefix 'info'.
 func Info(line string) {
