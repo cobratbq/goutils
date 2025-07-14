@@ -12,7 +12,7 @@ import (
 
 const defaultFlags = log.Ltime | log.LUTC | log.Lmicroseconds
 
-var debuglog = log.New(os.Stderr, "[debug] ", defaultFlags)
+var debuglog = log.New(os.Stderr, "\033[1;30m[debug]\033[0m ", defaultFlags)
 
 const calldepth = 2
 
@@ -78,7 +78,7 @@ func Infof(format string, args ...any) {
 	infolog.Output(calldepth, fmt.Sprintf(format, args...))
 }
 
-var warnlog = log.New(os.Stderr, " [warn] ", defaultFlags)
+var warnlog = log.New(os.Stderr, " \033[1;33m[warn]\033[0m ", defaultFlags)
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warn(line string) {
@@ -102,7 +102,7 @@ func WarnOnError(err error, line string) {
 	}
 }
 
-var errorlog = log.New(os.Stderr, "[ERROR] ", defaultFlags)
+var errorlog = log.New(os.Stderr, "\033[1;31m[ERROR]\033[0m ", defaultFlags)
 
 // Error writes a line to os.Stderr with prefix 'ERROR'.
 func Error(line string) {
