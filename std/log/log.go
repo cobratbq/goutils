@@ -12,7 +12,7 @@ import (
 
 const defaultFlags = log.Ltime | log.LUTC | log.Lmicroseconds
 
-var debuglog = log.New(os.Stderr, "\033[1;30m[debug]\033[0m ", defaultFlags)
+var debuglog = log.New(os.Stderr, "\033[1;34m[debug]\033[0m ", defaultFlags)
 
 const calldepth = 2
 
