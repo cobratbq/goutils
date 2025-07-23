@@ -16,7 +16,7 @@ func TestParseWrittenBytes(t *testing.T) {
 	var result bytes.Buffer
 	var n int64
 	var err error
-	n, err = WriteRaw(&result, b[:], 0)
+	n, err = writeRaw(&result, b[:], 0)
 	assert.Nil(t, err)
 	assert.Equal(t, 6004, result.Len())
 	assert.Equal(t, n, int64(result.Len()))

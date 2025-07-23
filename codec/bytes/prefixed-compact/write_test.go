@@ -29,7 +29,7 @@ func TestWriteRaw(t *testing.T) {
 	for i, d := range testdata {
 		buffer.Reset()
 		t.Log("Iteration:", i)
-		n, err = WriteRaw(&buffer, d.data, d.flags)
+		n, err = writeRaw(&buffer, d.data, d.flags)
 		assert.IsError(t, d.expected, err)
 		assert.Equal(t, len(d.encoded), int(n))
 		assert.SlicesEqual(t, d.encoded, buffer.Bytes())
@@ -115,7 +115,7 @@ func TestWriteRawVeryLarge(t *testing.T) {
 	var result bytes.Buffer
 	var n int64
 	var err error
-	n, err = WriteRaw(&result, b[:], 0)
+	n, err = writeRaw(&result, b[:], 0)
 	assert.Nil(t, err)
 	assert.Equal(t, 6004, n)
 	assert.Equal(t, int(n), result.Len())
