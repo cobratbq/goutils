@@ -60,7 +60,7 @@ func AbsInt[N types.SignedInteger](n N) N {
 }
 
 // Max returns the maximum of two values.
-func Max[N types.Integer](x, y N) N {
+func Max[N types.Number](x, y N) N {
 	if x > y {
 		return x
 	}
@@ -69,7 +69,7 @@ func Max[N types.Integer](x, y N) N {
 
 // MaxN returns the maximum of vararg provided number of values. At least one value must be provided
 // or the function will panic.
-func MaxN[N types.Integer](x ...N) N {
+func MaxN[N types.Number](x ...N) N {
 	max := x[0]
 	for _, v := range x {
 		if v > max {
@@ -80,7 +80,7 @@ func MaxN[N types.Integer](x ...N) N {
 }
 
 // Min returns the minimum of two values.
-func Min[N types.Integer](x, y N) N {
+func Min[N types.Number](x, y N) N {
 	if x < y {
 		return x
 	}
@@ -88,7 +88,7 @@ func Min[N types.Integer](x, y N) N {
 }
 
 // MinN returns the minimum of vararg provided number of values.
-func MinN[N types.Integer](x ...N) N {
+func MinN[N types.Number](x ...N) N {
 	min := x[0]
 	for _, v := range x {
 		if v < min {
@@ -100,14 +100,15 @@ func MinN[N types.Integer](x ...N) N {
 
 // Sign returns the sign of the provided value: `1` for positive value, `0` for zero, `-1` for
 // negative value.
-func Sign[N types.Integer](x N) int {
-	if x > 0 {
+func Sign[N types.Number](x N) int {
+	switch {
+	case x > 0:
 		return 1
-	}
-	if x == 0 {
+	case x < 0:
+		return -1
+	default:
 		return 0
 	}
-	return -1
 }
 
 // PowUint calculates a power of a given base for an arbitrary base value.
