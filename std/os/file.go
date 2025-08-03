@@ -12,6 +12,15 @@ func Exists(filepath string) bool {
 	return builtin.Error(os.Stat(filepath)) == nil
 }
 
+// ExistsIsDirectory checks whether a file-system entry exists and is a directory.
+func ExistsIsDirectory(filepath string) bool {
+	if fi, err := os.Stat(filepath); err == nil {
+		return fi.IsDir()
+	} else {
+		return false
+	}
+}
+
 // ExistsFile checks whether a file-system object exists and it is a regular file. If the path references a
 // symlink, it is followed to its target.
 func ExistsFile(filepath string) bool {
