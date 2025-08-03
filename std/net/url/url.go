@@ -4,6 +4,7 @@ package url
 
 import (
 	"net/url"
+	"path"
 	"strings"
 
 	"github.com/cobratbq/goutils/std/errors"
@@ -45,4 +46,26 @@ func DeriveOrigin(url *url.URL, allowPort bool) (string, error) {
 	} else {
 		return origin + url.Hostname(), nil
 	}
+}
+
+// ExtractFilename extracts the filename component from the URL path. Unlike `path.Base`, this does not
+// consider the last subdirectory of a path with trailing slash as the base. It returns empty string instead.
+func ExtractFilename(url *url.URL) string {
+	if url.Path[len(url.Path)-1] == '/' {
+		// `path.Base` will take the last section even if there is a trailing slash, to ensure we have a file-
+		// name, check for trailing slash first.
+		return ""
+	}
+	return path.Base(url.Path)
+}
+
+// ExtractFilenameFromLocation extracts the filename component from an URL location string. Unlike
+// `path.Base`, this does not consider the last subdirectory of a path with trailing slash as the base. It
+// returns empty string instead.
+func ExtractFilenameFromLocation(location string) (string, error) {
+	u, err := url.Parse(location)
+	if err != nil {
+		return "", errors.ErrIllegal
+	}
+	return ExtractFilename(u), nil
 }
