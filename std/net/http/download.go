@@ -36,12 +36,11 @@ func DownloadFromURL(dst io.Writer, url string) (int, error) {
 		return resp.StatusCode, err
 	}
 	defer io_.ClosePanicked(resp.Body, "failed to close response body: %+v")
-	_, err = io.Copy(dst, resp.Body)
-	if err != nil {
-		return 0, err
-	}
 	if resp.StatusCode != http.StatusOK {
 		return resp.StatusCode, errors.Context(ErrStatusCode, "unexpected status code")
+	}
+	if _, err = io.Copy(dst, resp.Body); err != nil {
+		return 0, err
 	}
 	return resp.StatusCode, nil
 }
