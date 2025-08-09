@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 // base58 is a binary-to-text codec that encodes into a ASCII/ANSI-string (single bytes) and decodes back to
 // the original data in binary.
 package base58

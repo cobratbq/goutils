@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 // Bitcoin VarInt encoding, used internally in Bitcoin Core. (Not part of specification.)
 //
 // ref: <https://learnmeabitcoin.com/technical/general/compact-size/#varint>

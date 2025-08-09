@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 package interval
 
 // UintInterval represents an unsigned integer interval.

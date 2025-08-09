@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-3.0-only
+
 // TODO return uint8 as we are guaranteed to read at most 9 bytes for a decode. (previously: 'int' for read number of bytes instead of `uint`? Although, now we guarantee by data-type that the value is always non-negative.)
 // FIXME needs testing
 package compactsize

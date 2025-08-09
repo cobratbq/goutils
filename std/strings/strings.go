@@ -68,7 +68,7 @@ func CondText(cond bool, truetext, falsetext string) string {
 	}
 }
 
-// ContainsAll tests if all chars are present in s (subset).
+// ContainsAll tests if all chars are present in s. (subset)
 func ContainsAll(s, chars string) bool {
 	for _, r := range chars {
 		if !strings.ContainsRune(s, r) {
