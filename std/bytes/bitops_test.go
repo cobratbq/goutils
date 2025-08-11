@@ -165,12 +165,12 @@ func TestRotations(t *testing.T) {
 		{input: 0b11110000, n: 6, left: 0b00111100, right: 0b11000011},
 		{input: 0b11110000, n: 7, left: 0b01111000, right: 0b11100001},
 	}
-	for i, e := range entries8 {
+	for i := range entries8 {
 		log.Infoln("Iteration", i)
-		left := RotateLeft(e.input, e.n)
-		assert.Equal(t, left, e.left)
-		right := RotateRight(e.input, e.n)
-		assert.Equal(t, right, e.right)
+		left := RotateLeft(entries8[i].input, entries8[i].n)
+		assert.Equal(t, left, entries8[i].left)
+		right := RotateRight(entries8[i].input, entries8[i].n)
+		assert.Equal(t, right, entries8[i].right)
 	}
 	log.Infoln("Testing with 64-bit unsinged integers…")
 	entries64 := []struct {
@@ -191,11 +191,11 @@ func TestRotations(t *testing.T) {
 		{input: 0b11111111_11111111_11111111_11111111_11111111_11111111_11111000_00000000, n: 16, left: 0b11111111_11111111_11111111_11111111_11111000_00000000_11111111_11111111, right: 0b11111000_00000000_11111111_11111111_11111111_11111111_11111111_11111111},
 		{input: 0b11111111_11111111_11111111_11111111_11111111_11111111_11111000_00000000, n: 32, left: 0b11111111_11111111_11111000_00000000_11111111_11111111_11111111_11111111, right: 0b11111111_11111111_11111000_00000000_11111111_11111111_11111111_11111111},
 	}
-	for i, e := range entries64 {
+	for i := range entries64 {
 		log.Infoln("Iteration", i)
-		left := RotateLeft(e.input, e.n)
-		assert.Equal(t, left, e.left)
-		right := RotateRight(e.input, e.n)
-		assert.Equal(t, right, e.right)
+		left := RotateLeft(entries64[i].input, entries64[i].n)
+		assert.Equal(t, left, entries64[i].left)
+		right := RotateRight(entries64[i].input, entries64[i].n)
+		assert.Equal(t, right, entries64[i].right)
 	}
 }
