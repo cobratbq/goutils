@@ -3,6 +3,8 @@
 package bytes
 
 import (
+	"unsafe"
+
 	"github.com/cobratbq/goutils/assert"
 	"github.com/cobratbq/goutils/types"
 )
@@ -65,6 +67,28 @@ func Or[T types.Integer](a, b []T) []T {
 		out[i] = a[i] | b[i]
 	}
 	return out
+}
+
+// RotateLeft rotates (as opposed to shifting) the bits through the data-type's memory region.
+//
+// note: in most cases, it would be better to take the single line of code and apply it yourself.
+func RotateLeft[T types.Integer](a T, n uint) T {
+	memsize := uint(unsafe.Sizeof(a)) * 8
+	if n %= memsize; n == 0 {
+		return a
+	}
+	return a<<n | a>>(memsize-n)
+}
+
+// RotateRight rotates (as opposed to shifting) the bits through the data-type's memory region.
+//
+// note: in most cases, it would be better to take the single line of code and apply it yourself.
+func RotateRight[T types.Integer](a T, n uint) T {
+	memsize := uint(unsafe.Sizeof(a)) * 8
+	if n %= memsize; n == 0 {
+		return a
+	}
+	return a>>n | a<<(memsize-n)
 }
 
 // ShiftLeft shifts contents of byte-slice `n` bits left, for n >= 0.
