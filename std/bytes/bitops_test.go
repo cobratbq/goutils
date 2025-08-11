@@ -6,8 +6,50 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/cobratbq/goutils/std/log"
 	assert "github.com/cobratbq/goutils/std/testing"
 )
+
+func TestOps(t *testing.T) {
+	// TODO could use more testdata, more variations
+	entries := []struct {
+		a   []byte
+		b   []byte
+		xor []byte
+		or  []byte
+		and []byte
+	}{
+		{a: []byte{0b11110000}, b: []byte{0b00001111}, xor: []byte{0b11111111}, or: []byte{0b11111111}, and: []byte{0b00000000}},
+		{a: []byte{0b11110000}, b: []byte{0b11111111}, xor: []byte{0b00001111}, or: []byte{0b11111111}, and: []byte{0b11110000}},
+		{a: []byte{0b11110000, 0b00000000, 0b11111111}, b: []byte{0b00001111, 0b11111111, 0b11111111}, xor: []byte{0b11111111, 0b11111111, 0b00000000}, or: []byte{0b11111111, 0b11111111, 0b11111111}, and: []byte{0b00000000, 0b00000000, 0b11111111}},
+	}
+	var buf, out []byte
+	for e := range entries {
+		// Bitwise XOR operation
+		out = Xor(entries[e].a, entries[e].b)
+		assert.SlicesEqual(t, entries[e].xor, out)
+		buf = bytes.Clone(entries[e].a)
+		XorInto(buf, entries[e].b)
+		assert.SlicesEqual(t, entries[e].xor, buf)
+		assert.SlicesEqual(t, out, buf)
+
+		// Bitwise OR operation
+		out = Or(entries[e].a, entries[e].b)
+		assert.SlicesEqual(t, entries[e].or, out)
+		buf = bytes.Clone(entries[e].a)
+		OrInto(buf, entries[e].b)
+		assert.SlicesEqual(t, entries[e].or, buf)
+		assert.SlicesEqual(t, out, buf)
+
+		// Bitwise AND operation
+		out = And(entries[e].a, entries[e].b)
+		assert.SlicesEqual(t, entries[e].and, out)
+		buf = bytes.Clone(entries[e].a)
+		AndInto(buf, entries[e].b)
+		assert.SlicesEqual(t, entries[e].and, buf)
+		assert.SlicesEqual(t, out, buf)
+	}
+}
 
 func TestShiftLeftNegativeN(t *testing.T) {
 	defer assert.RequirePanic(t)
