@@ -2,11 +2,14 @@
 
 package bytes
 
-import "github.com/cobratbq/goutils/assert"
+import (
+	"github.com/cobratbq/goutils/assert"
+	"github.com/cobratbq/goutils/types"
+)
 
 // XorInto, XOR the contents of two byte-slices of same length, write result into first parameter.
 // `inout` will contain `inout[i] ^ b[i]`, for all `i`.
-func XorInto(inout, b []byte) {
+func XorInto[T types.Integer](inout, b []T) {
 	assert.Equal(len(inout), len(b))
 	for i := range inout {
 		inout[i] ^= b[i]
@@ -15,9 +18,9 @@ func XorInto(inout, b []byte) {
 
 // Xor, XOR the contents of `a ^ b`.
 // Returns the result, leaving `a` and `b` unmodified.
-func Xor(a, b []byte) []byte {
+func Xor[T types.Integer](a, b []T) []T {
 	assert.Equal(len(a), len(b))
-	out := make([]byte, len(a))
+	out := make([]T, len(a))
 	for i := range out {
 		out[i] = a[i] ^ b[i]
 	}
@@ -26,7 +29,7 @@ func Xor(a, b []byte) []byte {
 
 // AndInto, AND the contents of two byte-slices of same length, write result into first parameter.
 // `inout` will contain `inout[i] & b[i]`, for all `i`.
-func AndInto(inout, b []byte) {
+func AndInto[T types.Integer](inout, b []T) {
 	assert.Equal(len(inout), len(b))
 	for i := range inout {
 		inout[i] &= b[i]
@@ -35,9 +38,9 @@ func AndInto(inout, b []byte) {
 
 // And, AND the contents: `a & b`.
 // Returns the result, leaving `a` and `b` unmodified.
-func And(a, b []byte) []byte {
+func And[T types.Integer](a, b []T) []T {
 	assert.Equal(len(a), len(b))
-	out := make([]byte, len(a))
+	out := make([]T, len(a))
 	for i := range out {
 		out[i] = a[i] & b[i]
 	}
@@ -46,7 +49,7 @@ func And(a, b []byte) []byte {
 
 // OrInto, OR the contents of two byte-slices of same length, write result into first parameter.
 // `inout` will contain `inout[i] | b[i]`, for all `i`.
-func OrInto(inout, b []byte) {
+func OrInto[T types.Integer](inout, b []T) {
 	assert.Equal(len(inout), len(b))
 	for i := range inout {
 		inout[i] |= b[i]
@@ -55,9 +58,9 @@ func OrInto(inout, b []byte) {
 
 // Or, OR the contents: `a | b`.
 // Returns the result, leaving `a` and `b` unmodified.
-func Or(a, b []byte) []byte {
+func Or[T types.Integer](a, b []T) []T {
 	assert.Equal(len(a), len(b))
-	out := make([]byte, len(a))
+	out := make([]T, len(a))
 	for i := range out {
 		out[i] = a[i] | b[i]
 	}
