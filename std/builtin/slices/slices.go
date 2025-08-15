@@ -22,7 +22,21 @@ func AppendCond[E any](cond bool, slice []E, value ...E) []E {
 }
 
 // ExtendFrom appends to a slice as far as capacity allows, without reallocation.
-func ExtendFrom[E any](slice []E, additions []E) ([]E, error) {
+func ExtendFrom[E any](slice []E, additions []E) []E {
+	n := len(slice)
+	assert.AtMost(cap(slice), n+len(additions))
+	slice = slice[:n+len(additions)]
+	copy(slice[n:], additions)
+	return slice
+}
+
+// Extend appends to a slice within the available capacity of the slice, without reallocation.
+func Extend[E any](slice []E, additions ...E) []E {
+	return ExtendFrom(slice, additions)
+}
+
+// ExtendFromMaybe appends to a slice as far as capacity allows, without reallocation.
+func ExtendFromMaybe[E any](slice []E, additions []E) ([]E, error) {
 	n := len(slice)
 	if cap(slice) < n+len(additions) {
 		return nil, errors.ErrOverflow
@@ -32,9 +46,9 @@ func ExtendFrom[E any](slice []E, additions []E) ([]E, error) {
 	return slice, nil
 }
 
-// Extend appends to a slice within the available capacity of the slice, without reallocation.
-func Extend[E any](slice []E, additions ...E) ([]E, error) {
-	return ExtendFrom(slice, additions)
+// ExtendMaybe appends to a slice within the available capacity of the slice, without reallocation.
+func ExtendMaybe[E any](slice []E, additions ...E) ([]E, error) {
+	return ExtendFromMaybe(slice, additions)
 }
 
 // Contains checks if provided value is present anywhere in the slice.
