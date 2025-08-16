@@ -10,6 +10,33 @@ import (
 	assert "github.com/cobratbq/goutils/std/testing"
 )
 
+func TestSliceExtendFailing(t *testing.T) {
+	defer assert.RequirePanic(t)
+	s := make([]byte, 0, 4)
+	s = Extend(s, 'a', 'b', 'c', 'd', 'e')
+	t.FailNow()
+}
+
+func TestSliceExtendFromFailing(t *testing.T) {
+	defer assert.RequirePanic(t)
+	s := make([]byte, 0, 4)
+	s = ExtendFrom(s, []byte{'a', 'b', 'c', 'd', 'e'})
+	t.FailNow()
+}
+
+func TestSliceExtendMaybeFailing(t *testing.T) {
+	var err error
+	s := make([]byte, 0, 4)
+	s, err = ExtendMaybe(s[0:0:4], 'a', 'b', 'c', 'd', 'e')
+	assert.NotNil(t, err)
+	assert.NotNil(t, s)
+	assert.Equal(t, 0, len(s))
+	s, err = ExtendFromMaybe(s[0:0:4], []byte{'a', 'b', 'c', 'd', 'e'})
+	assert.NotNil(t, err)
+	assert.NotNil(t, s)
+	assert.Equal(t, 0, len(s))
+}
+
 func TestSliceReversing(t *testing.T) {
 	var random [33]byte
 	rand.MustReadBytes(random[:])

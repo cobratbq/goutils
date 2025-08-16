@@ -36,10 +36,12 @@ func Extend[E any](slice []E, additions ...E) []E {
 }
 
 // ExtendFromMaybe appends to a slice as far as capacity allows, without reallocation.
+//
+// In case of failure, returns unmodified slice (w/o extending) and `errors.ErrOverflow`.
 func ExtendFromMaybe[E any](slice []E, additions []E) ([]E, error) {
 	n := len(slice)
 	if cap(slice) < n+len(additions) {
-		return nil, errors.ErrOverflow
+		return slice, errors.ErrOverflow
 	}
 	slice = slice[:n+len(additions)]
 	copy(slice[n:], additions)
@@ -47,6 +49,8 @@ func ExtendFromMaybe[E any](slice []E, additions []E) ([]E, error) {
 }
 
 // ExtendMaybe appends to a slice within the available capacity of the slice, without reallocation.
+//
+// In case of failure, returns unmodified slice (w/o extending) and `errors.ErrOverflow`.
 func ExtendMaybe[E any](slice []E, additions ...E) ([]E, error) {
 	return ExtendFromMaybe(slice, additions)
 }
