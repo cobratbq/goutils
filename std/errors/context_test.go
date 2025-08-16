@@ -36,5 +36,5 @@ func TestAggregateContext(t *testing.T) {
 	nested2 := Context(NewUintError(500), "Server failure")
 	nested3 := Context(os.ErrNotExist, "could not find unix socket connection for fancy plug-in")
 	aggregate := Aggregate(os.ErrInvalid, "provided input is bad", nested1, nested2, nested3)
-	assert.Equal(t, aggregate.Error(), "provided input is bad ([hello world failed big-time],[Server failure: 500],[could not find unix socket connection for fancy plug-in: file does not exist]): invalid argument")
+	assert.Equal(t, aggregate.Error(), "provided input is bad ([invalid argument],[hello world failed big-time],[Server failure: 500],[could not find unix socket connection for fancy plug-in: file does not exist])")
 }
