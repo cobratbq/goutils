@@ -8,11 +8,11 @@ all: build test
 
 .PHONY: test
 test: build
-	go test -tags netgo ./...
+	go test ./...
 
 .PHONY: build
 build: go.mod
-	go build -tags netgo ./...
+	go build ./...
 
 .PHONY: clean
 clean:
