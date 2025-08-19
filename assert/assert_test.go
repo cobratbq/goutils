@@ -104,7 +104,44 @@ func TestEmptySlice(t *testing.T) {
 	EmptySlice([]byte{})
 }
 
+func TestNonEmptySlice(t *testing.T) {
+	NonEmptySlice([]byte{0})
+	NonEmptySlice([]byte("Hello world!"))
+	defer assert.RequirePanic(t)
+	NonEmptySlice([]byte{})
+	t.FailNow()
+}
+
 func TestEmptyMap(t *testing.T) {
 	m := make(map[uint]string, 0)
 	EmptyMap(m)
+}
+
+func TestNonEmptyMap(t *testing.T) {
+	m := make(map[uint]string, 0)
+	m[0] = "abc"
+	m[1] = "defghi"
+	NonEmptyMap(m)
+	delete(m, 0)
+	NonEmptyMap(m)
+	delete(m, 1)
+	defer assert.RequirePanic(t)
+	NonEmptyMap(m)
+	t.FailNow()
+}
+
+func TestEmptyString(t *testing.T) {
+	EmptyString("")
+	defer assert.RequirePanic(t)
+	EmptyString("Hello")
+	t.FailNow()
+}
+
+func TestNonEmptyString(t *testing.T) {
+	NonEmptyString("Hello world!")
+	NonEmptyString("Boo")
+	NonEmptyString(".")
+	defer assert.RequirePanic(t)
+	NonEmptyString("")
+	t.FailNow()
 }

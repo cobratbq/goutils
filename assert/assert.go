@@ -140,6 +140,14 @@ func EmptyString(s string) {
 	panic("assertion failed: string is not empty/blank")
 }
 
+func NonEmptyString(s string) {
+	if len(s) > 0 {
+		return
+	}
+	log.TracelnDepth(1, "assert.NonEmptyString")
+	panic("assertion failed: string is empty/blank")
+}
+
 func EmptySlice[E any](collection []E) {
 	if len(collection) == 0 {
 		return
@@ -148,12 +156,28 @@ func EmptySlice[E any](collection []E) {
 	panic("assertion failed: slice is not empty")
 }
 
+func NonEmptySlice[E any](collection []E) {
+	if len(collection) > 0 {
+		return
+	}
+	log.TracelnDepth(1, "assert.NonEmptySlice")
+	panic("assertion failed: slice is empty")
+}
+
 func EmptyMap[K comparable, V any](collection map[K]V) {
 	if len(collection) == 0 {
 		return
 	}
 	log.TracelnDepth(1, "assert.EmptyMap:", len(collection), "entries")
 	panic("assertion failed: map is not empty")
+}
+
+func NonEmptyMap[K comparable, V any](collection map[K]V) {
+	if len(collection) > 0 {
+		return
+	}
+	log.TracelnDepth(1, "assert.NonEmptyMap")
+	panic("assertion failed: map is empty")
 }
 
 func AtLeast[C types.Ordered](least C, value C) C {
