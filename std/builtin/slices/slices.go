@@ -13,6 +13,54 @@ import (
 	"github.com/cobratbq/goutils/types"
 )
 
+// Increment a slice of unsigned integers by one, starting at the left-most element as least-significant
+// element.
+// FIXME needs testing.
+func IncrementLE[T types.UnsignedInteger](slice []T) {
+	for i := range len(slice) {
+		slice[i]++
+		if slice[i] != 0 {
+			break
+		}
+	}
+}
+
+// Decrement a slice of unsigned integers by one, starting at the left-most element as least-significant
+// element.
+// FIXME needs testing.
+func DecrementLE[T types.UnsignedInteger](slice []T) {
+	for i := range len(slice) {
+		slice[i]--
+		if slice[i]+1 != 0 {
+			break
+		}
+	}
+}
+
+// Increment a slice of unsigned integers by one, starting at the right-most element as least-significant
+// element.
+// FIXME needs testing.
+func IncrementBE[T types.UnsignedInteger](slice []T) {
+	for i := len(slice) - 1; i >= 0; i-- {
+		slice[i]++
+		if slice[i] != 0 {
+			break
+		}
+	}
+}
+
+// Decrement a slice of unsigned integers by one, starting at the right-most element as least-significant
+// element.
+// FIXME needs testing.
+func DecrementBE[T types.UnsignedInteger](slice []T) {
+	for i := len(slice) - 1; i >= 0; i-- {
+		slice[i]--
+		if slice[i]+1 != 0 {
+			break
+		}
+	}
+}
+
 // AppendCond appends to a slice if condition holds true.
 func AppendCond[E any](cond bool, slice []E, value ...E) []E {
 	if cond {
