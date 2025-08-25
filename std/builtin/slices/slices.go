@@ -15,7 +15,6 @@ import (
 
 // Increment a slice of unsigned integers by one, starting at the left-most element as least-significant
 // element.
-// FIXME needs testing.
 func IncrementLE[T types.UnsignedInteger](slice []T) {
 	for i := range len(slice) {
 		slice[i]++
@@ -27,7 +26,6 @@ func IncrementLE[T types.UnsignedInteger](slice []T) {
 
 // Decrement a slice of unsigned integers by one, starting at the left-most element as least-significant
 // element.
-// FIXME needs testing.
 func DecrementLE[T types.UnsignedInteger](slice []T) {
 	for i := range len(slice) {
 		slice[i]--
@@ -39,7 +37,6 @@ func DecrementLE[T types.UnsignedInteger](slice []T) {
 
 // Increment a slice of unsigned integers by one, starting at the right-most element as least-significant
 // element.
-// FIXME needs testing.
 func IncrementBE[T types.UnsignedInteger](slice []T) {
 	for i := len(slice) - 1; i >= 0; i-- {
 		slice[i]++
@@ -51,7 +48,6 @@ func IncrementBE[T types.UnsignedInteger](slice []T) {
 
 // Decrement a slice of unsigned integers by one, starting at the right-most element as least-significant
 // element.
-// FIXME needs testing.
 func DecrementBE[T types.UnsignedInteger](slice []T) {
 	for i := len(slice) - 1; i >= 0; i-- {
 		slice[i]--
