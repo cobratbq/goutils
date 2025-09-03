@@ -12,7 +12,16 @@ import (
 
 const defaultFlags = log.Ltime | log.LUTC | log.Lmicroseconds
 
-var debuglog = log.New(os.Stderr, "\033[1;34m[debug]\033[0m ", defaultFlags)
+const DebugLabel = "[debug] "
+const DebugLabelColored = "\033[1;34m[debug]\033[0m "
+const InfoLabel = " [info] "
+const InfoLabelColored = " \033[1;37m[info]\033[0m "
+const WarnLabel = " [warn] "
+const WarnLabelColored = " \033[1;33m[warn]\033[0m "
+const ErrorLabel = "[ERROR]"
+const ErrorLabelColored = "\033[1;31m[ERROR]\033[0m "
+
+var debuglog = log.New(os.Stderr, DebugLabelColored, defaultFlags)
 
 const calldepth = 2
 
@@ -61,7 +70,7 @@ func DebugReport(assert bool, format string, args ...any) {
 	}
 }
 
-var infolog = log.New(os.Stderr, " \033[1;37m[info]\033[0m ", defaultFlags)
+var infolog = log.New(os.Stderr, InfoLabelColored, defaultFlags)
 
 // Info writes a line to os.Stderr with prefix 'info'.
 func Info(line string) {
@@ -78,7 +87,7 @@ func Infof(format string, args ...any) {
 	infolog.Output(calldepth, fmt.Sprintf(format, args...))
 }
 
-var warnlog = log.New(os.Stderr, " \033[1;33m[warn]\033[0m ", defaultFlags)
+var warnlog = log.New(os.Stderr, WarnLabelColored, defaultFlags)
 
 // Warn writes a line to os.Stderr with prefix 'warn'.
 func Warn(line string) {
@@ -102,7 +111,7 @@ func WarnOnError(err error, line string) {
 	}
 }
 
-var errorlog = log.New(os.Stderr, "\033[1;31m[ERROR]\033[0m ", defaultFlags)
+var errorlog = log.New(os.Stderr, ErrorLabelColored, defaultFlags)
 
 // Error writes a line to os.Stderr with prefix 'ERROR'.
 func Error(line string) {
