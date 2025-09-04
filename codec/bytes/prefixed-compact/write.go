@@ -12,6 +12,7 @@ import (
 	"github.com/cobratbq/goutils/std/builtin/slices"
 	io_ "github.com/cobratbq/goutils/std/io"
 	"github.com/cobratbq/goutils/std/math"
+	"github.com/cobratbq/goutils/types"
 )
 
 // TODO there is going to be nested wrapping of _out into CountingWriter with recursive calls to various value-types. This is probably not ideal. :-P
@@ -59,6 +60,9 @@ func writeRaw(_out io.Writer, data []byte, typeflags byte) (int64, error) {
 // Type 0, 0 (singular, plain value) for any length.
 type Bytes []byte
 
+var _ io.WriterTo = (Bytes)(nil)
+var _ types.Equaler[Value] = (Bytes)(nil)
+
 // Len returns the number of bytes in the value.
 func (v Bytes) Len() int {
 	return len(v)
@@ -97,6 +101,9 @@ type KeyValue struct {
 	V Value
 }
 
+var _ io.WriterTo = (*KeyValue)(nil)
+var _ types.Equaler[Value] = (*KeyValue)(nil)
+
 // Equal tests if this key-value pair is equal to other.
 func (v *KeyValue) Equal(other Value) bool {
 	if o, ok := other.(*KeyValue); ok {
@@ -127,6 +134,9 @@ func WriteKeyValue(out io.Writer, key string, value Value) (int64, error) {
 
 // Type 1, 0 (multiple, plain value) for any length.
 type SequenceValue []Value
+
+var _ io.WriterTo = (SequenceValue)(nil)
+var _ types.Equaler[Value] = (SequenceValue)(nil)
 
 // Equal tests equality of this value with some other value.
 func (v SequenceValue) Equal(other Value) bool {
@@ -177,6 +187,9 @@ func WriteSequence(out io.Writer, seq []Value) (int64, error) {
 
 // Type 1, 1 (multiple, key-value-pairs) for any length.
 type MapValue map[string]Value
+
+var _ io.WriterTo = (MapValue)(nil)
+var _ types.Equaler[Value] = (MapValue)(nil)
 
 // Equal tests equality between this and another value.
 func (v MapValue) Equal(other Value) bool {
