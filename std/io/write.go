@@ -11,6 +11,9 @@ type CountingWriter struct {
 	Cum int64
 }
 
+var _ io.Writer = (*CountingWriter)(nil)
+var _ io.ReaderFrom = (*CountingWriter)(nil)
+
 func NewCountingWriter(out io.Writer) CountingWriter {
 	return CountingWriter{
 		out: out,
@@ -25,5 +28,12 @@ func (w *CountingWriter) Write(p []byte) (int, error) {
 	n, err := w.out.Write(p)
 	// just add onto the cumulative; let caller decide whether the error can be ignored.
 	w.Cum += int64(n)
+	return n, err
+}
+
+// ReadFrom implements the io.ReaderFrom interface.
+func (w *CountingWriter) ReadFrom(r io.Reader) (int64, error) {
+	n, err := io.Copy(w.out, r)
+	w.Cum += n
 	return n, err
 }
