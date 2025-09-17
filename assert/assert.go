@@ -27,10 +27,8 @@ func True(v bool) {
 }
 
 func Any[T comparable](actual T, values ...T) T {
-	for _, v := range values {
-		if actual == v {
-			return actual
-		}
+	if slices.Contains(values, actual) {
+		return actual
 	}
 	log.TracelnDepth(1, "assert.Any:", actual)
 	panic("assertion failed: expected one of specified values")
