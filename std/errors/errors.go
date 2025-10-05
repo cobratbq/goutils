@@ -20,10 +20,12 @@ import (
 	"strings"
 )
 
-// ErrIllegal indicates an illegal/bad value(s) for provided parameter(s).
+// ErrIllegal indicates an illegal/bad due to use, e.g. caller-provided parameter(s) are bad or otherwise
+// illegal.
 var ErrIllegal = NewStringError("illegal value")
+var ErrBad = ErrIllegal
 
-// ErrInternalState indicates a problem with internal state, or use while in incorrect state.
+// ErrInternalState indicates a problem due to (unexpected) internal state, or use while in incorrect state.
 var ErrInternalState = NewStringError("illegal state")
 
 // ErrFailure indicates that there was a processing failure.
