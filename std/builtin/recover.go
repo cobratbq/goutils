@@ -45,8 +45,8 @@ func RecoverLoggedStackTrace(format string) {
 func RecoverLoggedStackTraceExit(code int, format string) {
 	stacktrace := debug.Stack()
 	if v := recover(); v != nil {
-		log.Errorf(format, v)
 		log.Debugln(string(stacktrace))
+		log.Errorf(format, v)
 		os.Exit(code)
 	}
 }
