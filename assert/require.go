@@ -4,13 +4,20 @@
 
 package assert
 
-// Success checks that err is nil. If the error is non-nil, it will panic. `message` can have '%v'
-// format specifier so that it can be substituted with the error message.
+// Success checks that err is nil. If the error is non-nil, it will panic.
 func Success(err error, message string) {
 	if err == nil {
 		return
 	}
 	panic(message + ": " + err.Error())
+}
+
+// Failure checks that err is not nil. If the error is nil, it will panic.
+func Failure(err error, message string) {
+	if err != nil {
+		return
+	}
+	panic("Expected error missing: " + message)
 }
 
 func Type[T any](unknown interface{}, message string) T {
