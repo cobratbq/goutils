@@ -14,13 +14,11 @@ func Success(err error, message string) {
 
 // Failure checks that err is not nil. If the error is nil, it will panic.
 func Failure(err error, message string) {
-	if err != nil {
-		return
-	}
-	panic("Expected error missing: " + message)
+	Required(err, "Expected error missing: "+message)
 }
 
-func Type[T any](unknown interface{}, message string) T {
+// Type asserts that an unknown-typed variable is of a certain type or panics otherwise.
+func Type[T any](unknown any, message string) T {
 	v, ok := unknown.(T)
 	Require(ok, message)
 	return v
