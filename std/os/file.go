@@ -4,6 +4,7 @@ package os
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/cobratbq/goutils/std/builtin"
 )
@@ -21,6 +22,12 @@ func ExistsIsDirectory(filepath string) bool {
 	} else {
 		return false
 	}
+}
+
+// ExistsParentWithoutDestination checks if the parent of the specified destination exists as directory, to
+// possibly contain the destination, but the destination itself is absent.
+func ExistsParentWithoutDestination(path string) bool {
+	return ExistsIsDirectory(filepath.Dir(path)) && !Exists(filepath.Base(path))
 }
 
 // ExistsFile checks whether a file-system object exists and it is a regular file. If the path references a
