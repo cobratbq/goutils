@@ -29,7 +29,7 @@ func ClosePanicked(c io.Closer, message string) {
 func ClosePanickedWithIgnores(c io.Closer, message string, ignore ...error) {
 	err := c.Close()
 	log.TracefDepth(1, "ClosePanickedWithIgnores closed '%v', with error '%#v'", c, err)
-	if errors.IsAny(err, ignore) {
+	if errors.IsAny(err, ignore...) {
 		return
 	}
 	assert.Success(err, message)
@@ -51,7 +51,7 @@ func CloseLogged(c io.Closer, message string) {
 func CloseLoggedWithIgnores(c io.Closer, message string, ignore ...error) {
 	err := c.Close()
 	log.TracefDepth(1, "CloseLoggedWithIgnores closed '%v', with error '%#v'", c, err)
-	if err != nil && !errors.IsAny(err, ignore) {
+	if err != nil && !errors.IsAny(err, ignore...) {
 		log.Warnln(message, err.Error())
 	}
 }
