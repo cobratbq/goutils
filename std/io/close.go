@@ -13,13 +13,13 @@ import (
 // CloseIgnored closes the closer and discards any possible error.
 func CloseIgnored(c io.Closer) {
 	err := c.Close()
-	log.TracefDepth(1, "CloseIgnored closed '%v', with error '%#v'", c, err)
+	log.TracefDepth(1, "CloseIgnored closed '%T', with error '%#v'", c, err)
 }
 
 // ClosePanicked closes the closer and panics with specified message in case of any error.
 func ClosePanicked(c io.Closer, message string) {
 	err := c.Close()
-	log.TracefDepth(1, "ClosePanicked closed '%v', with error '%#v'", c, err)
+	log.TracefDepth(1, "ClosePanicked closed '%T', with error '%#v'", c, err)
 	assert.Success(err, message)
 }
 
@@ -28,7 +28,7 @@ func ClosePanicked(c io.Closer, message string) {
 // Typical ignored errors: net.ErrClosed (when closed elsewhere), io.ErrClosedPipe (when closed elsewhere)
 func ClosePanickedWithIgnores(c io.Closer, message string, ignore ...error) {
 	err := c.Close()
-	log.TracefDepth(1, "ClosePanickedWithIgnores closed '%v', with error '%#v'", c, err)
+	log.TracefDepth(1, "ClosePanickedWithIgnores closed '%T', with error '%#v'", c, err)
 	if errors.IsAny(err, ignore...) {
 		return
 	}
@@ -39,7 +39,7 @@ func ClosePanickedWithIgnores(c io.Closer, message string, ignore ...error) {
 // error message is logged as a warning.
 func CloseLogged(c io.Closer, message string) {
 	err := c.Close()
-	log.TracefDepth(1, "CloseLogged closed '%v', with error '%#v'", c, err)
+	log.TracefDepth(1, "CloseLogged closed '%T', with error '%#v'", c, err)
 	if err != nil {
 		log.Warnln(message, err.Error())
 	}
@@ -50,7 +50,7 @@ func CloseLogged(c io.Closer, message string) {
 // Typical ignored errors: net.ErrClosed (when closed elsewhere), io.ErrClosedPipe (when closed elsewhere)
 func CloseLoggedWithIgnores(c io.Closer, message string, ignore ...error) {
 	err := c.Close()
-	log.TracefDepth(1, "CloseLoggedWithIgnores closed '%v', with error '%#v'", c, err)
+	log.TracefDepth(1, "CloseLoggedWithIgnores closed '%T', with error '%#v'", c, err)
 	if err != nil && !errors.IsAny(err, ignore...) {
 		log.Warnln(message, err.Error())
 	}
