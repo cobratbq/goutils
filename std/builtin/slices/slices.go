@@ -13,6 +13,11 @@ import (
 	"github.com/cobratbq/goutils/types"
 )
 
+// Len offers `len` as a static function for use in function parameters.
+func Len[E any](slice []E) int {
+	return len(slice)
+}
+
 // Increment a slice of unsigned integers by one, starting at the left-most element as least-significant
 // element.
 func IncrementLE[T types.UnsignedInteger](slice []T) {
@@ -463,6 +468,20 @@ func AllEqual[E comparable](value E, input []E) bool {
 func AllSame[S ~[]E, E comparable](input S) bool {
 	for i := range input {
 		if i > 0 && input[i] != input[i-1] {
+			return false
+		}
+	}
+	return true
+}
+
+// AllSameFunc checks if all values in a slice are same.
+func AllSameFunc[S ~[]E, E any, V comparable](input S, extract func(E) V) bool {
+	if len(input) == 0 {
+		return true
+	}
+	first := extract(input[0])
+	for i := range input {
+		if extract(input[i]) != first {
 			return false
 		}
 	}

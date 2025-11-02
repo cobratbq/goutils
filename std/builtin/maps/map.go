@@ -7,6 +7,11 @@ import (
 	"github.com/cobratbq/goutils/types"
 )
 
+// Len offers `len` as a static function for use in function parameters.
+func Len[K comparable, V any](map_ map[K]V) int {
+	return len(map_)
+}
+
 // GetOr gets the value for `key` from a map, or returns `defvalue` if key is not present.
 func GetOr[K comparable, V any](map_ map[K]V, key K, defvalue V) V {
 	if v, ok := map_[key]; ok {
