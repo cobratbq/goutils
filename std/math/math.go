@@ -7,6 +7,14 @@ import (
 	"github.com/cobratbq/goutils/types"
 )
 
+func Sum[N types.Integer](entries ...N) N {
+	var sum N
+	for i := range entries {
+		sum += entries[i]
+	}
+	return sum
+}
+
 // Difference computes an absolute value that's the difference between `a` and `b`.
 func Difference[N types.Integer](a, b N) N {
 	if a < b {
