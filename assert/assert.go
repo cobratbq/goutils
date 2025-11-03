@@ -62,6 +62,20 @@ func Unequal[T comparable](v1, v2 T) {
 	}
 }
 
+func UnequalSlices[S ~[]E, E comparable](s1, s2 S) {
+	if slices.Equal(s1, s2) {
+		log.TracelnDepth(1, "assert.UnequalSlices:", s1, s2)
+		panic("assertion failed: UnequalSlices")
+	}
+}
+
+func UnequalMaps[M1, M2 ~map[K]V, K, V comparable](m1 M1, m2 M2) {
+	if maps.Equal(m1, m2) {
+		log.TracefDepth(1, "assert.UnequalMaps: %+v %+v", m1, m2)
+		panic("assertion failed: UnequalMaps")
+	}
+}
+
 func Zero[T types.Integer](v T) T {
 	if v == 0 {
 		return v
