@@ -5,9 +5,43 @@ package math
 import (
 	"testing"
 
+	"github.com/cobratbq/goutils/std/log"
 	t_ "github.com/cobratbq/goutils/std/testing"
 	"github.com/cobratbq/goutils/types"
 )
+
+func TestMod(t *testing.T) {
+	testdata := []struct{ x, mod, result int }{
+		{0, 3, 0},
+		{1, 3, 1},
+		{2, 3, 2},
+		{3, 3, 0},
+		{4, 3, 1},
+		{7, 3, 1},
+		{-1, 3, 2},
+		{-2, 3, 1},
+		{-3, 3, 0},
+		{-4, 3, 2},
+		{-1, -3, -1},
+		{-2, -3, -2},
+		{-3, -3, 0},
+		{-4, -3, -1},
+		{-5, -3, -2},
+		{-6, -3, 0},
+		{-7, -3, -1},
+		{1, -3, -2},
+		{2, -3, -1},
+		{3, -3, 0},
+		{4, -3, -2},
+		{5, -3, -1},
+		{6, -3, 0},
+		{7, -3, -2},
+	}
+	for i := range testdata {
+		log.Infoln("Iteration:", i)
+		t_.Equal(t, Mod(testdata[i].x, testdata[i].mod), testdata[i].result)
+	}
+}
 
 func TestMaxInts(t *testing.T) {
 	testdata := []struct {

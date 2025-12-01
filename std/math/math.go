@@ -67,6 +67,30 @@ func AbsInt[N types.SignedInteger](n N) N {
 	return n
 }
 
+// Mod determines Euclidian modulo of provided value.
+//
+// This is different from `%` operation, which truncates to the nearest value whether positive or negative,
+// despite a positive modulus.
+//
+// - positive modulus results in positive result (or 0).
+// - negative modulus results in negative result (or 0).
+func Mod[N types.Integer](val N, mod N) N {
+	switch {
+	case mod == 0:
+		panic("mod cannot be 0")
+	case mod > 0 && val >= mod, mod < 0 && val <= mod:
+		return val % mod
+	case mod > 0 && val < 0, mod < 0 && val > 0:
+		if rem := (val % mod); rem == 0 {
+			return rem
+		} else {
+			return rem + mod
+		}
+	default:
+		return val
+	}
+}
+
 // Max returns the maximum of two values.
 func Max[N types.Number](x, y N) N {
 	if x > y {
