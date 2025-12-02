@@ -18,6 +18,13 @@ func Len[E any](slice []E) int {
 	return len(slice)
 }
 
+// Fill fills provided slice with value as specified in function argument.
+func Fill[E any](slice []E, val E) {
+	for i := range slice {
+		slice[i] = val
+	}
+}
+
 // Increment a slice of unsigned integers by one, starting at the left-most element as least-significant
 // element.
 func IncrementLE[T types.UnsignedInteger](slice []T) {
