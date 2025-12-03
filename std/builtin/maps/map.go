@@ -125,6 +125,23 @@ func ExtractValues[K comparable, V any](map_ map[K]V) []V {
 	return vals
 }
 
+// Reduce reduces the entries in a map using provided function.
+//
+// note: current implementation will offer first map entry twice, once as (pre)selected key-value pair, so
+// `reduce` must be able to handle this case.
+func Reduce[K comparable, V any](input map[K]V, reduce func(k1 K, v1 V, k2 K, v2 V) (K, V)) (K, V) {
+	var selectK K
+	var selectV V
+	var init bool
+	for k, v := range input {
+		if !init {
+			selectK, selectV, init = k, v, true
+		}
+		selectK, selectV = reduce(selectK, selectV, k, v)
+	}
+	return selectK, selectV
+}
+
 // Fold folds a map into a single representation of type R, based on both its keys and values.
 func Fold[K comparable, V any, F any](input map[K]V, initial F, fold func(F, K, V) F) F {
 	z := initial
