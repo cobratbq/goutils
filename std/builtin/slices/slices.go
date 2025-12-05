@@ -77,6 +77,14 @@ func AppendCond[E any](cond bool, slice []E, value ...E) []E {
 	return slice
 }
 
+// ExtendOne extends a slice and adds exactly one element to the end.
+func ExtendOne[E any](slice []E, element E) []E {
+	n := len(slice)
+	slice = slice[:n+1]
+	slice[n] = element
+	return slice
+}
+
 // ExtendFrom appends to a slice as far as capacity allows, without reallocation.
 func ExtendFrom[E any](slice []E, additions []E) []E {
 	n := len(slice)
