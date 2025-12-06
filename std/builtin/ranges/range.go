@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
+// ranges provide a set of functions to work with ranges of numbers. Each range is a 2-value slice of a
+// number-type, with values representing range-start and range-end, inclusive.
 package ranges
 
 import (
@@ -25,6 +27,7 @@ func Overlaps[E types.Number](r1, r2 [2]E) bool {
 }
 
 // Merge merges two overlapping ranges. (Ranges must overlap.)
+// FIXME needs testing
 func Merge[E types.Number](r1, r2 [2]E) [2]E {
 	if r1[0] <= r2[0] && r1[1] >= r2[0] {
 		return [2]E{r1[0], math.Max(r1[1], r2[1])}
@@ -36,11 +39,13 @@ func Merge[E types.Number](r1, r2 [2]E) [2]E {
 }
 
 // MergeAnyOverlapping merges any overlapping ranges of a provided slice of ranges.
+// FIXME needs testing
 func MergeAnyOverlapping[E types.Number](ranges [][2]E) [][2]E {
 	initial, reduced := [][2]E{}, ranges
+	merged := make(map[[2]E]struct{})
 	for len(reduced) != len(initial) {
 		initial, reduced = reduced, [][2]E{}
-		merged := make(map[[2]E]struct{})
+		clear(merged)
 	next:
 		for r := range initial {
 			if set.Contains(merged, initial[r]) {
@@ -60,6 +65,7 @@ func MergeAnyOverlapping[E types.Number](ranges [][2]E) [][2]E {
 }
 
 // Expand expands a range into its individidual elements. (inclusive)
+// FIXME needs testing
 func Expand[E types.Number](range_ [2]E) []E {
 	elements := make([]E, 0, Len(range_))
 	for r := range_[0]; r <= range_[1]; r++ {
