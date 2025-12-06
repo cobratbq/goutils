@@ -13,22 +13,36 @@ import (
 
 // Len returns the length of a range.
 func Len[E types.Number](range_ [2]E) int {
+	if range_[1] < range_[0] {
+		return 0
+	}
 	return int(range_[1]-range_[0]) + 1
 }
 
 // Contains checks whether a value is contained in a range. (inclusive)
 func Contains[E types.Number](range_ [2]E, val E) bool {
+	if range_[1] < range_[0] {
+		return false
+	}
 	return val >= range_[0] && val <= range_[1]
 }
 
-// Overlaps verify if two ranges overlap
+// Overlaps verifies if two ranges overlap
+//
+// Note: empty ranges (r[1] < r[0]) never overlap by absence of values.
 func Overlaps[E types.Number](r1, r2 [2]E) bool {
+	if r1[1] < r1[0] || r2[1] < r2[0] {
+		return false
+	}
 	return (r1[0] <= r2[0] && r1[1] >= r2[0]) || (r2[0] <= r1[0] && r2[1] >= r1[0])
 }
 
 // Merge merges two overlapping ranges. (Ranges must overlap.)
 // FIXME needs testing
 func Merge[E types.Number](r1, r2 [2]E) [2]E {
+	if r1[1] < r1[0] || r2[1] < r2[0] {
+		panic("empty ranges do not overlap")
+	}
 	if r1[0] <= r2[0] && r1[1] >= r2[0] {
 		return [2]E{r1[0], math.Max(r1[1], r2[1])}
 	}
@@ -67,6 +81,9 @@ func MergeAnyOverlapping[E types.Number](ranges [][2]E) [][2]E {
 // Expand expands a range into its individidual elements. (inclusive)
 // FIXME needs testing
 func Expand[E types.Number](range_ [2]E) []E {
+	if range_[1] < range_[0] {
+		return []E{}
+	}
 	elements := make([]E, 0, Len(range_))
 	for r := range_[0]; r <= range_[1]; r++ {
 		elements = slices.ExtendOne(elements, r)
