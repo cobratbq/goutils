@@ -389,6 +389,30 @@ func FilterIndexed[E any](input []E, filter func(int, E) bool) []E {
 	return filtered
 }
 
+// FilterRepeats filters elements immediately following a first that are the same.
+func FilterRepeats[E comparable](input []E) []E {
+	filtered := make([]E, 0)
+	for i := range input {
+		if i > 0 && input[i] == input[i-1] {
+			continue
+		}
+		filtered = append(filtered, input[i])
+	}
+	return filtered
+}
+
+// FilterRepeatsFunc filters elements immediately following a first element that are equal according to `eq`.
+func FilterRepeatsFunc[E any](input []E, eq func(a, b E) bool) []E {
+	filtered := make([]E, 0)
+	for i := range input {
+		if i > 0 && eq(input[i], input[i-1]) {
+			continue
+		}
+		filtered = append(filtered, input[i])
+	}
+	return filtered
+}
+
 // Fold folds a slice `input` to a single aggregate value of type `V`, using `initial V` as starting value.
 // Function `fold` defines exactly how `V` is determined from each entry.
 func Fold[E any, V any](input []E, initial V, fold func(V, E) V) V {
